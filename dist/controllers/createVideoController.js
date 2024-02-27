@@ -20,7 +20,8 @@ const createVideoController = (req, res) => {
     const newId = db_1.db.videos[db_1.db.videos.length - 1].id + 1;
     const title = req.body.title;
     const author = req.body.author;
-    const date = new Date();
+    const createdAt = new Date();
+    const publicationDate = req.body.publicationDate ? req.body.publicationDate : createdAt;
     const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
     const canBeDownloaded = req.body.canBeDownloaded ? true : false;
     const availableResolutions = req.body.availableResolutions;
@@ -61,8 +62,8 @@ const createVideoController = (req, res) => {
         author: author,
         canBeDownloaded: canBeDownloaded,
         minAgeRestriction: minAgeRestriction,
-        createdAt: date.toISOString(),
-        publicationDate: date.toISOString(),
+        createdAt: createdAt.toISOString(),
+        publicationDate: publicationDate.toISOString(),
         availableResolutions: availableResolutions
     };
     const isValidate = validateNewVideo();

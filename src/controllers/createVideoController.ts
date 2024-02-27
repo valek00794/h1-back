@@ -23,7 +23,8 @@ export const createVideoController = (req: Request<CreateVideoInputType>, res: R
     const newId = db.videos[db.videos.length - 1].id + 1;
     const title = req.body.title;
     const author = req.body.author;
-    const date = new Date();
+    const createdAt = new Date();
+    const publicationDate = req.body.publicationDate ? req.body.publicationDate : createdAt;
     const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
     const canBeDownloaded = req.body.canBeDownloaded ? true : false;
     const availableResolutions: Resolutions[] = req.body.availableResolutions;
@@ -67,8 +68,8 @@ export const createVideoController = (req: Request<CreateVideoInputType>, res: R
         author: author,
         canBeDownloaded: canBeDownloaded,
         minAgeRestriction: minAgeRestriction,
-        createdAt: date.toISOString(),
-        publicationDate: date.toISOString(),
+        createdAt: createdAt.toISOString(),
+        publicationDate: publicationDate.toISOString(),
         availableResolutions: availableResolutions
     }
 

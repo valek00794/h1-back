@@ -25,3 +25,12 @@ export type OutputVideoType = {
     publicationDate: string,
     availableResolutions: string[]
 }
+
+export type UpdateVideoType = {
+    title: string
+    author: string
+    canBeDownloaded: boolean
+    minAgeRestriction: number | null,
+    publicationDate: string,
+    availableResolutions: string[]
+}
