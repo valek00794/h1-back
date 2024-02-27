@@ -1,12 +1,6 @@
-import express from 'express';
-const app = express()
-const envPort = process.env.PORT;
-const port = envPort ? +envPort : 5000;
+import {app} from './app'
+import {SETTINGS} from './settings'
 
-app.get('/', (req, res) => {
-  res.send('Hello backender')
-})
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.listen(SETTINGS.PORT, () => {
+  console.log(`Example app listening on port ${SETTINGS.PORT}`)
 })

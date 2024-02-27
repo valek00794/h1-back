@@ -1,15 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const app = (0, express_1.default)();
-const envPort = process.env.PORT;
-const port = envPort ? +envPort : 5000;
-app.get('/', (req, res) => {
-    res.send('Hello backender');
-});
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+const app_1 = require("./app");
+const settings_1 = require("./settings");
+app_1.app.listen(settings_1.SETTINGS.PORT, () => {
+    console.log(`Example app listening on port ${settings_1.SETTINGS.PORT}`);
 });
