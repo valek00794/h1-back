@@ -12,8 +12,7 @@ const deleteVideoController = (req, res) => {
     else {
         db_1.db.videos.splice(idVideo, 1);
         res
-            .status(204)
-            .json({ message: 'success deleted' });
+            .status(204);
     }
 };
 exports.deleteVideoController = deleteVideoController;
