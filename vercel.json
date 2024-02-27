@@ -2,9 +2,15 @@
     "version": 2,
     "name": "h1-back",
     "builds": [
-        { "src": "/src/index.ts", "use": "@versel/node" }
+        { 
+            "src": "/src/index.ts", 
+            "use": "@versel/node" 
+        }
     ],
     "routes": [
-        { "src": "/(.*)", "use": "/src/index.ts" }
+        { 
+            "src": "/(.*)", 
+            "dest": "/src/index.ts" 
+        }
     ]
 }
