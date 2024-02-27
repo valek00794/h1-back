@@ -3,7 +3,7 @@ import { db } from '../db/db'
 import { APIErrorResult, FieldError } from '../types/validation-types';
 
 const validationErrorsMassages = {
-    id: `Id not found`,
+    id: `Not found video with the requested ID for removing`,
 };
 
 let apiErrors: FieldError[] = []

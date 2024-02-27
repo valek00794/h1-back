@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteVideoController = void 0;
 const db_1 = require("../db/db");
 const validationErrorsMassages = {
-    id: `Id not found`,
+    id: `Not found video with the requested ID for removing`,
 };
 let apiErrors = [];
 const deleteVideoController = (req, res) => {
