@@ -7,6 +7,7 @@ const validationErrorsMassages = {
 };
 let apiErrors = [];
 const deleteVideoController = (req, res) => {
+    apiErrors = [];
     const idVideo = db_1.db.videos.findIndex(video => video.id === +req.params.id);
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
@@ -19,7 +20,8 @@ const deleteVideoController = (req, res) => {
     else {
         db_1.db.videos.splice(idVideo, 1);
         res
-            .status(204);
+            .status(204)
+            .send();
     }
 };
 exports.deleteVideoController = deleteVideoController;

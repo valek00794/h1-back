@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { Resolutions, OutputVideoType, CreateVideoInputModel } from '../types/video-types'
+import { Resolutions, OutputVideoType, CreateVideoInputType } from '../types/video-types'
 import { APIErrorResult, FieldError } from '../types/validation-types'
 
 const VALIDATE_PHARAMS = {
@@ -19,7 +19,7 @@ const validationErrorsMassages = {
 
 let apiErrors: FieldError[] = [];
 
-export const createVideoController = (req: Request<CreateVideoInputModel>, res: Response<OutputVideoType | APIErrorResult>) => {
+export const createVideoController = (req: Request<CreateVideoInputType>, res: Response<OutputVideoType | APIErrorResult>) => {
     const newId = db.videos[db.videos.length - 1].id + 1;
     const title = req.body.title;
     const author = req.body.author;

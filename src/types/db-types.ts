@@ -1,5 +1,5 @@
-import { CreateVideoInputType } from "./video-types";
+import { OutputVideoType } from "./video-types";
 
 export type DBType = {
-    videos: CreateVideoInputType[],
+    videos: OutputVideoType[],
 }
