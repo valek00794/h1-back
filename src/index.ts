@@ -16,10 +16,10 @@ app.listen(SETTINGS.PORT, () => {
   console.log(`Example app listening on port ${SETTINGS.PORT}`)
 })
 
-app.get('/', getVideosController)
-app.get('/:id', findVideoController)
-app.post('/', createVideoController)
-app.delete('/:id', deleteVideoController)
-app.put('/:id', updateVideoController)
+app.get('/videos', getVideosController)
+app.get('/videos/:id', findVideoController)
+app.post('/videos', createVideoController)
+app.delete('/videos/:id', deleteVideoController)
+app.put('/videos/:id', updateVideoController)
 app.delete('/testing/all-data', clearDbController)
 
