@@ -37,6 +37,7 @@ const updateVideoController = (req, res) => {
         const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
         const canBeDownloaded = req.body.canBeDownloaded ? req.body.canBeDownloaded : false;
         const availableResolutions = req.body.availableResolutions;
+        console.log(new Date(1994));
         const validateNewVideo = () => {
             let isMinAgeRestrictionValidated = false;
             let isTitleValidated = false;
@@ -73,7 +74,7 @@ const updateVideoController = (req, res) => {
             else {
                 apiErrors.push({ field: "canBeDownloaded", message: validationErrorsMassages.canBeDownloaded });
             }
-            if (publicationDate.toString() !== "Invalid Date") {
+            if (publicationDate.toString() !== "Invalid Date" && publicationDate > new Date(db_1.db.videos[idVideo].createdAt)) {
                 isPublicationDateValidated = true;
             }
             else {
