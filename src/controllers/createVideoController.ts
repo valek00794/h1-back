@@ -63,20 +63,20 @@ export const createVideoController = (req: Request<CreateVideoInputType>, res: R
 
         return isMinAgeRestrictionValidated && isTitleValidated && isAuthorValidated && isAvailableResolutionsValidated;
     }
-    const newVideo: OutputVideoType = {
-        id: newId,
-        title: title,
-        author: author,
-        canBeDownloaded: canBeDownloaded,
-        minAgeRestriction: minAgeRestriction,
-        createdAt: createdAt.toISOString(),
-        publicationDate: publicationDate.toISOString(),
-        availableResolutions: availableResolutions
-    }
 
     const isValidate = validateNewVideo();
     
     if (isValidate) {
+        const newVideo: OutputVideoType = {
+            id: newId,
+            title: title,
+            author: author,
+            canBeDownloaded: canBeDownloaded,
+            minAgeRestriction: minAgeRestriction,
+            createdAt: createdAt.toISOString(),
+            publicationDate: publicationDate.toISOString(),
+            availableResolutions: availableResolutions
+        }
         db.videos.push(newVideo)
         res
             .status(201)

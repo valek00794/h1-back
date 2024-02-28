@@ -57,18 +57,18 @@ const createVideoController = (req, res) => {
         }
         return isMinAgeRestrictionValidated && isTitleValidated && isAuthorValidated && isAvailableResolutionsValidated;
     };
-    const newVideo = {
-        id: newId,
-        title: title,
-        author: author,
-        canBeDownloaded: canBeDownloaded,
-        minAgeRestriction: minAgeRestriction,
-        createdAt: createdAt.toISOString(),
-        publicationDate: publicationDate.toISOString(),
-        availableResolutions: availableResolutions
-    };
     const isValidate = validateNewVideo();
     if (isValidate) {
+        const newVideo = {
+            id: newId,
+            title: title,
+            author: author,
+            canBeDownloaded: canBeDownloaded,
+            minAgeRestriction: minAgeRestriction,
+            createdAt: createdAt.toISOString(),
+            publicationDate: publicationDate.toISOString(),
+            availableResolutions: availableResolutions
+        };
         db_1.db.videos.push(newVideo);
         res
             .status(201)

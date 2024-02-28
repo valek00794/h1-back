@@ -33,7 +33,7 @@ const updateVideoController = (req, res) => {
     else {
         const title = req.body.title;
         const author = req.body.author;
-        const publicationDate = req.body.publicationDate;
+        const publicationDate = new Date(req.body.publicationDate);
         const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
         const canBeDownloaded = req.body.canBeDownloaded ? req.body.canBeDownloaded : false;
         const availableResolutions = req.body.availableResolutions;
@@ -73,7 +73,7 @@ const updateVideoController = (req, res) => {
             else {
                 apiErrors.push({ field: "canBeDownloaded", message: validationErrorsMassages.canBeDownloaded });
             }
-            if (new Date(publicationDate).toString() !== "Invalid Date") {
+            if (publicationDate.toString() !== "Invalid Date") {
                 isPublicationDateValidated = true;
             }
             else {
@@ -82,16 +82,16 @@ const updateVideoController = (req, res) => {
             return isMinAgeRestrictionValidated && isTitleValidated && isAuthorValidated &&
                 isAvailableResolutionsValidated && isCanBeDownloadedValidated && isPublicationDateValidated;
         };
-        const updatedVideo = {
-            title: title,
-            author: author,
-            canBeDownloaded: canBeDownloaded,
-            minAgeRestriction: minAgeRestriction,
-            publicationDate: publicationDate.toISOString(),
-            availableResolutions: availableResolutions
-        };
         const isValidate = validateNewVideo();
         if (isValidate) {
+            const updatedVideo = {
+                title: title,
+                author: author,
+                canBeDownloaded: canBeDownloaded,
+                minAgeRestriction: minAgeRestriction,
+                publicationDate: publicationDate.toISOString(),
+                availableResolutions: availableResolutions
+            };
             db_1.db.videos[idVideo] = Object.assign(Object.assign({ id: db_1.db.videos[idVideo].id }, updatedVideo), { createdAt: db_1.db.videos[idVideo].createdAt });
             res
                 .status(204)

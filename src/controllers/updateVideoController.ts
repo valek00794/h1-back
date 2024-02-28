@@ -35,7 +35,7 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
     } else {
         const title = req.body.title;
         const author = req.body.author;
-        const publicationDate = req.body.publicationDate;
+        const publicationDate = new Date (req.body.publicationDate);
         const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
         const canBeDownloaded = req.body.canBeDownloaded ? req.body.canBeDownloaded : false;
         const availableResolutions: Resolutions[] = req.body.availableResolutions;
@@ -78,7 +78,8 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
                 apiErrors.push({ field: "canBeDownloaded", message: validationErrorsMassages.canBeDownloaded })
             }
 
-            if (new Date(publicationDate).toString() !== "Invalid Date") {
+            if (publicationDate.toString() !== "Invalid Date") {
+
                 isPublicationDateValidated = true;
             } else {
                 apiErrors.push({ field: "publicationDate", message: validationErrorsMassages.publicationDate })
@@ -87,18 +88,17 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
             return isMinAgeRestrictionValidated && isTitleValidated && isAuthorValidated &&
                 isAvailableResolutionsValidated && isCanBeDownloadedValidated && isPublicationDateValidated;
         }
-        const updatedVideo: UpdateVideoType = {
-            title: title,
-            author: author,
-            canBeDownloaded: canBeDownloaded,
-            minAgeRestriction: minAgeRestriction,
-            publicationDate: publicationDate.toISOString(),
-            availableResolutions: availableResolutions
-        }
-
         const isValidate = validateNewVideo();
 
         if (isValidate) {
+            const updatedVideo: UpdateVideoType = {
+                title: title,
+                author: author,
+                canBeDownloaded: canBeDownloaded,
+                minAgeRestriction: minAgeRestriction,
+                publicationDate: publicationDate.toISOString(),
+                availableResolutions: availableResolutions
+            }
             db.videos[idVideo] = { id: db.videos[idVideo].id, ...updatedVideo, createdAt: db.videos[idVideo].createdAt }
             res
                 .status(204)
