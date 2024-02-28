@@ -6,6 +6,7 @@ import { findVideoController } from './controllers/findVideoController'
 import { createVideoController } from './controllers/createVideoController'
 import { deleteVideoController } from './controllers/deleteVideoController'
 import { updateVideoController } from './controllers/updateVideoController'
+import { clearDbController } from './controllers/clearDbController'
 
  
 const app = express()
@@ -20,4 +21,5 @@ app.get('/:id', findVideoController)
 app.post('/', createVideoController)
 app.delete('/:id', deleteVideoController)
 app.put('/:id', updateVideoController)
+app.delete('/testing/all-data', clearDbController)
 

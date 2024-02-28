@@ -40,3 +40,12 @@ export const db: DBType = {
     }
   ]
 }
+
+export const setDB = (dataset?: Partial<DBType>) => {
+  if (!dataset) {
+      db.videos = []
+      return
+  }
+
+  db.videos = dataset.videos || db.videos
+}

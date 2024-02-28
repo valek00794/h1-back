@@ -10,6 +10,7 @@ const findVideoController_1 = require("./controllers/findVideoController");
 const createVideoController_1 = require("./controllers/createVideoController");
 const deleteVideoController_1 = require("./controllers/deleteVideoController");
 const updateVideoController_1 = require("./controllers/updateVideoController");
+const clearDbController_1 = require("./controllers/clearDbController");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.listen(settings_1.SETTINGS.PORT, () => {
@@ -20,3 +21,4 @@ app.get('/:id', findVideoController_1.findVideoController);
 app.post('/', createVideoController_1.createVideoController);
 app.delete('/:id', deleteVideoController_1.deleteVideoController);
 app.put('/:id', updateVideoController_1.updateVideoController);
+app.delete('/testing/all-data', clearDbController_1.clearDbController);
