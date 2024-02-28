@@ -15,6 +15,8 @@ const validationErrorsMassages = {
     author: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.authoraxLength}`,
     availableResolutions: `Field will be includes values ${Object.values(video_types_1.Resolutions)}`,
     id: `Not found video with the requested ID for updating`,
+    canBeDownloaded: 'Field will be only boolean',
+    publicationDate: 'Invalid Date'
 };
 let apiErrors = [];
 const updateVideoController = (req, res) => {
@@ -31,14 +33,16 @@ const updateVideoController = (req, res) => {
     else {
         const title = req.body.title;
         const author = req.body.author;
-        const publicationDate = new Date();
+        const publicationDate = req.body.publicationDate;
         const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
-        const canBeDownloaded = req.body.canBeDownloaded ? true : false;
+        const canBeDownloaded = req.body.canBeDownloaded ? req.body.canBeDownloaded : false;
         const availableResolutions = req.body.availableResolutions;
         const validateNewVideo = () => {
             let isMinAgeRestrictionValidated = false;
             let isTitleValidated = false;
             let isAuthorValidated = false;
+            let isCanBeDownloadedValidated = false;
+            let isPublicationDateValidated = false;
             const isAvailableResolutionsValidated = availableResolutions.every((availableResolution) => Object.values(video_types_1.Resolutions).includes(availableResolution));
             if ((minAgeRestriction <= VALIDATE_PHARAMS.maxAgeRestrictionPossible &&
                 minAgeRestriction >= VALIDATE_PHARAMS.minAgeRestrictionPossible) ||
@@ -63,7 +67,20 @@ const updateVideoController = (req, res) => {
             if (!isAvailableResolutionsValidated) {
                 apiErrors.push({ field: "availableResolutions", message: validationErrorsMassages.availableResolutions });
             }
-            return isMinAgeRestrictionValidated && isTitleValidated && isAuthorValidated && isAvailableResolutionsValidated;
+            if (typeof (canBeDownloaded) === "boolean") {
+                isCanBeDownloadedValidated = true;
+            }
+            else {
+                apiErrors.push({ field: "canBeDownloaded", message: validationErrorsMassages.canBeDownloaded });
+            }
+            if (new Date(publicationDate).toString() !== "Invalid Date") {
+                isPublicationDateValidated = true;
+            }
+            else {
+                apiErrors.push({ field: "publicationDate", message: validationErrorsMassages.publicationDate });
+            }
+            return isMinAgeRestrictionValidated && isTitleValidated && isAuthorValidated &&
+                isAvailableResolutionsValidated && isCanBeDownloadedValidated && isPublicationDateValidated;
         };
         const updatedVideo = {
             title: title,
