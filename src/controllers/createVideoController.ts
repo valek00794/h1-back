@@ -20,11 +20,12 @@ const validationErrorsMassages = {
 let apiErrors: FieldError[] = [];
 
 export const createVideoController = (req: Request<CreateVideoInputType>, res: Response<OutputVideoType | APIErrorResult>) => {
-    const newId = db.videos[db.videos.length - 1].id + 1;
+    const createdAt = new Date();
+    const newId = Date.parse(createdAt.toISOString());
     const title = req.body.title;
     const author = req.body.author;
-    const createdAt = new Date();
-    const publicationDate = req.body.publicationDate ? req.body.publicationDate : createdAt;
+    const defaultPublicationDate = new Date(new Date().setDate(new Date().getDate() + 1));
+    const publicationDate = req.body.publicationDate ? req.body.publicationDate : defaultPublicationDate;
     const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
     const canBeDownloaded = req.body.canBeDownloaded ? true : false;
     const availableResolutions: Resolutions[] = req.body.availableResolutions;

@@ -4,12 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const settings_1 = require("./settings");
+const express_1 = __importDefault(require("express"));
 const getVideosController_1 = require("./controllers/getVideosController");
 const findVideoController_1 = require("./controllers/findVideoController");
 const createVideoController_1 = require("./controllers/createVideoController");
 const deleteVideoController_1 = require("./controllers/deleteVideoController");
 const updateVideoController_1 = require("./controllers/updateVideoController");
-const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.listen(settings_1.SETTINGS.PORT, () => {

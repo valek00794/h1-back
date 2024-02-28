@@ -17,11 +17,12 @@ const validationErrorsMassages = {
 };
 let apiErrors = [];
 const createVideoController = (req, res) => {
-    const newId = db_1.db.videos[db_1.db.videos.length - 1].id + 1;
+    const createdAt = new Date();
+    const newId = Date.parse(createdAt.toISOString());
     const title = req.body.title;
     const author = req.body.author;
-    const createdAt = new Date();
-    const publicationDate = req.body.publicationDate ? req.body.publicationDate : createdAt;
+    const defaultPublicationDate = new Date(new Date().setDate(new Date().getDate() + 1));
+    const publicationDate = req.body.publicationDate ? req.body.publicationDate : defaultPublicationDate;
     const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
     const canBeDownloaded = req.body.canBeDownloaded ? true : false;
     const availableResolutions = req.body.availableResolutions;

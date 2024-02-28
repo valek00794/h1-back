@@ -1,10 +1,12 @@
 import { SETTINGS } from './settings'
+import express from 'express'
+
 import { getVideosController } from './controllers/getVideosController'
 import { findVideoController } from './controllers/findVideoController'
 import { createVideoController } from './controllers/createVideoController'
 import { deleteVideoController } from './controllers/deleteVideoController'
 import { updateVideoController } from './controllers/updateVideoController'
-import express from 'express'
+
  
 const app = express()
 app.use(express.json())
