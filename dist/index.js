@@ -16,9 +16,9 @@ app.use(express_1.default.json());
 app.listen(settings_1.SETTINGS.PORT, () => {
     console.log(`Example app listening on port ${settings_1.SETTINGS.PORT}`);
 });
-app.get('/videos', getVideosController_1.getVideosController);
-app.get('/videos/:id', findVideoController_1.findVideoController);
-app.post('/videos', createVideoController_1.createVideoController);
-app.delete('/videos/:id', deleteVideoController_1.deleteVideoController);
-app.put('/videos/:id', updateVideoController_1.updateVideoController);
-app.delete('/testing/all-data', clearDbController_1.clearDbController);
+app.get(settings_1.SETTINGS.PATH.videos, getVideosController_1.getVideosController);
+app.get(settings_1.SETTINGS.PATH.videosById, findVideoController_1.findVideoController);
+app.post(settings_1.SETTINGS.PATH.videos, createVideoController_1.createVideoController);
+app.delete(settings_1.SETTINGS.PATH.videosById, deleteVideoController_1.deleteVideoController);
+app.put(settings_1.SETTINGS.PATH.videosById, updateVideoController_1.updateVideoController);
+app.delete(settings_1.SETTINGS.PATH.videosById, clearDbController_1.clearDbController);
