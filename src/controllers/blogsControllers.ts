@@ -4,7 +4,7 @@ import { CreateBlogType, OutputBlogtType } from '../types/blog'
 import { APIErrorResult, FieldError } from '../types/errors';
 
 const validationErrorsMassages = {
-    id: 'Not found video with the requested ID',
+    id: 'Not found blog with the requested ID',
 };
 
 let apiErrors: FieldError[] = []
@@ -12,8 +12,8 @@ let apiErrors: FieldError[] = []
 
 export const getBlogsController = (req: Request, res: Response<OutputBlogtType[]>) => {
     res
-    .status(200)
-    .json(db.blogs)
+        .status(200)
+        .json(db.blogs)
 }
 
 export const findBlogController = (req: Request, res: Response<APIErrorResult | OutputBlogtType>) => {
@@ -58,7 +58,7 @@ export const createBlogController = (req: Request<CreateBlogType>, res: Response
     const websiteUrl = req.body.websiteUrl
 
     const isValidate = true;
-    
+
     if (isValidate) {
         const newBlog: OutputBlogtType = {
             id: newId,
@@ -76,5 +76,43 @@ export const createBlogController = (req: Request<CreateBlogType>, res: Response
             .json({
                 errorsMessages: apiErrors
             })
+    }
+}
+
+export const updateBlogController = (req: Request, res: Response<OutputBlogtType | APIErrorResult>) => {
+    apiErrors = [];
+    const blogId = db.blogs.findIndex(blog => blog.id === req.params.id);
+    if (blogId === -1) {
+        apiErrors.push({ field: "id", message: validationErrorsMassages.id })
+        res
+            .status(404)
+            .json({
+                errorsMessages: apiErrors
+            })
+    } else {
+        const name = req.body.name
+        const description = req.body.description
+        const websiteUrl = req.body.websiteUrl
+
+        const isValidate = true
+
+        if (isValidate) {
+            const updatedPost: OutputBlogtType = {
+                id: db.blogs[blogId].id,
+                name,
+                description,
+                websiteUrl,
+            }
+            db.blogs[blogId] = { ...updatedPost }
+            res
+                .status(204)
+                .send()
+        } else {
+            res
+                .status(400)
+                .json({
+                    errorsMessages: apiErrors
+                })
+        }
     }
 }

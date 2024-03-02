@@ -22,9 +22,11 @@ app.delete(settings_1.SETTINGS.PATH.videosById, videosControllers_1.deleteVideoC
 app.get(settings_1.SETTINGS.PATH.blogs, blogsControllers_1.getBlogsController);
 app.get(settings_1.SETTINGS.PATH.blogsById, blogsControllers_1.findBlogController);
 app.post(settings_1.SETTINGS.PATH.blogs, blogsControllers_1.createBlogController);
+app.put(settings_1.SETTINGS.PATH.blogsById, blogsControllers_1.updateBlogController);
 app.delete(settings_1.SETTINGS.PATH.blogsById, blogsControllers_1.deleteBlogController);
 app.get(settings_1.SETTINGS.PATH.posts, postsControllers_1.getPostsController);
 app.get(settings_1.SETTINGS.PATH.postsById, postsControllers_1.findPostController);
 app.post(settings_1.SETTINGS.PATH.posts, postsControllers_1.createPostController);
+app.put(settings_1.SETTINGS.PATH.postsById, postsControllers_1.updatePostController);
 app.delete(settings_1.SETTINGS.PATH.postsById, postsControllers_1.deletePostController);
 app.delete(settings_1.SETTINGS.PATH.clearDb, clearDbController_1.clearDbController);

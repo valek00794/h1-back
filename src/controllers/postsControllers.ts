@@ -4,7 +4,7 @@ import { CreatePostType, OutputPostType } from '../types/post'
 import { APIErrorResult, FieldError } from '../types/errors'
 
 const validationErrorsMassages = {
-    id: 'Not found video with the requested ID',
+    id: 'Not found post with the requested ID',
 };
 
 let apiErrors: FieldError[] = []
@@ -79,5 +79,47 @@ export const createPostController = (req: Request<CreatePostType>, res: Response
             .json({
                 errorsMessages: apiErrors
             })
+    }
+}
+
+export const updatePostController = (req: Request, res: Response<OutputPostType | APIErrorResult>) => {
+    apiErrors = [];
+    const postId = db.posts.findIndex(post => post.id === req.params.id);
+    if (postId === -1) {
+        apiErrors.push({ field: "id", message: validationErrorsMassages.id })
+        res
+            .status(404)
+            .json({
+                errorsMessages: apiErrors
+            })
+    } else {
+        const title = req.body.title
+        const shortDescription = req.body.shortDescription
+        const content = req.body.content
+        const blogId = req.body.blogId
+        const blogName = db.blogs.find(blog => blog.id === blogId)?.name || ''
+
+        const isValidate = true
+
+        if (isValidate) {
+            const updatedPost: OutputPostType = {
+                id: db.posts[postId].id,
+                title,
+                shortDescription,
+                content,
+                blogId,
+                blogName: blogName
+            }
+            db.posts[postId] = { ...updatedPost }
+            res
+                .status(204)
+                .send()
+        } else {
+            res
+                .status(400)
+                .json({
+                    errorsMessages: apiErrors
+                })
+        }
     }
 }

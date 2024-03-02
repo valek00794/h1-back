@@ -2,8 +2,8 @@ import { SETTINGS } from './settings'
 import express from 'express'
 
 import { clearDbController } from './controllers/clearDbController'
-import { createBlogController, deleteBlogController, findBlogController, getBlogsController } from './controllers/blogsControllers'
-import { createPostController, deletePostController, findPostController, getPostsController } from './controllers/postsControllers'
+import { createBlogController, deleteBlogController, findBlogController, getBlogsController, updateBlogController } from './controllers/blogsControllers'
+import { createPostController, deletePostController, findPostController, getPostsController, updatePostController } from './controllers/postsControllers'
 import { createVideoController, deleteVideoController, findVideoController, getVideosController, updateVideoController } from './controllers/videosControllers'
 
  
@@ -23,11 +23,13 @@ app.delete(SETTINGS.PATH.videosById, deleteVideoController)
 app.get(SETTINGS.PATH.blogs, getBlogsController)
 app.get(SETTINGS.PATH.blogsById, findBlogController)
 app.post(SETTINGS.PATH.blogs, createBlogController)
+app.put(SETTINGS.PATH.blogsById, updateBlogController)
 app.delete(SETTINGS.PATH.blogsById, deleteBlogController)
 
 app.get(SETTINGS.PATH.posts, getPostsController)
 app.get(SETTINGS.PATH.postsById, findPostController)
 app.post(SETTINGS.PATH.posts, createPostController)
+app.put(SETTINGS.PATH.postsById, updatePostController)
 app.delete(SETTINGS.PATH.postsById, deletePostController)
 
 app.delete(SETTINGS.PATH.clearDb, clearDbController)

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createPostController = exports.deletePostController = exports.findPostController = exports.getPostsController = void 0;
+exports.updatePostController = exports.createPostController = exports.deletePostController = exports.findPostController = exports.getPostsController = void 0;
 const db_1 = require("../db/db");
 const validationErrorsMassages = {
-    id: 'Not found video with the requested ID',
+    id: 'Not found post with the requested ID',
 };
 let apiErrors = [];
 const getPostsController = (req, res) => {
@@ -81,3 +81,46 @@ const createPostController = (req, res) => {
     }
 };
 exports.createPostController = createPostController;
+const updatePostController = (req, res) => {
+    var _a;
+    apiErrors = [];
+    const postId = db_1.db.posts.findIndex(post => post.id === req.params.id);
+    if (postId === -1) {
+        apiErrors.push({ field: "id", message: validationErrorsMassages.id });
+        res
+            .status(404)
+            .json({
+            errorsMessages: apiErrors
+        });
+    }
+    else {
+        const title = req.body.title;
+        const shortDescription = req.body.shortDescription;
+        const content = req.body.content;
+        const blogId = req.body.blogId;
+        const blogName = ((_a = db_1.db.blogs.find(blog => blog.id === blogId)) === null || _a === void 0 ? void 0 : _a.name) || '';
+        const isValidate = true;
+        if (isValidate) {
+            const updatedPost = {
+                id: db_1.db.posts[postId].id,
+                title,
+                shortDescription,
+                content,
+                blogId,
+                blogName: blogName
+            };
+            db_1.db.posts[postId] = Object.assign({}, updatedPost);
+            res
+                .status(204)
+                .send();
+        }
+        else {
+            res
+                .status(400)
+                .json({
+                errorsMessages: apiErrors
+            });
+        }
+    }
+};
+exports.updatePostController = updatePostController;

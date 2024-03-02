@@ -61,7 +61,6 @@ const updateVideoController = (req, res) => {
         const minAgeRestriction = req.body.minAgeRestriction ? req.body.minAgeRestriction : null;
         const canBeDownloaded = req.body.canBeDownloaded ? req.body.canBeDownloaded : false;
         const availableResolutions = req.body.availableResolutions;
-        console.log(new Date(1994));
         const validateNewVideo = () => {
             let isMinAgeRestrictionValidated = false;
             let isTitleValidated = false;
