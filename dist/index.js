@@ -11,6 +11,8 @@ const createVideoController_1 = require("./controllers/createVideoController");
 const deleteVideoController_1 = require("./controllers/deleteVideoController");
 const updateVideoController_1 = require("./controllers/updateVideoController");
 const clearDbController_1 = require("./controllers/clearDbController");
+const blogsController_1 = require("./controllers/blogsController");
+const postsController_1 = require("./controllers/postsController");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.listen(settings_1.SETTINGS.PORT, () => {
@@ -22,3 +24,9 @@ app.post(settings_1.SETTINGS.PATH.videos, createVideoController_1.createVideoCon
 app.delete(settings_1.SETTINGS.PATH.videosById, deleteVideoController_1.deleteVideoController);
 app.put(settings_1.SETTINGS.PATH.videosById, updateVideoController_1.updateVideoController);
 app.delete(settings_1.SETTINGS.PATH.videosById, clearDbController_1.clearDbController);
+app.get(settings_1.SETTINGS.PATH.blogs, blogsController_1.getBlogsController);
+app.get(settings_1.SETTINGS.PATH.posts, postsController_1.getPostsController);
+app.get(settings_1.SETTINGS.PATH.postsById, postsController_1.findPostController);
+app.get(settings_1.SETTINGS.PATH.blogsById, blogsController_1.findBlogController);
+app.delete(settings_1.SETTINGS.PATH.postsById, postsController_1.deletePostController);
+app.delete(settings_1.SETTINGS.PATH.blogsById, blogsController_1.deleteBlogController);

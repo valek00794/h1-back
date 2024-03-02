@@ -7,6 +7,8 @@ import { createVideoController } from './controllers/createVideoController'
 import { deleteVideoController } from './controllers/deleteVideoController'
 import { updateVideoController } from './controllers/updateVideoController'
 import { clearDbController } from './controllers/clearDbController'
+import { deleteBlogController, findBlogController, getBlogsController } from './controllers/blogsController'
+import { deletePostController, findPostController, getPostsController } from './controllers/postsController'
 
  
 const app = express()
@@ -23,3 +25,9 @@ app.delete(SETTINGS.PATH.videosById, deleteVideoController)
 app.put(SETTINGS.PATH.videosById, updateVideoController)
 app.delete(SETTINGS.PATH.videosById, clearDbController)
 
+app.get(SETTINGS.PATH.blogs, getBlogsController)
+app.get(SETTINGS.PATH.posts, getPostsController)
+app.get(SETTINGS.PATH.postsById, findPostController)
+app.get(SETTINGS.PATH.blogsById, findBlogController)
+app.delete(SETTINGS.PATH.postsById, deletePostController)
+app.delete(SETTINGS.PATH.blogsById, deleteBlogController)

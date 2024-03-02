@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateVideoController = void 0;
 const db_1 = require("../db/db");
-const video_types_1 = require("../types/video-types");
+const video_1 = require("../types/video");
 const VALIDATE_PHARAMS = {
     titleMaxLength: 40,
     authoraxLength: 20,
@@ -13,7 +13,7 @@ const validationErrorsMassages = {
     minAgeRestriction: `Field will be null or will be more than ${VALIDATE_PHARAMS.minAgeRestrictionPossible} and less then ${VALIDATE_PHARAMS.maxAgeRestrictionPossible}`,
     title: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.titleMaxLength}`,
     author: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.authoraxLength}`,
-    availableResolutions: `Field will be includes values ${Object.values(video_types_1.Resolutions)}`,
+    availableResolutions: `Field will be includes values ${Object.values(video_1.Resolutions)}`,
     id: `Not found video with the requested ID for updating`,
     canBeDownloaded: 'Field will be only boolean',
     publicationDate: 'Invalid Date'
@@ -44,7 +44,7 @@ const updateVideoController = (req, res) => {
             let isAuthorValidated = false;
             let isCanBeDownloadedValidated = false;
             let isPublicationDateValidated = false;
-            const isAvailableResolutionsValidated = availableResolutions.every((availableResolution) => Object.values(video_types_1.Resolutions).includes(availableResolution));
+            const isAvailableResolutionsValidated = availableResolutions.every((availableResolution) => Object.values(video_1.Resolutions).includes(availableResolution));
             if ((minAgeRestriction <= VALIDATE_PHARAMS.maxAgeRestrictionPossible &&
                 minAgeRestriction >= VALIDATE_PHARAMS.minAgeRestrictionPossible) ||
                 minAgeRestriction === null) {

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { APIErrorResult, FieldError } from '../types/validation-types';
-import { OutputVideoType } from '../types/video-types';
+import { APIErrorResult, FieldError } from '../types/errors';
+import { OutputVideoType } from '../types/video';
 
 const validationErrorsMassages = {
     id: 'Not found video with the requested ID',

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { OutputVideoType, Resolutions, UpdateVideoType } from '../types/video-types'
-import { APIErrorResult, FieldError } from '../types/validation-types';
+import { OutputVideoType, Resolutions, UpdateVideoType } from '../types/video'
+import { APIErrorResult, FieldError } from '../types/errors';
 
 const VALIDATE_PHARAMS = {
     titleMaxLength: 40,
