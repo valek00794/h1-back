@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { OutputBlogtType } from '../types/blog'
+import { CreateBlogType, OutputBlogtType } from '../types/blog'
 import { APIErrorResult, FieldError } from '../types/errors';
 
 const validationErrorsMassages = {
@@ -48,5 +48,33 @@ export const deleteBlogController = (req: Request, res: Response<APIErrorResult>
         res
             .status(204)
             .send()
+    }
+}
+
+export const createBlogController = (req: Request<CreateBlogType>, res: Response<OutputBlogtType | APIErrorResult>) => {
+    const newId = Date.parse(new Date().toISOString()).toString()
+    const name = req.body.name
+    const description = req.body.description
+    const websiteUrl = req.body.websiteUrl
+
+    const isValidate = true;
+    
+    if (isValidate) {
+        const newBlog: OutputBlogtType = {
+            id: newId,
+            name,
+            description,
+            websiteUrl,
+        }
+        db.blogs.push(newBlog)
+        res
+            .status(201)
+            .json(newBlog)
+    } else {
+        res
+            .status(400)
+            .json({
+                errorsMessages: apiErrors
+            })
     }
 }

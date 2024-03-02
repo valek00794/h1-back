@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
+exports.createBlogController = exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
 const db_1 = require("../db/db");
 const validationErrorsMassages = {
     id: 'Not found video with the requested ID',
@@ -49,3 +49,30 @@ const deleteBlogController = (req, res) => {
     }
 };
 exports.deleteBlogController = deleteBlogController;
+const createBlogController = (req, res) => {
+    const newId = Date.parse(new Date().toISOString()).toString();
+    const name = req.body.name;
+    const description = req.body.description;
+    const websiteUrl = req.body.websiteUrl;
+    const isValidate = true;
+    if (isValidate) {
+        const newBlog = {
+            id: newId,
+            name,
+            description,
+            websiteUrl,
+        };
+        db_1.db.blogs.push(newBlog);
+        res
+            .status(201)
+            .json(newBlog);
+    }
+    else {
+        res
+            .status(400)
+            .json({
+            errorsMessages: apiErrors
+        });
+    }
+};
+exports.createBlogController = createBlogController;

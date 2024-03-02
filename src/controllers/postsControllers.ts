@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { OutputPostType } from '../types/post'
+import { CreatePostType, OutputPostType } from '../types/post'
 import { APIErrorResult, FieldError } from '../types/errors'
 
 const validationErrorsMassages = {
@@ -47,5 +47,37 @@ export const deletePostController = (req: Request, res: Response<APIErrorResult>
         res
             .status(204)
             .send()
+    }
+}
+
+export const createPostController = (req: Request<CreatePostType>, res: Response<OutputPostType | APIErrorResult>) => {
+    const newId = Date.parse(new Date().toISOString()).toString()
+    const title = req.body.title
+    const shortDescription = req.body.shortDescription
+    const content = req.body.content
+    const blogId = req.body.blogId
+    const blogName = db.blogs.find(blog => blog.id === blogId)?.name || ''
+
+    const isValidate = true;
+    
+    if (isValidate) {
+        const newPost: OutputPostType = {
+            id: newId,
+            title,
+            shortDescription,
+            content,
+            blogId,
+            blogName: blogName
+        }
+        db.posts.push(newPost)
+        res
+            .status(201)
+            .json(newPost)
+    } else {
+        res
+            .status(400)
+            .json({
+                errorsMessages: apiErrors
+            })
     }
 }

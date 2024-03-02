@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePostController = exports.findPostController = exports.getPostsController = void 0;
+exports.createPostController = exports.deletePostController = exports.findPostController = exports.getPostsController = void 0;
 const db_1 = require("../db/db");
 const validationErrorsMassages = {
     id: 'Not found video with the requested ID',
@@ -49,3 +49,35 @@ const deletePostController = (req, res) => {
     }
 };
 exports.deletePostController = deletePostController;
+const createPostController = (req, res) => {
+    var _a;
+    const newId = Date.parse(new Date().toISOString()).toString();
+    const title = req.body.title;
+    const shortDescription = req.body.shortDescription;
+    const content = req.body.content;
+    const blogId = req.body.blogId;
+    const blogName = ((_a = db_1.db.blogs.find(blog => blog.id === blogId)) === null || _a === void 0 ? void 0 : _a.name) || '';
+    const isValidate = true;
+    if (isValidate) {
+        const newPost = {
+            id: newId,
+            title,
+            shortDescription,
+            content,
+            blogId,
+            blogName: blogName
+        };
+        db_1.db.posts.push(newPost);
+        res
+            .status(201)
+            .json(newPost);
+    }
+    else {
+        res
+            .status(400)
+            .json({
+            errorsMessages: apiErrors
+        });
+    }
+};
+exports.createPostController = createPostController;
