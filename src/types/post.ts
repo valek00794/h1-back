@@ -1,11 +1,11 @@
-export type PostInputModel = {
+export type CreatePostType = {
     title: string,
     shortDescription: string,
     content: string,
     blogId: string
 }
 
-export type PostViewModel = {
+export type OutputPostType = {
     id: string,
     title: string,
     shortDescription: string,

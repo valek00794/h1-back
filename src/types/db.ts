@@ -1,9 +1,9 @@
-import { BlogViewModel } from "./blog"
-import { PostViewModel } from "./post"
+import { OutputBlogtType } from "./blog"
+import { OutputPostType } from "./post"
 import { OutputVideoType } from "./video"
 
 export type DBType = {
-    posts: PostViewModel[],
-    blogs: BlogViewModel[],
+    posts: OutputPostType[],
+    blogs: OutputBlogtType[],
     videos: OutputVideoType[],
 }

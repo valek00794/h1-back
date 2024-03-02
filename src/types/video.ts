@@ -9,7 +9,7 @@ export enum Resolutions {
     'P2160' = 'P2160'
 }
 
-export type CreateVideoInputType = {
+export type CreateVideoType = {
     title: string
     author: string
     availableResolutions: Resolutions[]

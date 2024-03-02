@@ -1,14 +1,10 @@
 import { SETTINGS } from './settings'
 import express from 'express'
 
-import { getVideosController } from './controllers/getVideosController'
-import { findVideoController } from './controllers/findVideoController'
-import { createVideoController } from './controllers/createVideoController'
-import { deleteVideoController } from './controllers/deleteVideoController'
-import { updateVideoController } from './controllers/updateVideoController'
 import { clearDbController } from './controllers/clearDbController'
-import { deleteBlogController, findBlogController, getBlogsController } from './controllers/blogsController'
-import { deletePostController, findPostController, getPostsController } from './controllers/postsController'
+import { deleteBlogController, findBlogController, getBlogsController } from './controllers/blogsControllers'
+import { deletePostController, findPostController, getPostsController } from './controllers/postsControllers'
+import { createVideoController, deleteVideoController, findVideoController, getVideosController, updateVideoController } from './controllers/videosControllers'
 
  
 const app = express()

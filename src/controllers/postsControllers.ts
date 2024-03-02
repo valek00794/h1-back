@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { BlogViewModel } from '../types/blog'
-import { APIErrorResult, FieldError } from '../types/errors';
+import { OutputPostType } from '../types/post'
+import { APIErrorResult, FieldError } from '../types/errors'
 
 const validationErrorsMassages = {
     id: 'Not found video with the requested ID',
@@ -9,17 +9,16 @@ const validationErrorsMassages = {
 
 let apiErrors: FieldError[] = []
 
-
-export const getBlogsController = (req: Request, res: Response<BlogViewModel[]>) => {
+export const getPostsController = (req: Request, res: Response<OutputPostType[]>) => {
     res
     .status(200)
-    .json(db.blogs)
+    .json(db.posts)
 }
 
-export const findBlogController = (req: Request, res: Response<APIErrorResult | BlogViewModel>) => {
+export const findPostController = (req: Request, res: Response<APIErrorResult | OutputPostType>) => {
     apiErrors = []
-    const blogId = db.posts.findIndex(blog => blog.id === req.params.id)
-    if (blogId === -1) {
+    const postId = db.posts.findIndex(post => post.id === req.params.id)
+    if (postId === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id })
         res
             .status(404)
@@ -29,14 +28,14 @@ export const findBlogController = (req: Request, res: Response<APIErrorResult | 
     } else {
         res
             .status(200)
-            .json(db.blogs[blogId])
+            .json(db.posts[postId])
     }
 }
 
-export const deleteBlogController = (req: Request, res: Response<APIErrorResult>) => {
+export const deletePostController = (req: Request, res: Response<APIErrorResult>) => {
     apiErrors = []
-    const blogId = db.blogs.findIndex(blog => blog.id === req.params.id)
-    if (blogId === -1) {
+    const postId = db.posts.findIndex(post => post.id === req.params.id)
+    if (postId === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id })
         res
             .status(404)
@@ -44,7 +43,7 @@ export const deleteBlogController = (req: Request, res: Response<APIErrorResult>
                 errorsMessages: apiErrors
             })
     } else {
-        db.blogs.splice(blogId, 1)
+        db.posts.splice(postId, 1)
         res
             .status(204)
             .send()
