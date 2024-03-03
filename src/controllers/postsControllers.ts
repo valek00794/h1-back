@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { db } from '../db/db'
 import { CreatePostType, OutputPostType } from '../types/posts-types'
 import { APIErrorResult, FieldError } from '../types/errors-types'
+import { postsRepository } from '../repositories/posts-repository';
 
 const validationErrorsMassages = {
     id: 'Not found post with the requested ID',
@@ -10,40 +11,32 @@ const validationErrorsMassages = {
 let apiErrors: FieldError[] = []
 
 export const getPostsController = (req: Request, res: Response<OutputPostType[]>) => {
+    const posts = postsRepository.getPosts()
     res
-    .status(200)
-    .json(db.posts)
+        .status(200)
+        .json(posts)
 }
 
 export const findPostController = (req: Request, res: Response<APIErrorResult | OutputPostType>) => {
-    apiErrors = []
-    const postId = db.posts.findIndex(post => post.id === req.params.id)
-    if (postId === -1) {
-        apiErrors.push({ field: "id", message: validationErrorsMassages.id })
+    const post = postsRepository.findPost(req.params.id)
+    if (!post) {
         res
             .status(404)
-            .json({
-                errorsMessages: apiErrors
-            })
+            .send()
     } else {
         res
             .status(200)
-            .json(db.posts[postId])
+            .json(post)
     }
 }
 
 export const deletePostController = (req: Request, res: Response<APIErrorResult>) => {
-    apiErrors = []
-    const postId = db.posts.findIndex(post => post.id === req.params.id)
-    if (postId === -1) {
-        apiErrors.push({ field: "id", message: validationErrorsMassages.id })
+    const postIsDeleted = postsRepository.deletePost(req.params.id)
+    if (!postIsDeleted) {
         res
             .status(404)
-            .json({
-                errorsMessages: apiErrors
-            })
+            .send()
     } else {
-        db.posts.splice(postId, 1)
         res
             .status(204)
             .send()
@@ -51,75 +44,27 @@ export const deletePostController = (req: Request, res: Response<APIErrorResult>
 }
 
 export const createPostController = (req: Request<CreatePostType>, res: Response<OutputPostType | APIErrorResult>) => {
-    const newId = Date.parse(new Date().toISOString()).toString()
-    const title = req.body.title
-    const shortDescription = req.body.shortDescription
-    const content = req.body.content
-    const blogId = req.body.blogId
-    const blogName = db.blogs.find(blog => blog.id === blogId)?.name || ''
-
-    const isValidate = true;
-    
-    if (isValidate) {
-        const newPost: OutputPostType = {
-            id: newId,
-            title,
-            shortDescription,
-            content,
-            blogId,
-            blogName: blogName
-        }
-        db.posts.push(newPost)
+    const newPost = postsRepository.createPost(req.body)
+    if (newPost) {
         res
             .status(201)
             .json(newPost)
     } else {
         res
             .status(400)
-            .json({
-                errorsMessages: apiErrors
-            })
+            .send()
     }
 }
 
 export const updatePostController = (req: Request, res: Response<OutputPostType | APIErrorResult>) => {
-    apiErrors = [];
-    const postId = db.posts.findIndex(post => post.id === req.params.id);
-    if (postId === -1) {
-        apiErrors.push({ field: "id", message: validationErrorsMassages.id })
+    const updatedPost = postsRepository.updatePost(req.body, req.params.id)
+    if (!updatedPost) {
         res
             .status(404)
-            .json({
-                errorsMessages: apiErrors
-            })
+            .send()
     } else {
-        const title = req.body.title
-        const shortDescription = req.body.shortDescription
-        const content = req.body.content
-        const blogId = req.body.blogId
-        const blogName = db.blogs.find(blog => blog.id === blogId)?.name || ''
-
-        const isValidate = true
-
-        if (isValidate) {
-            const updatedPost: OutputPostType = {
-                id: db.posts[postId].id,
-                title,
-                shortDescription,
-                content,
-                blogId,
-                blogName: blogName
-            }
-            db.posts[postId] = { ...updatedPost }
-            res
-                .status(204)
-                .send()
-        } else {
-            res
-                .status(400)
-                .json({
-                    errorsMessages: apiErrors
-                })
-        }
+        res
+            .status(204)
+            .send()
     }
 }
