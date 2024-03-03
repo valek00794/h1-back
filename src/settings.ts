@@ -4,12 +4,9 @@ config()
 export const SETTINGS = {
     PORT: process.env.PORT || 3000,
     PATH: {
-        videos: '/videos',
-        videosById: '/videos/:id',
-        clearDb: '/testing/all-data',
+        videos: '/videos',    
         posts: '/posts',
         blogs: '/blogs',
-        postsById: '/posts/:id',
-        blogsById: '/blogs/:id',
+        clearDb: '/testing/all-data',
     }
 }

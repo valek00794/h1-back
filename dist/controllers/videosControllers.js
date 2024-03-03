@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteVideoController = exports.createVideoController = exports.updateVideoController = exports.findVideoController = exports.getVideosController = void 0;
 const db_1 = require("../db/db");
-const video_1 = require("../types/video");
+const videos_types_1 = require("../types/videos-types");
 const VALIDATE_PHARAMS = {
     titleMaxLength: 40,
     authoraxLength: 20,
@@ -14,7 +14,7 @@ const validationErrorsMassages = {
     minAgeRestriction: `Field will be null or will be more than ${VALIDATE_PHARAMS.minAgeRestrictionPossible} and less then ${VALIDATE_PHARAMS.maxAgeRestrictionPossible}`,
     title: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.titleMaxLength}`,
     author: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.authoraxLength}`,
-    availableResolutions: `Field will be includes values ${Object.values(video_1.Resolutions)}`,
+    availableResolutions: `Field will be includes values ${Object.values(videos_types_1.Resolutions)}`,
     canBeDownloaded: 'Field will be only boolean',
     publicationDate: 'Invalid Date'
 };
@@ -67,7 +67,7 @@ const updateVideoController = (req, res) => {
             let isAuthorValidated = false;
             let isCanBeDownloadedValidated = false;
             let isPublicationDateValidated = false;
-            const isAvailableResolutionsValidated = availableResolutions.every((availableResolution) => Object.values(video_1.Resolutions).includes(availableResolution));
+            const isAvailableResolutionsValidated = availableResolutions.every((availableResolution) => Object.values(videos_types_1.Resolutions).includes(availableResolution));
             if ((minAgeRestriction <= VALIDATE_PHARAMS.maxAgeRestrictionPossible &&
                 minAgeRestriction >= VALIDATE_PHARAMS.minAgeRestrictionPossible) ||
                 minAgeRestriction === null) {
@@ -146,7 +146,7 @@ const createVideoController = (req, res) => {
         let isMinAgeRestrictionValidated = false;
         let isTitleValidated = false;
         let isAuthorValidated = false;
-        const isAvailableResolutionsValidated = availableResolutions.every((availableResolution) => Object.values(video_1.Resolutions).includes(availableResolution));
+        const isAvailableResolutionsValidated = availableResolutions.every((availableResolution) => Object.values(videos_types_1.Resolutions).includes(availableResolution));
         if ((minAgeRestriction <= VALIDATE_PHARAMS.maxAgeRestrictionPossible &&
             minAgeRestriction >= VALIDATE_PHARAMS.minAgeRestrictionPossible) ||
             minAgeRestriction === null) {

@@ -1,14 +1,13 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { CreateBlogType, OutputBlogtType } from '../types/blog'
-import { APIErrorResult, FieldError } from '../types/errors';
+import { CreateBlogType, OutputBlogtType } from '../types/blogs-types'
+import { APIErrorResult, FieldError } from '../types/errors-types';
 
 const validationErrorsMassages = {
     id: 'Not found blog with the requested ID',
 };
 
 let apiErrors: FieldError[] = []
-
 
 export const getBlogsController = (req: Request, res: Response<OutputBlogtType[]>) => {
     res

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { db } from '../db/db'
-import { CreatePostType, OutputPostType } from '../types/post'
-import { APIErrorResult, FieldError } from '../types/errors'
+import { CreatePostType, OutputPostType } from '../types/posts-types'
+import { APIErrorResult, FieldError } from '../types/errors-types'
 
 const validationErrorsMassages = {
     id: 'Not found post with the requested ID',

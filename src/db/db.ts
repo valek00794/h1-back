@@ -1,4 +1,4 @@
-import { DBType } from "../types/db";
+import { DBType } from "../types/db-types";
 
 export const db: DBType = {
   videos: [
