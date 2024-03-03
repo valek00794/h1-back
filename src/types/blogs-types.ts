@@ -4,7 +4,7 @@ export type CreateBlogType = {
     websiteUrl: string
 }
 
-export type OutputBlogtType = {
+export type OutputBlogType = {
     id: string,
     name: string,
     description: string,
