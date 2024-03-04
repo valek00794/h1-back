@@ -27,14 +27,11 @@ exports.blogsRepository = {
     },
     createBlog(body) {
         const newId = Date.parse(new Date().toISOString()).toString();
-        const name = body.name;
-        const description = body.description;
-        const websiteUrl = body.websiteUrl;
         const newBlog = {
             id: newId,
-            name,
-            description,
-            websiteUrl,
+            name: body.name,
+            description: body.description,
+            websiteUrl: body.websiteUrl,
         };
         const newBlogsLength = db_1.db.blogs.push(newBlog);
         const isPushed = db_1.db.blogs.find((blog) => blog.id === newId);
@@ -46,21 +43,19 @@ exports.blogsRepository = {
         }
     },
     updateBlog(body, id) {
-        const blogId = db_1.db.blogs.findIndex(blog => blog.id === id);
-        if (!blogId) {
+        const blogIndex = db_1.db.blogs.findIndex(blog => blog.id === id);
+        console.log(blogIndex);
+        if (blogIndex === -1) {
             return false;
         }
         else {
-            const name = body.name;
-            const description = body.description;
-            const websiteUrl = body.websiteUrl;
             const updatedblog = {
-                id: db_1.db.blogs[blogId].id,
-                name,
-                description,
-                websiteUrl,
+                id: db_1.db.blogs[blogIndex].id,
+                name: body.name,
+                description: body.description,
+                websiteUrl: body.websiteUrl,
             };
-            return db_1.db.blogs[blogId] = Object.assign({}, updatedblog);
+            return db_1.db.blogs[blogIndex] = Object.assign({}, updatedblog);
         }
     }
 };

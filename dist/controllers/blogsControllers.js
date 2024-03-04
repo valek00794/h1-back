@@ -11,28 +11,28 @@ const getBlogsController = (req, res) => {
 exports.getBlogsController = getBlogsController;
 const findBlogController = (req, res) => {
     const blog = blogs_repository_1.blogsRepository.findBlog(req.params.id);
-    if (!blog) {
-        res
-            .status(404)
-            .send();
-    }
-    else {
+    if (blog) {
         res
             .status(200)
             .json(blog);
+    }
+    else {
+        res
+            .status(404)
+            .send();
     }
 };
 exports.findBlogController = findBlogController;
 const deleteBlogController = (req, res) => {
     const blogIsDeleted = blogs_repository_1.blogsRepository.deleteBlog(req.params.id);
-    if (!blogIsDeleted) {
+    if (blogIsDeleted) {
         res
-            .status(404)
+            .status(204)
             .send();
     }
     else {
         res
-            .status(204)
+            .status(404)
             .send();
     }
 };
@@ -46,21 +46,21 @@ const createBlogController = (req, res) => {
     }
     else {
         res
-            .status(400)
+            .status(404)
             .send();
     }
 };
 exports.createBlogController = createBlogController;
 const updateBlogController = (req, res) => {
     const updatedBlog = blogs_repository_1.blogsRepository.updateBlog(req.body, req.params.id);
-    if (!updatedBlog) {
+    if (updatedBlog) {
         res
-            .status(404)
+            .status(204)
             .send();
     }
     else {
         res
-            .status(204)
+            .status(404)
             .send();
     }
 };

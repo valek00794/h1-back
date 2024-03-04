@@ -2,10 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePostController = exports.createPostController = exports.deletePostController = exports.findPostController = exports.getPostsController = void 0;
 const posts_repository_1 = require("../repositories/posts-repository");
-const validationErrorsMassages = {
-    id: 'Not found post with the requested ID',
-};
-let apiErrors = [];
 const getPostsController = (req, res) => {
     const posts = posts_repository_1.postsRepository.getPosts();
     res
@@ -15,15 +11,15 @@ const getPostsController = (req, res) => {
 exports.getPostsController = getPostsController;
 const findPostController = (req, res) => {
     const post = posts_repository_1.postsRepository.findPost(req.params.id);
-    if (!post) {
-        res
-            .status(404)
-            .send();
-    }
-    else {
+    if (post) {
         res
             .status(200)
             .json(post);
+    }
+    else {
+        res
+            .status(404)
+            .send();
     }
 };
 exports.findPostController = findPostController;
@@ -57,14 +53,14 @@ const createPostController = (req, res) => {
 exports.createPostController = createPostController;
 const updatePostController = (req, res) => {
     const updatedPost = posts_repository_1.postsRepository.updatePost(req.body, req.params.id);
-    if (!updatedPost) {
+    if (updatedPost) {
         res
-            .status(404)
+            .status(204)
             .send();
     }
     else {
         res
-            .status(204)
+            .status(404)
             .send();
     }
 };

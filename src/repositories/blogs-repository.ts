@@ -24,15 +24,11 @@ export const blogsRepository = {
     },
     createBlog(body: CreateBlogType) {
         const newId = Date.parse(new Date().toISOString()).toString()
-        const name = body.name
-        const description = body.description
-        const websiteUrl = body.websiteUrl
-
         const newBlog: OutputBlogType = {
             id: newId,
-            name,
-            description,
-            websiteUrl,
+            name: body.name,
+            description: body.description,
+            websiteUrl: body.websiteUrl,
         }
 
         const newBlogsLength = db.blogs.push(newBlog)
@@ -44,22 +40,18 @@ export const blogsRepository = {
         }
     },
     updateBlog(body: CreateBlogType, id: string) {
-        const blogId = db.blogs.findIndex(blog => blog.id === id);
-
-        if (!blogId) {
+        const blogIndex = db.blogs.findIndex(blog => blog.id === id);
+        console.log(blogIndex);
+        if (blogIndex === -1) {
             return false
         } else {
-            const name = body.name
-            const description = body.description
-            const websiteUrl = body.websiteUrl
-
             const updatedblog: OutputBlogType = {
-                id: db.blogs[blogId].id,
-                name,
-                description,
-                websiteUrl,
+                id: db.blogs[blogIndex].id,
+                name: body.name,
+                description: body.description,
+                websiteUrl: body.websiteUrl,
             }
-            return db.blogs[blogId] = { ...updatedblog }
+            return db.blogs[blogIndex] = { ...updatedblog }
         }
     }
 }

@@ -4,12 +4,6 @@ import { CreatePostType, OutputPostType } from '../types/posts-types'
 import { APIErrorResult, FieldError } from '../types/errors-types'
 import { postsRepository } from '../repositories/posts-repository';
 
-const validationErrorsMassages = {
-    id: 'Not found post with the requested ID',
-};
-
-let apiErrors: FieldError[] = []
-
 export const getPostsController = (req: Request, res: Response<OutputPostType[]>) => {
     const posts = postsRepository.getPosts()
     res
@@ -19,14 +13,14 @@ export const getPostsController = (req: Request, res: Response<OutputPostType[]>
 
 export const findPostController = (req: Request, res: Response<APIErrorResult | OutputPostType>) => {
     const post = postsRepository.findPost(req.params.id)
-    if (!post) {
-        res
-            .status(404)
-            .send()
-    } else {
+    if (post) {
         res
             .status(200)
             .json(post)
+    } else {
+        res
+            .status(404)
+            .send()
     }
 }
 
@@ -58,13 +52,14 @@ export const createPostController = (req: Request<CreatePostType>, res: Response
 
 export const updatePostController = (req: Request, res: Response<OutputPostType | APIErrorResult>) => {
     const updatedPost = postsRepository.updatePost(req.body, req.params.id)
-    if (!updatedPost) {
-        res
-            .status(404)
-            .send()
-    } else {
+    if (updatedPost) {
         res
             .status(204)
+            .send()
+
+    } else {
+        res
+            .status(404)
             .send()
     }
 }

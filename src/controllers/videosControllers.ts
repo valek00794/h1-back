@@ -5,7 +5,7 @@ import { APIErrorResult, FieldError } from '../types/errors-types';
 
 const VALIDATE_PHARAMS = {
     titleMaxLength: 40,
-    authoraxLength: 20,
+    authorMaxLength: 20,
     minAgeRestrictionPossible: 1,
     maxAgeRestrictionPossible: 18,
 }
@@ -14,7 +14,7 @@ const validationErrorsMassages = {
     id: 'Not found video with the requested ID',
     minAgeRestriction: `Field will be null or will be more than ${VALIDATE_PHARAMS.minAgeRestrictionPossible} and less then ${VALIDATE_PHARAMS.maxAgeRestrictionPossible}`,
     title: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.titleMaxLength}`,
-    author: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.authoraxLength}`,
+    author: `Field is required, not be empty and will be less the ${VALIDATE_PHARAMS.authorMaxLength}`,
     availableResolutions: `Field will be includes values ${Object.values(Resolutions)}`,
     canBeDownloaded: 'Field will be only boolean',
     publicationDate: 'Invalid Date'
@@ -85,7 +85,7 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
                 apiErrors.push({ field: "title", message: validationErrorsMassages.title })
             }
 
-            if (author && author.length <= VALIDATE_PHARAMS.authoraxLength) {
+            if (author && author.length <= VALIDATE_PHARAMS.authorMaxLength) {
                 isAuthorValidated = true;
             } else {
                 apiErrors.push({ field: "author", message: validationErrorsMassages.author })
@@ -168,7 +168,7 @@ export const createVideoController = (req: Request<CreateVideoType>, res: Respon
             apiErrors.push({ field: "title", message: validationErrorsMassages.title })
         }
 
-        if (author && author.length <= VALIDATE_PHARAMS.authoraxLength) {
+        if (author && author.length <= VALIDATE_PHARAMS.authorMaxLength) {
             isAuthorValidated = true;
         } else {
             apiErrors.push({ field: "author", message: validationErrorsMassages.author })
