@@ -3,6 +3,14 @@ import { SETTINGS } from "../settings"
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'] as string
+
+    if (!authHeader) {
+        res
+            .status(401)
+            .send()
+        return
+    }
+
     const buff = Buffer.from(authHeader.slice(6), 'base64')
     const decodedAuth = buff.toString('utf8')
 
