@@ -1,11 +1,7 @@
-import express, { Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { CreateBlogType, OutputBlogType } from '../types/blogs-types'
-import { APIErrorResult, FieldError } from '../types/errors-types';
+import { APIErrorResult } from '../types/errors-types';
 import { blogsRepository } from '../repositories/blogs-repository';
-import { FieldValidationError, Result, validationResult } from 'express-validator';
-import { inputValidationMiddleware } from '../validation/inputValidationMiddleware';
-
-
 
 export const getBlogsController = (req: Request, res: Response<OutputBlogType[]>) => {
     const blogs = blogsRepository.getBlogs()

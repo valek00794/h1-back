@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
-import { db } from '../db/db'
 import { CreatePostType, OutputPostType } from '../types/posts-types'
-import { APIErrorResult, FieldError } from '../types/errors-types'
+import { APIErrorResult } from '../types/errors-types'
 import { postsRepository } from '../repositories/posts-repository';
 
 export const getPostsController = (req: Request, res: Response<OutputPostType[]>) => {

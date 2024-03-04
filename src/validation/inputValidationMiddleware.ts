@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { FieldValidationError, Result, validationResult } from 'express-validator'
 
-import { APIErrorResult, FieldError } from '../types/errors-types'
-import { CreateBlogType, OutputBlogType } from '../types/blogs-types'
+import { FieldError } from '../types/errors-types'
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     let apiErrors: FieldError[] = []
