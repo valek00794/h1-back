@@ -45,7 +45,7 @@ export const db: DBType = {
       "title": "string1",
       "shortDescription": "string1",
       "content": "string1",
-      "blogId": "string1",
+      "blogId": "1",
       "blogName": "string1"
     },
     {
@@ -53,7 +53,7 @@ export const db: DBType = {
       "title": "string2",
       "shortDescription": "string2",
       "content": "string2",
-      "blogId": "string2",
+      "blogId": "2",
       "blogName": "string2"
     }
   ],
