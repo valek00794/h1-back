@@ -10,5 +10,6 @@ exports.SETTINGS = {
         posts: '/posts',
         blogs: '/blogs',
         clearDb: '/testing/all-data',
-    }
+    },
+    ADMIN_AUTH: 'admin:qwerty',
 };
