@@ -4,7 +4,7 @@ import { FieldValidationError, Result, validationResult } from 'express-validato
 import { APIErrorResult, FieldError } from '../types/errors-types'
 import { CreateBlogType, OutputBlogType } from '../types/blogs-types'
 
-export const inputValidationMiddleware = (req: Request<CreateBlogType>, res: Response<OutputBlogType | APIErrorResult>, next: NextFunction) => {
+export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     let apiErrors: FieldError[] = []
     const result = validationResult(req)
     const resultWithFormater: Result<FieldValidationError> = result.formatWith(error => error as FieldValidationError);

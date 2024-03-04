@@ -60,15 +60,15 @@ export const db: DBType = {
   blogs: [
     {
       "id": "1",
-      "name": "string1",
-      "description": "string1",
-      "websiteUrl": "string1"
+      "name": "blog1",
+      "description": "descriptionBlog1",
+      "websiteUrl": "https://Id2Nij8.9.ge8Mr7.PRsadsdoD4a7HCL3UkRvN.yYJ_8zwBm72uzzor_MLVW2fsfRZ/5jcX85qxWhdGDh9cg1M-4lcYA"
     },
     {
       "id": "2",
-      "name": "string2",
-      "description": "string2",
-      "websiteUrl": "string2"
+      "name": "blog2",
+      "description": "descriptionBlog2",
+      "websiteUrl": "https://Id2Nij8.9.ge8Mr7.PRsadsdoD4a7HCL3UkRvN.yYJ_8zwBm72uzzor_MLVW2fsfRZ/5jcX85qxWhdGDh9cg1M-4lcYA"
     }
   ]
 }

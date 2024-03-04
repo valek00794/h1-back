@@ -47,8 +47,7 @@ export const postsRepository = {
     },
     updatePost(body: CreatePostType, id: string) {
         const postId = db.posts.findIndex(post => post.id === id);
-
-        if (!postId) {
+        if (postId === -1) {
             return false
         } else {
             const title = body.title

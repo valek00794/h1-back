@@ -53,7 +53,7 @@ exports.postsRepository = {
     updatePost(body, id) {
         var _a;
         const postId = db_1.db.posts.findIndex(post => post.id === id);
-        if (!postId) {
+        if (postId === -1) {
             return false;
         }
         else {
