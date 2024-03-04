@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { createPostController, deletePostController, findPostController, getPostsController, updatePostController } from '../controllers/postsControllers'
-import { inputValidationMiddleware } from "../validation/inputValidationMiddleware";
+import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { postsInputValidation } from "../validation/postsInputValidation";
 
 export const postsRouter = Router();

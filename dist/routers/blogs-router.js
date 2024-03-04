@@ -4,7 +4,7 @@ exports.blogsRouter = void 0;
 const express_1 = require("express");
 const blogsControllers_1 = require("../controllers/blogsControllers");
 const blogsInputValidation_1 = require("../validation/blogsInputValidation");
-const inputValidationMiddleware_1 = require("../validation/inputValidationMiddleware");
+const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddleware");
 exports.blogsRouter = (0, express_1.Router)();
 exports.blogsRouter.get('/', blogsControllers_1.getBlogsController);
 exports.blogsRouter.get('/:id', blogsControllers_1.findBlogController);

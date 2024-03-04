@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { createBlogController, deleteBlogController, findBlogController, getBlogsController, updateBlogController } from '../controllers/blogsControllers'
 import { blogsInputValidation } from "../validation/blogsInputValidation";
-import { inputValidationMiddleware } from "../validation/inputValidationMiddleware";
+import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 
 export const blogsRouter = Router();
 

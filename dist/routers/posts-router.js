@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRouter = void 0;
 const express_1 = require("express");
 const postsControllers_1 = require("../controllers/postsControllers");
-const inputValidationMiddleware_1 = require("../validation/inputValidationMiddleware");
+const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddleware");
 const postsInputValidation_1 = require("../validation/postsInputValidation");
 exports.postsRouter = (0, express_1.Router)();
 exports.postsRouter.get('/', postsControllers_1.getPostsController);
