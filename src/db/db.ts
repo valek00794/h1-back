@@ -1,4 +1,25 @@
 import { DBType } from "../types/db-types";
+import { MongoClient } from "mongodb";
+import dotenv from 'dotenv'
+dotenv.config()
+
+
+const mongoURI = process.env.MONGO_URL;
+
+if (!mongoURI) {
+throw new Error ('MongoDB Url not found')
+}
+
+const client = new MongoClient(mongoURI)
+export const runDb = async () => {
+  try {
+    await client.connect()
+    console.log('Connect success')
+  } catch (e) {
+    console.log('Connect ERROR', e)
+    await client.close()
+  }
+}
 
 export const db: DBType = {
   videos: [
@@ -39,7 +60,7 @@ export const db: DBType = {
       ]
     }
   ],
-  posts:[
+  posts: [
     {
       "id": "1",
       "title": "string1",
@@ -75,10 +96,10 @@ export const db: DBType = {
 
 export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {
-      db.videos = []
-      db.posts =  []
-      db.blogs = []
-      return
+    db.videos = []
+    db.posts = []
+    db.blogs = []
+    return
   }
 
   db.videos = dataset.videos || db.videos
