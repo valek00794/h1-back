@@ -7,8 +7,6 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 
 export const blogsRouter = Router();
 
-
-
 blogsRouter.get('/', getBlogsController)
 blogsRouter.get('/:id', findBlogController)
 blogsRouter.post('/', authMiddleware, blogsInputValidation, inputValidationMiddleware, createBlogController)

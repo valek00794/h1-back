@@ -1,69 +1,60 @@
-import { db } from '../db/db'
+import { ObjectId } from 'mongodb'
+import { postsCollection } from '../db/db'
 import { CreatePostType, OutputPostType } from '../types/posts-types'
+import { blogsRepository } from './blogs-repository'
 
 export const postsRepository = {
-    getPosts() {
-        return db.posts
+    async getPosts(): Promise<OutputPostType[]> {
+        return await postsCollection.find({}).toArray()
     },
-    findPost(id: string) {
-        const postId = db.posts.findIndex(post => post.id === id)
-        if (postId === -1) {
-            return false
+    async findPost(id: string) {
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            return postsCollection.findOne({ "_id": new ObjectId(id) })
         } else {
-            return db.posts[postId]
+            return false
         }
     },
-    deletePost(id: string) {
-        const postId = db.posts.findIndex(post => post.id === id)
-        if (postId === -1) {
+    async deletePost(id: string) {
+        const post = await postsCollection.deleteOne({ "_id": new ObjectId(id) })
+        if (post.deletedCount === 0) {
             return false
         } else {
-            db.posts.splice(postId, 1)
             return true
         }
     },
-    createPost(body: CreatePostType) {
-        const newId = Date.parse(new Date().toISOString()).toString()
-        const title = body.title
-        const shortDescription = body.shortDescription
-        const content = body.content
-        const blogId = body.blogId
-        const blogName = db.blogs.find(blog => blog.id === blogId)?.name || ''
+    async createPost(body: CreatePostType) {
         const newPost: OutputPostType = {
-            id: newId,
-            title,
-            shortDescription,
-            content,
-            blogId,
-            blogName: blogName
+            title: body.title,
+            shortDescription: body.shortDescription,
+            content: body.content,
+            blogId: new ObjectId(body.blogId),
+            blogName: ''
         }
-        const newPostsLength = db.posts.push(newPost);
-        const isPushed = db.posts.find((post) => post.id === newId);
-        if (isPushed) {
-            return db.posts[newPostsLength - 1]
-        } else {
-            return false
+        const blog = await blogsRepository.findBlog(body.blogId)
+        if (blog) {
+            newPost.blogName = blog.name
         }
+        const postInsertId = (await postsCollection.insertOne(newPost)).insertedId
+        return await this.findPost(postInsertId.toString())
     },
-    updatePost(body: CreatePostType, id: string) {
-        const postId = db.posts.findIndex(post => post.id === id);
-        if (postId === -1) {
+    async updatePost(body: CreatePostType, id: string) {
+        const post = await this.findPost(id)
+        if (!post) {
             return false
         } else {
-            const title = body.title
-            const shortDescription = body.shortDescription
-            const content = body.content
-            const blogId = body.blogId
-            const blogName = db.blogs.find(blog => blog.id === blogId)?.name || ''
             const updatedPost: OutputPostType = {
-                id: db.posts[postId].id,
-                title,
-                shortDescription,
-                content,
-                blogId,
-                blogName: blogName
+                title: body.title,
+                shortDescription: body.shortDescription,
+                content: body.content,
+                blogId: new ObjectId(body.blogId),
+                blogName: ''
             }
-            return db.posts[postId] = { ...updatedPost }
+            const blog = await blogsRepository.findBlog(body.blogId)
+            if (blog) {
+                updatedPost.blogName = blog.name
+            }
+            await postsCollection.updateOne({ "_id": new ObjectId(id) }, { "$set": updatedPost })
+            return true
         }
     }
 }

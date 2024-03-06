@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb"
 export type CreatePostType = {
     title: string,
     shortDescription: string,
@@ -6,10 +7,10 @@ export type CreatePostType = {
 }
 
 export type OutputPostType = {
-    id: string,
+    _id?: ObjectId,
     title: string,
     shortDescription: string,
     content: string,
-    blogId: string,
+    blogId: ObjectId,
     blogName: string
 }

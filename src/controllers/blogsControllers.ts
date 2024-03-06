@@ -1,17 +1,16 @@
 import { Request, Response } from 'express'
-import { CreateBlogType, OutputBlogType } from '../types/blogs-types'
-import { APIErrorResult } from '../types/errors-types';
 import { blogsRepository } from '../repositories/blogs-repository';
+import { BlogType } from '../types/blogs-types';
 
-export const getBlogsController = (req: Request, res: Response<OutputBlogType[]>) => {
-    const blogs = blogsRepository.getBlogs()
+export const getBlogsController = async (req: Request, res: Response<BlogType[]>) => {
+    const blogs = await blogsRepository.getBlogs()
     res
         .status(200)
         .json(blogs)
 }
 
-export const findBlogController = (req: Request, res: Response<APIErrorResult | OutputBlogType>) => {
-    const blog = blogsRepository.findBlog(req.params.id)
+export const findBlogController = async (req: Request, res: Response<false | BlogType>) => {
+    const blog = await blogsRepository.findBlog(req.params.id)
     if (blog) {
         res
             .status(200)
@@ -24,22 +23,21 @@ export const findBlogController = (req: Request, res: Response<APIErrorResult | 
     }
 }
 
-export const deleteBlogController = (req: Request, res: Response<APIErrorResult>) => {
-    const blogIsDeleted = blogsRepository.deleteBlog(req.params.id)
+export const deleteBlogController = async (req: Request, res: Response) => {
+    const blogIsDeleted = await blogsRepository.deleteBlog(req.params.id)
     if (blogIsDeleted) {
         res
             .status(204)
             .send()
     } else {
         res
-
             .status(404)
             .send()
     }
 }
 
-export const createBlogController = (req: Request<CreateBlogType>, res: Response<OutputBlogType | APIErrorResult>) => {
-    const newBlog = blogsRepository.createBlog(req.body)
+export const createBlogController = async (req: Request, res: Response<false | BlogType>) => {
+    const newBlog = await blogsRepository.createBlog(req.body)
     if (newBlog) {
         res
             .status(201)
@@ -51,8 +49,8 @@ export const createBlogController = (req: Request<CreateBlogType>, res: Response
     }
 }
 
-export const updateBlogController = (req: Request, res: Response<OutputBlogType | APIErrorResult>) => {
-    const updatedBlog = blogsRepository.updateBlog(req.body, req.params.id)
+export const updateBlogController = async (req: Request, res: Response<boolean>) => {
+    const updatedBlog = await blogsRepository.updateBlog(req.body, req.params.id)
     if (updatedBlog) {
         res
             .status(204)

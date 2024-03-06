@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setDB = exports.db = exports.runDb = void 0;
+exports.setDB = exports.blogsCollection = exports.postsCollection = exports.db = exports.runDb = void 0;
 const mongodb_1 = require("mongodb");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -71,48 +71,14 @@ exports.db = {
             ]
         }
     ],
-    posts: [
-        {
-            "id": "1",
-            "title": "string1",
-            "shortDescription": "string1",
-            "content": "string1",
-            "blogId": "1",
-            "blogName": "string1"
-        },
-        {
-            "id": "2",
-            "title": "string2",
-            "shortDescription": "string2",
-            "content": "string2",
-            "blogId": "2",
-            "blogName": "string2"
-        }
-    ],
-    blogs: [
-        {
-            "id": "1",
-            "name": "blog1",
-            "description": "descriptionBlog1",
-            "websiteUrl": "https://Id2Nij8.9.ge8Mr7.PRsadsdoD4a7HCL3UkRvN.yYJ_8zwBm72uzzor_MLVW2fsfRZ/5jcX85qxWhdGDh9cg1M-4lcYA"
-        },
-        {
-            "id": "2",
-            "name": "blog2",
-            "description": "descriptionBlog2",
-            "websiteUrl": "https://Id2Nij8.9.ge8Mr7.PRsadsdoD4a7HCL3UkRvN.yYJ_8zwBm72uzzor_MLVW2fsfRZ/5jcX85qxWhdGDh9cg1M-4lcYA"
-        }
-    ]
 };
+exports.postsCollection = client.db().collection('posts');
+exports.blogsCollection = client.db().collection('blogs');
 const setDB = (dataset) => {
     if (!dataset) {
         exports.db.videos = [];
-        exports.db.posts = [];
-        exports.db.blogs = [];
         return;
     }
     exports.db.videos = dataset.videos || exports.db.videos;
-    exports.db.posts = dataset.posts || exports.db.posts;
-    exports.db.blogs = dataset.blogs || exports.db.blogs;
 };
 exports.setDB = setDB;

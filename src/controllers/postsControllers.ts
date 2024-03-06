@@ -2,16 +2,17 @@ import { Request, Response } from 'express'
 import { CreatePostType, OutputPostType } from '../types/posts-types'
 import { APIErrorResult } from '../types/errors-types'
 import { postsRepository } from '../repositories/posts-repository';
+import { InsertOneResult } from 'mongodb';
 
-export const getPostsController = (req: Request, res: Response<OutputPostType[]>) => {
-    const posts = postsRepository.getPosts()
+export const getPostsController = async (req: Request, res: Response<OutputPostType[]>) => {
+    const posts = await postsRepository.getPosts()
     res
         .status(200)
         .json(posts)
 }
 
-export const findPostController = (req: Request, res: Response<APIErrorResult | OutputPostType>) => {
-    const post = postsRepository.findPost(req.params.id)
+export const findPostController = async (req: Request, res: Response<false | OutputPostType>) => {
+    const post = await postsRepository.findPost(req.params.id)
     if (post) {
         res
             .status(200)
@@ -23,21 +24,21 @@ export const findPostController = (req: Request, res: Response<APIErrorResult | 
     }
 }
 
-export const deletePostController = (req: Request, res: Response<APIErrorResult>) => {
-    const postIsDeleted = postsRepository.deletePost(req.params.id)
-    if (!postIsDeleted) {
+export const deletePostController = async (req: Request, res: Response) => {
+    const postIsDeleted = await postsRepository.deletePost(req.params.id)
+    if (postIsDeleted) {
         res
-            .status(404)
+            .status(204)
             .send()
     } else {
         res
-            .status(204)
+            .status(404)
             .send()
     }
 }
 
-export const createPostController = (req: Request<CreatePostType>, res: Response<OutputPostType | APIErrorResult>) => {
-    const newPost = postsRepository.createPost(req.body)
+export const createPostController = async (req: Request<CreatePostType>, res: Response<false | OutputPostType>) => {
+    const newPost = await postsRepository.createPost(req.body)
     if (newPost) {
         res
             .status(201)
@@ -49,8 +50,8 @@ export const createPostController = (req: Request<CreatePostType>, res: Response
     }
 }
 
-export const updatePostController = (req: Request, res: Response<OutputPostType | APIErrorResult>) => {
-    const updatedPost = postsRepository.updatePost(req.body, req.params.id)
+export const updatePostController = async (req: Request, res: Response<Promise<false | InsertOneResult<OutputPostType>> | APIErrorResult>) => {
+    const updatedPost = await postsRepository.updatePost(req.body, req.params.id)
     if (updatedPost) {
         res
             .status(204)

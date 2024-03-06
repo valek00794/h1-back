@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 const VALIDATE_PHARAMS = {
     nameMaxLength: 15,

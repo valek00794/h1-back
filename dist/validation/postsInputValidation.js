@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsInputValidation = void 0;
 const express_validator_1 = require("express-validator");
-const db_1 = require("../db/db");
 const VALIDATE_PHARAMS = {
     titleMaxLength: 30,
     shortDescriptionMaxLength: 100,
@@ -20,13 +19,13 @@ exports.postsInputValidation = [
         .isLength({ max: VALIDATE_PHARAMS.contentMaxLength }).withMessage(`The field length must be less than ${VALIDATE_PHARAMS.contentMaxLength}`),
     (0, express_validator_1.body)('blogId').trim()
         .notEmpty().withMessage('The field is required'),
-    (0, express_validator_1.body)('blogId').custom(value => {
-        const blogIdIncludes = db_1.db.blogs.findIndex(el => el.id === value);
-        if (blogIdIncludes === -1) {
-            throw new Error('Blog not found');
-        }
-        else {
-            return value;
-        }
-    })
+    /*    body('blogId').custom(async (value) => {
+            const blogs = await blogsRepository.getBlogs()
+            const blogIdIncludes = db.blogs.findIndex(el => el.id === value)
+            if (blogIdIncludes === -1) {
+                throw new Error('Blog not found');
+            } else {
+                return value;
+            }
+        })*/
 ];

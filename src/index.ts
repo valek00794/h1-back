@@ -1,7 +1,8 @@
 import express from 'express'
-import { runDb } from './db/db'
 
 import { SETTINGS } from './settings'
+
+import { runDb } from './db/db'
 import { clearDbController } from './controllers/clearDbController'
 import { videosRouter } from './routers/videos-router'
 import { postsRouter } from './routers/posts-router'
