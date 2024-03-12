@@ -45,6 +45,8 @@ exports.blogsRepository = {
                 name: body.name,
                 description: body.description,
                 websiteUrl: body.websiteUrl,
+                createdAt: new Date().toISOString(),
+                isMembership: false
             };
             const blogInsertId = (yield db_1.blogsCollection.insertOne(newBlog)).insertedId;
             return yield this.findBlog(blogInsertId.toString());
@@ -61,6 +63,8 @@ exports.blogsRepository = {
                     name: body.name,
                     description: body.description,
                     websiteUrl: body.websiteUrl,
+                    createdAt: new Date().toISOString(),
+                    isMembership: false,
                 };
                 yield db_1.blogsCollection.updateOne({ "_id": new mongodb_1.ObjectId(id) }, { "$set": updatedblog });
                 return true;

@@ -47,7 +47,8 @@ exports.postsRepository = {
                 shortDescription: body.shortDescription,
                 content: body.content,
                 blogId: new mongodb_1.ObjectId(body.blogId),
-                blogName: ''
+                blogName: '',
+                createdAt: new Date().toISOString()
             };
             const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId);
             if (blog) {
@@ -69,7 +70,8 @@ exports.postsRepository = {
                     shortDescription: body.shortDescription,
                     content: body.content,
                     blogId: new mongodb_1.ObjectId(body.blogId),
-                    blogName: ''
+                    blogName: '',
+                    createdAt: new Date().toISOString()
                 };
                 const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId);
                 if (blog) {

@@ -12,5 +12,6 @@ export type OutputPostType = {
     shortDescription: string,
     content: string,
     blogId: ObjectId,
-    blogName: string
+    blogName: string,
+    createdAt: string
 }

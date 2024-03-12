@@ -28,7 +28,8 @@ export const postsRepository = {
             shortDescription: body.shortDescription,
             content: body.content,
             blogId: new ObjectId(body.blogId),
-            blogName: ''
+            blogName: '',
+            createdAt: new Date().toISOString()
         }
         const blog = await blogsRepository.findBlog(body.blogId)
         if (blog) {
@@ -47,7 +48,8 @@ export const postsRepository = {
                 shortDescription: body.shortDescription,
                 content: body.content,
                 blogId: new ObjectId(body.blogId),
-                blogName: ''
+                blogName: '',
+                createdAt: new Date().toISOString()
             }
             const blog = await blogsRepository.findBlog(body.blogId)
             if (blog) {

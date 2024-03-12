@@ -26,6 +26,8 @@ export const blogsRepository = {
             name: body.name,
             description: body.description,
             websiteUrl: body.websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false
         }
 
         const blogInsertId = (await blogsCollection.insertOne(newBlog)).insertedId
@@ -40,6 +42,8 @@ export const blogsRepository = {
                 name: body.name,
                 description: body.description,
                 websiteUrl: body.websiteUrl,
+                createdAt: new Date().toISOString(),
+                isMembership: false,
             }
             await blogsCollection.updateOne({ "_id": new ObjectId(id) }, { "$set": updatedblog })
             return true
