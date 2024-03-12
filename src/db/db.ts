@@ -76,3 +76,8 @@ export const setDB = (dataset?: Partial<DBType>) => {
   
   db.videos = dataset.videos || db.videos
 }
+
+export const setMongoDB = () => {
+  postsCollection.drop()
+  blogsCollection.drop()
+}

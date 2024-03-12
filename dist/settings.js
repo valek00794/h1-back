@@ -10,6 +10,7 @@ exports.SETTINGS = {
         posts: '/posts',
         blogs: '/blogs',
         clearDb: '/testing/all-data',
+        clearLocalDb: '/testing/videos/all-data',
     },
     ADMIN_AUTH: 'admin:qwerty',
 };

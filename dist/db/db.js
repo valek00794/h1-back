@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setDB = exports.blogsCollection = exports.postsCollection = exports.db = exports.runDb = void 0;
+exports.setMongoDB = exports.setDB = exports.blogsCollection = exports.postsCollection = exports.db = exports.runDb = void 0;
 const mongodb_1 = require("mongodb");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -82,3 +82,8 @@ const setDB = (dataset) => {
     exports.db.videos = dataset.videos || exports.db.videos;
 };
 exports.setDB = setDB;
+const setMongoDB = () => {
+    exports.postsCollection.drop();
+    exports.blogsCollection.drop();
+};
+exports.setMongoDB = setMongoDB;

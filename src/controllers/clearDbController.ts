@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { setDB } from '../db/db'
+import { setMongoDB } from '../db/db';
 
 export const clearDbController = (req: Request, res: Response) => {
-    setDB();
+    setMongoDB();
     res
         .status(204)
         .send()
