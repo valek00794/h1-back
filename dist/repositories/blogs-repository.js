@@ -75,7 +75,7 @@ exports.blogsRepository = {
                     name: body.name,
                     description: body.description,
                     websiteUrl: body.websiteUrl,
-                    createdAt: new Date().toISOString(),
+                    createdAt: body.createdAt,
                     isMembership: false,
                 };
                 yield db_1.blogsCollection.updateOne({ "_id": new mongodb_1.ObjectId(id) }, { "$set": updatedblog });

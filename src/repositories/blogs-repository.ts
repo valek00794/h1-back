@@ -52,7 +52,7 @@ export const blogsRepository = {
                 name: body.name,
                 description: body.description,
                 websiteUrl: body.websiteUrl,
-                createdAt: new Date().toISOString(),
+                createdAt: body.createdAt,
                 isMembership: false,
             }
             await blogsCollection.updateOne({ "_id": new ObjectId(id) }, { "$set": updatedblog })

@@ -83,9 +83,9 @@ exports.postsRepository = {
                     content: body.content,
                     blogId: new mongodb_1.ObjectId(body.blogId),
                     blogName: '',
-                    createdAt: new Date().toISOString()
+                    createdAt: body.createdAt
                 };
-                const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId);
+                const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId.toString());
                 if (blog) {
                     updatedPost.blogName = blog.name;
                 }
