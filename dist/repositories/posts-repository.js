@@ -83,7 +83,7 @@ exports.postsRepository = {
                     content: body.content,
                     blogId: new mongodb_1.ObjectId(body.blogId),
                     blogName: '',
-                    createdAt: body.createdAt
+                    createdAt: post.createdAt
                 };
                 const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId.toString());
                 if (blog) {

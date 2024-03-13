@@ -48,7 +48,7 @@ export const postsRepository = {
         const postInsertId = (await postsCollection.insertOne(newPost)).insertedId
         return await this.findPost(postInsertId.toString())
     },
-    async updatePost(body: PostType, id: string) {
+    async updatePost(body: CreatePostType, id: string) {
         const post = await this.findPost(id)
         if (!post) {
             return false
@@ -59,7 +59,7 @@ export const postsRepository = {
                 content: body.content,
                 blogId: new ObjectId(body.blogId),
                 blogName: '',
-                createdAt: body.createdAt
+                createdAt: post.createdAt
             }
             const blog = await blogsRepository.findBlog(body.blogId.toString())
             if (blog) {
