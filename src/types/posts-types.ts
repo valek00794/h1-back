@@ -7,7 +7,7 @@ export type CreatePostType = {
 }
 
 export type OutputPostType = {
-    _id?: ObjectId,
+    id?: ObjectId,
     title: string,
     shortDescription: string,
     content: string,
