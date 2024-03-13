@@ -16,13 +16,20 @@ const blogs_repository_1 = require("./blogs-repository");
 exports.postsRepository = {
     getPosts() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.find({}).toArray();
+            const posts = yield db_1.postsCollection.find({}).toArray();
+            return posts.map(post => this.mapToOutput(post));
         });
     },
     findPost(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (id.match(/^[0-9a-fA-F]{24}$/)) {
-                return db_1.postsCollection.findOne({ "_id": new mongodb_1.ObjectId(id) });
+                const post = yield db_1.postsCollection.findOne({ "_id": new mongodb_1.ObjectId(id) });
+                if (!post) {
+                    return false;
+                }
+                else {
+                    return this.mapToOutput(post);
+                }
             }
             else {
                 return false;
@@ -31,12 +38,17 @@ exports.postsRepository = {
     },
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield db_1.postsCollection.deleteOne({ "_id": new mongodb_1.ObjectId(id) });
-            if (post.deletedCount === 0) {
-                return false;
+            if (id.match(/^[0-9a-fA-F]{24}$/)) {
+                const post = yield db_1.postsCollection.deleteOne({ "_id": new mongodb_1.ObjectId(id) });
+                if (post.deletedCount === 0) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
             }
             else {
-                return true;
+                return false;
             }
         });
     },
@@ -81,5 +93,16 @@ exports.postsRepository = {
                 return true;
             }
         });
+    },
+    mapToOutput(post) {
+        return {
+            id: post._id,
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt
+        };
     }
 };

@@ -6,12 +6,20 @@ export type CreatePostType = {
     blogId: string
 }
 
-export type OutputPostType = {
-    id?: ObjectId,
+export type PostType = {
+    blogName: string,
+    createdAt: string
     title: string,
     shortDescription: string,
     content: string,
-    blogId: ObjectId,
-    blogName: string,
-    createdAt: string
+    blogId: ObjectId
 }
+
+export type PostDbType = Pick<PostType, keyof PostType> & {
+    _id: ObjectId,
+}
+
+export type PostViewType =  Pick<PostType, keyof PostType> & {
+    id: ObjectId,
+}
+

@@ -21,7 +21,7 @@ export const postsInputValidation = [
         .notEmpty().withMessage('The field is required'),
     body('blogId').custom(async (value) => {
         const blogs = await blogsRepository.getBlogs()
-        const blogIdIncludes = blogs.findIndex(el => el._id?.toString() === value)
+        const blogIdIncludes = blogs.findIndex(el => el.id?.toString() === value)
         if (blogIdIncludes === -1) {
             throw new Error('Blog not found');
         } else {

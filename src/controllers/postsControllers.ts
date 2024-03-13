@@ -1,17 +1,17 @@
 import { Request, Response } from 'express'
-import { CreatePostType, OutputPostType } from '../types/posts-types'
+import { CreatePostType, PostType, PostViewType } from '../types/posts-types'
 import { APIErrorResult } from '../types/errors-types'
 import { postsRepository } from '../repositories/posts-repository';
 import { InsertOneResult } from 'mongodb';
 
-export const getPostsController = async (req: Request, res: Response<OutputPostType[]>) => {
+export const getPostsController = async (req: Request, res: Response<PostViewType[]>) => {
     const posts = await postsRepository.getPosts()
     res
         .status(200)
         .json(posts)
 }
 
-export const findPostController = async (req: Request, res: Response<false | OutputPostType>) => {
+export const findPostController = async (req: Request, res: Response<false | PostViewType>) => {
     const post = await postsRepository.findPost(req.params.id)
     if (post) {
         res
@@ -37,7 +37,7 @@ export const deletePostController = async (req: Request, res: Response) => {
     }
 }
 
-export const createPostController = async (req: Request<CreatePostType>, res: Response<false | OutputPostType>) => {
+export const createPostController = async (req: Request<CreatePostType>, res: Response<false | PostViewType>) => {
     const newPost = await postsRepository.createPost(req.body)
     if (newPost) {
         res
@@ -50,7 +50,7 @@ export const createPostController = async (req: Request<CreatePostType>, res: Re
     }
 }
 
-export const updatePostController = async (req: Request, res: Response<Promise<false | InsertOneResult<OutputPostType>> | APIErrorResult>) => {
+export const updatePostController = async (req: Request, res: Response<Promise<false | InsertOneResult<PostViewType>> | APIErrorResult>) => {
     const updatedPost = await postsRepository.updatePost(req.body, req.params.id)
     if (updatedPost) {
         res

@@ -1,29 +1,39 @@
 import { ObjectId } from 'mongodb'
 import { postsCollection } from '../db/db'
-import { CreatePostType, OutputPostType } from '../types/posts-types'
+import { CreatePostType, PostDbType, PostType, PostViewType } from '../types/posts-types'
 import { blogsRepository } from './blogs-repository'
 
 export const postsRepository = {
-    async getPosts(): Promise<OutputPostType[]> {
-        return await postsCollection.find({}).toArray()
+    async getPosts(): Promise<PostViewType[]> {
+        const posts = await postsCollection.find({}).toArray()
+        return posts.map(post => this.mapToOutput(post))
     },
     async findPost(id: string) {
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            return postsCollection.findOne({ "_id": new ObjectId(id) })
+            const post = await postsCollection.findOne({ "_id": new ObjectId(id) })
+            if (!post) {
+                return false
+            } else {
+                return this.mapToOutput(post!)
+            }
         } else {
             return false
         }
     },
     async deletePost(id: string) {
-        const post = await postsCollection.deleteOne({ "_id": new ObjectId(id) })
-        if (post.deletedCount === 0) {
-            return false
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            const post = await postsCollection.deleteOne({ "_id": new ObjectId(id) })
+            if (post.deletedCount === 0) {
+                return false
+            } else {
+                return true
+            }
         } else {
-            return true
+            return false
         }
     },
     async createPost(body: CreatePostType) {
-        const newPost: OutputPostType = {
+        const newPost: PostType = {
             title: body.title,
             shortDescription: body.shortDescription,
             content: body.content,
@@ -43,7 +53,7 @@ export const postsRepository = {
         if (!post) {
             return false
         } else {
-            const updatedPost: OutputPostType = {
+            const updatedPost: PostType = {
                 title: body.title,
                 shortDescription: body.shortDescription,
                 content: body.content,
@@ -57,6 +67,17 @@ export const postsRepository = {
             }
             await postsCollection.updateOne({ "_id": new ObjectId(id) }, { "$set": updatedPost })
             return true
+        }
+    },
+    mapToOutput(post: PostDbType) {
+        return {
+            id: post._id,
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt
         }
     }
 }

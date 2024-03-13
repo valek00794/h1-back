@@ -1,15 +1,15 @@
 import { Request, Response } from 'express'
 import { blogsRepository } from '../repositories/blogs-repository';
-import { BlogType } from '../types/blogs-types';
+import { BlogViewType } from '../types/blogs-types';
 
-export const getBlogsController = async (req: Request, res: Response<BlogType[]>) => {
+export const getBlogsController = async (req: Request, res: Response<BlogViewType[]>) => {
     const blogs = await blogsRepository.getBlogs()
     res
         .status(200)
         .json(blogs)
 }
 
-export const findBlogController = async (req: Request, res: Response<false | BlogType>) => {
+export const findBlogController = async (req: Request, res: Response<false | BlogViewType>) => {
     const blog = await blogsRepository.findBlog(req.params.id)
     if (blog) {
         res
@@ -36,7 +36,7 @@ export const deleteBlogController = async (req: Request, res: Response) => {
     }
 }
 
-export const createBlogController = async (req: Request, res: Response<false | BlogType>) => {
+export const createBlogController = async (req: Request, res: Response<false | BlogViewType>) => {
     const newBlog = await blogsRepository.createBlog(req.body)
     if (newBlog) {
         res

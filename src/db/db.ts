@@ -1,7 +1,7 @@
 import { DBType } from "../types/db-types";
 import { MongoClient } from "mongodb";
 import dotenv from 'dotenv'
-import { OutputPostType } from "../types/posts-types";
+import { PostType } from "../types/posts-types";
 import { BlogType } from "../types/blogs-types";
 dotenv.config()
 
@@ -64,7 +64,7 @@ export const db: DBType = {
   ],
 }
 
-export const postsCollection = client.db().collection<OutputPostType>('posts')
+export const postsCollection = client.db().collection<PostType>('posts')
 
 export const blogsCollection = client.db().collection<BlogType>('blogs')
 

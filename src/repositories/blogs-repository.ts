@@ -1,24 +1,34 @@
 import { ObjectId } from 'mongodb'
 import { blogsCollection } from '../db/db'
-import { BlogType } from '../types/blogs-types'
+import { BlogDBType, BlogType, BlogViewType } from '../types/blogs-types'
 
 export const blogsRepository = {
-    async getBlogs(): Promise<BlogType[]> {
-        return await blogsCollection.find({}).toArray()
+    async getBlogs(): Promise<BlogViewType[]> {
+        const blogs = await blogsCollection.find({}).toArray()
+        return blogs.map(blog => this.mapToOutput(blog))
     },
     async findBlog(id: string) {
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            return await blogsCollection.findOne({ "_id": new ObjectId(id) })
+            const blog = await blogsCollection.findOne({ "_id": new ObjectId(id) })
+            if (!blog) {
+                return false
+            } else {
+                return this.mapToOutput(blog!)
+            }
         } else {
             return false
         }
     },
     async deleteBlog(id: string) {
-        const blog = await blogsCollection.deleteOne({ "_id": new ObjectId(id) })
-        if (blog.deletedCount === 0) {
-            return false
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            const blog = await blogsCollection.deleteOne({ "_id": new ObjectId(id) })
+            if (blog.deletedCount === 0) {
+                return false
+            } else {
+                return true
+            }
         } else {
-            return true
+            return false
         }
     },
     async createBlog(body: BlogType) {
@@ -47,6 +57,16 @@ export const blogsRepository = {
             }
             await blogsCollection.updateOne({ "_id": new ObjectId(id) }, { "$set": updatedblog })
             return true
+        }
+    },
+    mapToOutput(blog: BlogDBType) {
+        return {
+            id: blog._id,
+            name: blog.name,
+            description: blog.description,
+            websiteUrl: blog.websiteUrl,
+            createdAt: blog.createdAt,
+            isMembership: blog.isMembership,
         }
     }
 }

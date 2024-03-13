@@ -15,13 +15,20 @@ const db_1 = require("../db/db");
 exports.blogsRepository = {
     getBlogs() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.blogsCollection.find({}).toArray();
+            const blogs = yield db_1.blogsCollection.find({}).toArray();
+            return blogs.map(blog => this.mapToOutput(blog));
         });
     },
     findBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (id.match(/^[0-9a-fA-F]{24}$/)) {
-                return yield db_1.blogsCollection.findOne({ "_id": new mongodb_1.ObjectId(id) });
+                const blog = yield db_1.blogsCollection.findOne({ "_id": new mongodb_1.ObjectId(id) });
+                if (!blog) {
+                    return false;
+                }
+                else {
+                    return this.mapToOutput(blog);
+                }
             }
             else {
                 return false;
@@ -30,12 +37,17 @@ exports.blogsRepository = {
     },
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield db_1.blogsCollection.deleteOne({ "_id": new mongodb_1.ObjectId(id) });
-            if (blog.deletedCount === 0) {
-                return false;
+            if (id.match(/^[0-9a-fA-F]{24}$/)) {
+                const blog = yield db_1.blogsCollection.deleteOne({ "_id": new mongodb_1.ObjectId(id) });
+                if (blog.deletedCount === 0) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
             }
             else {
-                return true;
+                return false;
             }
         });
     },
@@ -70,5 +82,15 @@ exports.blogsRepository = {
                 return true;
             }
         });
+    },
+    mapToOutput(blog) {
+        return {
+            id: blog._id,
+            name: blog.name,
+            description: blog.description,
+            websiteUrl: blog.websiteUrl,
+            createdAt: blog.createdAt,
+            isMembership: blog.isMembership,
+        };
     }
 };
