@@ -23,7 +23,7 @@ exports.blogsRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             if (id.match(/^[0-9a-fA-F]{24}$/)) {
                 const blog = yield db_1.blogsCollection.findOne({ "_id": new mongodb_1.ObjectId(id) });
-                if (!blog) {
+                if (blog !== null) {
                     return false;
                 }
                 else {

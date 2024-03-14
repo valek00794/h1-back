@@ -10,7 +10,7 @@ export const blogsRepository = {
     async findBlog(id: string) {
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
             const blog = await blogsCollection.findOne({ "_id": new ObjectId(id) })
-            if (!blog) {
+            if (blog !== null) {
                 return false
             } else {
                 return this.mapToOutput(blog!)
