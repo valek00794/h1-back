@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBlogController = exports.createBlogController = exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
+exports.updateBlogController = exports.createBlogController = exports.deleteBlogController = exports.findPostsOfBlogController = exports.findBlogController = exports.getBlogsController = void 0;
 const blogs_repository_1 = require("../repositories/blogs-repository");
 const getBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogs = yield blogs_repository_1.blogsRepository.getBlogs();
@@ -32,6 +32,20 @@ const findBlogController = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.findBlogController = findBlogController;
+const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const posts = yield blogs_repository_1.blogsRepository.findPostsOfBlog(req.params.id);
+    if (posts) {
+        res
+            .status(200)
+            .json(posts);
+    }
+    else {
+        res
+            .status(404)
+            .send();
+    }
+});
+exports.findPostsOfBlogController = findPostsOfBlogController;
 const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogIsDeleted = yield blogs_repository_1.blogsRepository.deleteBlog(req.params.id);
     if (blogIsDeleted) {

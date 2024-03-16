@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { CreatePostType, PostType, PostViewType } from '../types/posts-types'
+import { CreatePostType, PostViewType } from '../types/posts-types'
 import { APIErrorResult } from '../types/errors-types'
 import { postsRepository } from '../repositories/posts-repository';
 import { InsertOneResult } from 'mongodb';

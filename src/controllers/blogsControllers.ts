@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { blogsRepository } from '../repositories/blogs-repository';
 import { BlogViewType } from '../types/blogs-types';
+import { PostViewType } from '../types/posts-types';
 
 export const getBlogsController = async (req: Request, res: Response<BlogViewType[]>) => {
     const blogs = await blogsRepository.getBlogs()
@@ -15,6 +16,20 @@ export const findBlogController = async (req: Request, res: Response<false | Blo
         res
             .status(200)
             .json(blog)
+
+    } else {
+        res
+            .status(404)
+            .send()
+    }
+}
+
+export const findPostsOfBlogController = async (req: Request, res: Response<false | PostViewType[]>) => {
+    const posts = await blogsRepository.findPostsOfBlog(req.params.id)
+    if (posts) {
+        res
+            .status(200)
+            .json(posts)
 
     } else {
         res

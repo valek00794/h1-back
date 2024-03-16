@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
+const posts_repository_1 = require("./posts-repository");
 exports.blogsRepository = {
     getBlogs() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,6 +30,17 @@ exports.blogsRepository = {
                 else {
                     return this.mapToOutput(blog);
                 }
+            }
+            else {
+                return false;
+            }
+        });
+    },
+    findPostsOfBlog(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (id.match(/^[0-9a-fA-F]{24}$/)) {
+                const posts = yield db_1.postsCollection.find({ "blogId": new mongodb_1.ObjectId(id) }).toArray();
+                return posts.map(post => posts_repository_1.postsRepository.mapToOutput(post));
             }
             else {
                 return false;

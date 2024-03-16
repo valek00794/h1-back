@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
-import { blogsCollection } from '../db/db'
+import { blogsCollection, postsCollection } from '../db/db'
 import { BlogDBType, BlogType, BlogViewType } from '../types/blogs-types'
+import { postsRepository } from './posts-repository'
 
 export const blogsRepository = {
     async getBlogs(): Promise<BlogViewType[]> {
@@ -15,6 +16,14 @@ export const blogsRepository = {
             } else {
                 return this.mapToOutput(blog!)
             }
+        } else {
+            return false
+        }
+    },
+    async findPostsOfBlog(id: string) {
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            const posts = await postsCollection.find({ "blogId": new ObjectId(id) }).toArray()
+            return posts.map(post => postsRepository.mapToOutput(post))
         } else {
             return false
         }
