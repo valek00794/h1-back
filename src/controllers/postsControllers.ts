@@ -24,6 +24,20 @@ export const findPostController = async (req: Request, res: Response<false | Pos
     }
 }
 
+export const findPostsOfBlogController = async (req: Request, res: Response<false | PostViewType[]>) => {
+    const posts = await postsRepository.findPostsOfBlog(req.params.id)
+    if (posts) {
+        res
+            .status(200)
+            .json(posts)
+
+    } else {
+        res
+            .status(404)
+            .send()
+    }
+}
+
 export const deletePostController = async (req: Request, res: Response) => {
     const postIsDeleted = await postsRepository.deletePost(req.params.id)
     if (postIsDeleted) {

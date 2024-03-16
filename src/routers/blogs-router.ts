@@ -1,9 +1,10 @@
 import { Router } from "express";
 
-import { createBlogController, deleteBlogController, findBlogController, findPostsOfBlogController, getBlogsController, updateBlogController } from '../controllers/blogsControllers'
+import { createBlogController, deleteBlogController, findBlogController, getBlogsController, updateBlogController } from '../controllers/blogsControllers'
 import { blogsInputValidation } from "../validation/blogsInputValidation";
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { findPostsOfBlogController } from "../controllers/postsControllers";
 
 export const blogsRouter = Router();
 

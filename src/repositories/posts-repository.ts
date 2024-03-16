@@ -20,6 +20,16 @@ export const postsRepository = {
             return false
         }
     },
+    
+    async findPostsOfBlog(id: string) {
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            const posts = await postsCollection.find({ "blogId": new ObjectId(id) }).toArray()
+            return posts.map(post => postsRepository.mapToOutput(post))
+        } else {
+            return false
+        }
+    },
+
     async deletePost(id: string) {
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
             const post = await postsCollection.deleteOne({ "_id": new ObjectId(id) })
