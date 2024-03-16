@@ -25,7 +25,7 @@ export const findPostController = async (req: Request, res: Response<false | Pos
 }
 
 export const findPostsOfBlogController = async (req: Request, res: Response<false | PostViewType[]>) => {
-    const posts = await postsRepository.getPosts(req.params.id)
+    const posts = await postsRepository.getPosts(req.params.blogId)
     if (posts) {
         res
             .status(200)
@@ -51,8 +51,21 @@ export const deletePostController = async (req: Request, res: Response) => {
     }
 }
 
-export const createPostController = async (req: Request<CreatePostType>, res: Response<false | PostViewType>) => {
+export const createPostController = async (req: Request, res: Response<false | PostViewType>) => {
     const newPost = await postsRepository.createPost(req.body)
+    if (newPost) {
+        res
+            .status(201)
+            .json(newPost)
+    } else {
+        res
+            .status(400)
+            .send()
+    }
+}
+
+export const createPostForBlogController = async (req: Request, res: Response<false | PostViewType>) => {
+    const newPost = await postsRepository.createPost(req.body, req.params.blogId)
     if (newPost) {
         res
             .status(201)

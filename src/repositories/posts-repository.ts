@@ -37,16 +37,18 @@ export const postsRepository = {
             return false
         }
     },
-    async createPost(body: CreatePostType) {
+    async createPost(body: CreatePostType, blogId?: string) {
+        let getBloggId  = blogId?.match(/^[0-9a-fA-F]{24}$/) ? blogId : body.blogId
+
         const newPost: PostType = {
             title: body.title,
             shortDescription: body.shortDescription,
             content: body.content,
-            blogId: new ObjectId(body.blogId),
+            blogId: new ObjectId(getBloggId),
             blogName: '',
             createdAt: new Date().toISOString()
         }
-        const blog = await blogsRepository.findBlog(body.blogId)
+        const blog = await blogsRepository.findBlog(getBloggId)
         if (blog) {
             newPost.blogName = blog.name
         }

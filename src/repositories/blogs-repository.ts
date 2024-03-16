@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb'
 import { blogsCollection, postsCollection } from '../db/db'
 import { BlogDBType, BlogType, BlogViewType } from '../types/blogs-types'
-import { postsRepository } from './posts-repository'
 
 export const blogsRepository = {
     async getBlogs(): Promise<BlogViewType[]> {

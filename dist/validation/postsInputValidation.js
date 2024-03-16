@@ -27,9 +27,9 @@ exports.postsInputValidation = [
     (0, express_validator_1.body)('content').trim()
         .notEmpty().withMessage('The field is required')
         .isLength({ max: VALIDATE_PHARAMS.contentMaxLength }).withMessage(`The field length must be less than ${VALIDATE_PHARAMS.contentMaxLength}`),
-    (0, express_validator_1.body)('blogId').trim()
+    (0, express_validator_1.check)('blogId').trim()
         .notEmpty().withMessage('The field is required'),
-    (0, express_validator_1.body)('blogId').custom((value) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, express_validator_1.check)('blogId').custom((value) => __awaiter(void 0, void 0, void 0, function* () {
         const blogs = yield blogs_repository_1.blogsRepository.getBlogs();
         const blogIdIncludes = blogs.findIndex(el => { var _a; return ((_a = el.id) === null || _a === void 0 ? void 0 : _a.toString()) === value; });
         if (blogIdIncludes === -1) {

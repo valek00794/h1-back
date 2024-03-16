@@ -56,17 +56,18 @@ exports.postsRepository = {
             }
         });
     },
-    createPost(body) {
+    createPost(body, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
+            let getBloggId = (blogId === null || blogId === void 0 ? void 0 : blogId.match(/^[0-9a-fA-F]{24}$/)) ? blogId : body.blogId;
             const newPost = {
                 title: body.title,
                 shortDescription: body.shortDescription,
                 content: body.content,
-                blogId: new mongodb_1.ObjectId(body.blogId),
+                blogId: new mongodb_1.ObjectId(getBloggId),
                 blogName: '',
                 createdAt: new Date().toISOString()
             };
-            const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId);
+            const blog = yield blogs_repository_1.blogsRepository.findBlog(getBloggId);
             if (blog) {
                 newPost.blogName = blog.name;
             }

@@ -4,13 +4,15 @@ import { createBlogController, deleteBlogController, findBlogController, getBlog
 import { blogsInputValidation } from "../validation/blogsInputValidation";
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { findPostsOfBlogController } from "../controllers/postsControllers";
+import { createPostForBlogController, findPostsOfBlogController } from "../controllers/postsControllers";
+import { postsInputValidation } from "../validation/postsInputValidation";
 
 export const blogsRouter = Router();
 
 blogsRouter.get('/', getBlogsController)
 blogsRouter.get('/:id', findBlogController)
-blogsRouter.get('/:id/posts', findPostsOfBlogController)
+blogsRouter.get('/:blogId/posts', findPostsOfBlogController)
+blogsRouter.post('/:blogId/posts', postsInputValidation, inputValidationMiddleware, createPostForBlogController)
 blogsRouter.post('/', authMiddleware, blogsInputValidation, inputValidationMiddleware, createBlogController)
 blogsRouter.put('/:id', authMiddleware, blogsInputValidation, inputValidationMiddleware, updateBlogController)
 blogsRouter.delete('/:id', authMiddleware, deleteBlogController)

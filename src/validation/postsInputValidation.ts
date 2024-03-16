@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, check } from 'express-validator';
 import { blogsRepository } from '../repositories/blogs-repository';
 
 const VALIDATE_PHARAMS = {
@@ -17,9 +17,9 @@ export const postsInputValidation = [
     body('content').trim()
         .notEmpty().withMessage('The field is required')
         .isLength({ max: VALIDATE_PHARAMS.contentMaxLength }).withMessage(`The field length must be less than ${VALIDATE_PHARAMS.contentMaxLength}`),
-    body('blogId').trim()
+    check('blogId').trim()
         .notEmpty().withMessage('The field is required'),
-    body('blogId').custom(async (value) => {
+    check('blogId').custom(async (value) => {
         const blogs = await blogsRepository.getBlogs()
         const blogIdIncludes = blogs.findIndex(el => el.id?.toString() === value)
         if (blogIdIncludes === -1) {
