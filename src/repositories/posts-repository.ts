@@ -4,8 +4,12 @@ import { CreatePostType, PostDbType, PostType, PostViewType } from '../types/pos
 import { blogsRepository } from './blogs-repository'
 
 export const postsRepository = {
-    async getPosts(): Promise<PostViewType[]> {
-        const posts = await postsCollection.find({}).toArray()
+    async getPosts(blogId? : string): Promise<PostViewType[]> {
+        let findOptions = {}
+        if (blogId) {
+            findOptions = { "blogId": new ObjectId(blogId) }
+        }
+        const posts = await postsCollection.find(findOptions).toArray()
         return posts.map(post => this.mapToOutput(post))
     },
     async findPost(id: string) {
@@ -16,15 +20,6 @@ export const postsRepository = {
             } else {
                 return this.mapToOutput(post!)
             }
-        } else {
-            return false
-        }
-    },
-    
-    async findPostsOfBlog(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            const posts = await postsCollection.find({ "blogId": new ObjectId(id) }).toArray()
-            return posts.map(post => postsRepository.mapToOutput(post))
         } else {
             return false
         }

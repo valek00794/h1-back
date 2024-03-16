@@ -33,7 +33,7 @@ const findPostController = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.findPostController = findPostController;
 const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield posts_repository_1.postsRepository.findPostsOfBlog(req.params.id);
+    const posts = yield posts_repository_1.postsRepository.getPosts(req.params.id);
     if (posts) {
         res
             .status(200)

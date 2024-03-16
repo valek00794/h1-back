@@ -25,7 +25,7 @@ export const findPostController = async (req: Request, res: Response<false | Pos
 }
 
 export const findPostsOfBlogController = async (req: Request, res: Response<false | PostViewType[]>) => {
-    const posts = await postsRepository.findPostsOfBlog(req.params.id)
+    const posts = await postsRepository.getPosts(req.params.id)
     if (posts) {
         res
             .status(200)

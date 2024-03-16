@@ -14,9 +14,13 @@ const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
 const blogs_repository_1 = require("./blogs-repository");
 exports.postsRepository = {
-    getPosts() {
+    getPosts(blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const posts = yield db_1.postsCollection.find({}).toArray();
+            let findOptions = {};
+            if (blogId) {
+                findOptions = { "blogId": new mongodb_1.ObjectId(blogId) };
+            }
+            const posts = yield db_1.postsCollection.find(findOptions).toArray();
             return posts.map(post => this.mapToOutput(post));
         });
     },
@@ -30,17 +34,6 @@ exports.postsRepository = {
                 else {
                     return this.mapToOutput(post);
                 }
-            }
-            else {
-                return false;
-            }
-        });
-    },
-    findPostsOfBlog(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/)) {
-                const posts = yield db_1.postsCollection.find({ "blogId": new mongodb_1.ObjectId(id) }).toArray();
-                return posts.map(post => exports.postsRepository.mapToOutput(post));
             }
             else {
                 return false;
