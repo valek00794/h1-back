@@ -1,6 +1,7 @@
 import { ObjectId, SortDirection } from 'mongodb'
+
 import { postsCollection } from '../db/db'
-import { CreatePostType, PaginatorPostViewType, PostDbType, PostType, PostViewType } from '../types/posts-types'
+import { CreatePostType, PaginatorPostViewType, PostDbType, PostType } from '../types/posts-types'
 import { blogsRepository } from './blogs-repository'
 import { SearchQueryParametersType } from '../types/query-types'
 
@@ -9,16 +10,14 @@ const defaultSearchQueryParameters = {
     pageSize: 10,
     sortBy: 'createdAt',
     sortDirection: 'desc' as SortDirection,
-    searchNameTerm: null
 }
 
 export const postsRepository = {
     async getPosts(query: any, blogId?: string): Promise<PaginatorPostViewType> {
         const sanitizationQuery = this.getSanitizationQuery(query)
         let findOptions = {}
-        findOptions = sanitizationQuery.searchNameTerm !== null ? { title: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
         if (blogId) {
-            findOptions = { ...findOptions, blogId: new ObjectId(blogId) }
+            findOptions = { blogId: new ObjectId(blogId) }
         }
 
         const posts = await postsCollection
@@ -119,7 +118,6 @@ export const postsRepository = {
             pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
             sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
             sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         }
     }
 }

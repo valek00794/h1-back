@@ -18,16 +18,14 @@ const defaultSearchQueryParameters = {
     pageSize: 10,
     sortBy: 'createdAt',
     sortDirection: 'desc',
-    searchNameTerm: null
 };
 exports.postsRepository = {
     getPosts(query, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = this.getSanitizationQuery(query);
             let findOptions = {};
-            findOptions = sanitizationQuery.searchNameTerm !== null ? { title: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {};
             if (blogId) {
-                findOptions = Object.assign(Object.assign({}, findOptions), { blogId: new mongodb_1.ObjectId(blogId) });
+                findOptions = { blogId: new mongodb_1.ObjectId(blogId) };
             }
             const posts = yield db_1.postsCollection
                 .find(findOptions)
@@ -137,7 +135,6 @@ exports.postsRepository = {
             pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
             sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
             sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         };
     }
 };

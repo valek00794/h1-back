@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { blogsRepository } from '../repositories/blogs-repository';
-import { BlogViewType } from '../types/blogs-types';
+import { BlogViewType, PaginatorBlogViewType } from '../types/blogs-types';
 
-export const getBlogsController = async (req: Request, res: Response<BlogViewType[]>) => {
-    const blogs = await blogsRepository.getBlogs()
+export const getBlogsController = async (req: Request, res: Response<PaginatorBlogViewType>) => {
+    const blogs = await blogsRepository.getBlogs(req.query)
     res
         .status(200)
         .json(blogs)

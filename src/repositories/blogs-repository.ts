@@ -1,11 +1,39 @@
-import { ObjectId } from 'mongodb'
-import { blogsCollection, postsCollection } from '../db/db'
-import { BlogDBType, BlogType, BlogViewType } from '../types/blogs-types'
+import { ObjectId, SortDirection } from 'mongodb'
+
+import { blogsCollection } from '../db/db'
+import { BlogDBType, BlogType, PaginatorBlogViewType } from '../types/blogs-types'
+import { SearchQueryParametersType } from '../types/query-types'
+
+const defaultSearchQueryParameters = {
+    pageNumber: 1,
+    pageSize: 10,
+    sortBy: 'createdAt',
+    sortDirection: 'desc' as SortDirection,
+    searchNameTerm: null
+}
+
 
 export const blogsRepository = {
-    async getBlogs(): Promise<BlogViewType[]> {
-        const blogs = await blogsCollection.find({}).toArray()
-        return blogs.map(blog => this.mapToOutput(blog))
+    async getBlogs(query?: any): Promise<PaginatorBlogViewType> {
+        const sanitizationQuery = this.getSanitizationQuery(query)
+        const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
+
+        const blogs = await blogsCollection
+            .find(findOptions)
+            .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+            .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
+            .limit(sanitizationQuery.pageSize)
+            .toArray()
+
+        const blogsCount = await blogsCollection.countDocuments(findOptions)
+
+        return {
+            pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
+            page: sanitizationQuery.pageNumber,
+            pageSize: sanitizationQuery.pageSize,
+            totalCount: blogsCount,
+            items: blogs.map(blog => this.mapToOutput(blog))
+        }
     },
     async findBlog(id: string) {
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -68,6 +96,15 @@ export const blogsRepository = {
             websiteUrl: blog.websiteUrl,
             createdAt: blog.createdAt,
             isMembership: blog.isMembership,
+        }
+    },
+    getSanitizationQuery(query: SearchQueryParametersType) {
+        return {
+            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
+            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
+            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
+            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         }
     }
 }

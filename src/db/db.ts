@@ -68,7 +68,7 @@ export const setDB = (dataset?: Partial<DBType>) => {
     db.videos = []
     return
   }
-  
+
   db.videos = dataset.videos || db.videos
 }
 

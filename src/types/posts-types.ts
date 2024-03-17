@@ -20,14 +20,14 @@ export type PostDbType = PostType & {
     _id: ObjectId,
 }
 
-export type PostViewType =  PostType & {
+export type PostViewType = PostType & {
     id: ObjectId,
 }
 
 export type PaginatorPostViewType = {
-    pagesCount:	number,
-    page:	number,
-    pageSize:	number,
-    totalCount:	number,
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
     items: PostViewType[]
 }

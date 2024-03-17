@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBlogController = exports.createBlogController = exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
 const blogs_repository_1 = require("../repositories/blogs-repository");
 const getBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blogs = yield blogs_repository_1.blogsRepository.getBlogs();
+    const blogs = yield blogs_repository_1.blogsRepository.getBlogs(req.query);
     res
         .status(200)
         .json(blogs);

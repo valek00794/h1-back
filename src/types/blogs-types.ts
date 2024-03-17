@@ -15,3 +15,11 @@ export type BlogDBType = BlogType & {
 export type BlogViewType = BlogType & {
     id: ObjectId,
 }
+
+export type PaginatorBlogViewType = {
+    pagesCount: number,
+    page: number,
+    pageSize: number,
+    totalCount: number,
+    items: BlogViewType[]
+}

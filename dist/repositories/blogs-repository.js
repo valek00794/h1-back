@@ -12,11 +12,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
+const defaultSearchQueryParameters = {
+    pageNumber: 1,
+    pageSize: 10,
+    sortBy: 'createdAt',
+    sortDirection: 'desc',
+    searchNameTerm: null
+};
 exports.blogsRepository = {
-    getBlogs() {
+    getBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogs = yield db_1.blogsCollection.find({}).toArray();
-            return blogs.map(blog => this.mapToOutput(blog));
+            const sanitizationQuery = this.getSanitizationQuery(query);
+            const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {};
+            const blogs = yield db_1.blogsCollection
+                .find(findOptions)
+                .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+                .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
+                .limit(sanitizationQuery.pageSize)
+                .toArray();
+            const blogsCount = yield db_1.blogsCollection.countDocuments(findOptions);
+            return {
+                pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
+                page: sanitizationQuery.pageNumber,
+                pageSize: sanitizationQuery.pageSize,
+                totalCount: blogsCount,
+                items: blogs.map(blog => this.mapToOutput(blog))
+            };
         });
     },
     findBlog(id) {
@@ -91,6 +112,15 @@ exports.blogsRepository = {
             websiteUrl: blog.websiteUrl,
             createdAt: blog.createdAt,
             isMembership: blog.isMembership,
+        };
+    },
+    getSanitizationQuery(query) {
+        return {
+            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
+            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
+            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
+            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         };
     }
 };
