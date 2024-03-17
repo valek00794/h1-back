@@ -15,8 +15,8 @@ exports.SETTINGS = {
     ADMIN_AUTH: 'admin:qwerty',
     DB: {
         collection: {
-            POST_COLLECTION_NAME: process.env.POST_COLLECTION_NAME || 'posts',
-            BLOG_COLLECTION_NAME: process.env.BLOG_COLLECTION_NAME || 'blogs'
+            POST_COLLECTION_NAME: process.env.POST_COLLECTION_NAME || '',
+            BLOG_COLLECTION_NAME: process.env.BLOG_COLLECTION_NAME || ''
         },
         mongoURI: process.env.MONGO_URL || 'mongodb://localhost:27017/sprint1localdb'
     }
