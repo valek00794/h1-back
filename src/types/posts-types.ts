@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+
 export type CreatePostType = {
     title: string,
     shortDescription: string,
@@ -15,11 +16,18 @@ export type PostType = {
     blogId: ObjectId
 }
 
-export type PostDbType = Pick<PostType, keyof PostType> & {
+export type PostDbType = PostType & {
     _id: ObjectId,
 }
 
-export type PostViewType =  Pick<PostType, keyof PostType> & {
+export type PostViewType =  PostType & {
     id: ObjectId,
 }
 
+export type PaginatorPostViewType = {
+    pagesCount:	number,
+    page:	number,
+    pageSize:	number,
+    totalCount:	number,
+    items: PostViewType[]
+}

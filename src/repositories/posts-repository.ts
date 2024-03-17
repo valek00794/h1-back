@@ -1,16 +1,42 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, SortDirection } from 'mongodb'
 import { postsCollection } from '../db/db'
-import { CreatePostType, PostDbType, PostType, PostViewType } from '../types/posts-types'
+import { CreatePostType, PaginatorPostViewType, PostDbType, PostType, PostViewType } from '../types/posts-types'
 import { blogsRepository } from './blogs-repository'
+import { SearchQueryParametersType } from '../types/query-types'
+
+const defaultSearchQueryParameters = {
+    pageNumber: 1,
+    pageSize: 10,
+    sortBy: 'createdAt',
+    sortDirection: 'desc' as SortDirection,
+    searchNameTerm: null
+}
 
 export const postsRepository = {
-    async getPosts(blogId?: string): Promise<PostViewType[]> {
+    async getPosts(query: any, blogId?: string): Promise<PaginatorPostViewType> {
+        const sanitizationQuery = this.getSanitizationQuery(query)
         let findOptions = {}
+        findOptions = sanitizationQuery.searchNameTerm !== null ? { title: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
         if (blogId) {
-            findOptions = { "blogId": new ObjectId(blogId) }
+            findOptions = { ...findOptions, blogId: new ObjectId(blogId) }
         }
-        const posts = await postsCollection.find(findOptions).toArray()
-        return posts.map(post => this.mapToOutput(post))
+
+        const posts = await postsCollection
+            .find(findOptions)
+            .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+            .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
+            .limit(sanitizationQuery.pageSize)
+            .toArray()
+
+        const postsCount = await postsCollection.countDocuments(findOptions)
+
+        return {
+            pagesCount: Math.ceil(postsCount / sanitizationQuery.pageSize),
+            page: sanitizationQuery.pageNumber,
+            pageSize: sanitizationQuery.pageSize,
+            totalCount: postsCount,
+            items: posts.map(post => this.mapToOutput(post))
+        }
     },
     async findPost(id: string) {
         if (id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -85,6 +111,15 @@ export const postsRepository = {
             blogId: post.blogId,
             blogName: post.blogName,
             createdAt: post.createdAt
+        }
+    },
+    getSanitizationQuery(query: SearchQueryParametersType) {
+        return {
+            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
+            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
+            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
+            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         }
     }
 }

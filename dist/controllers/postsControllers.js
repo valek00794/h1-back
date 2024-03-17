@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePostController = exports.createPostForBlogController = exports.createPostController = exports.deletePostController = exports.findPostsOfBlogController = exports.findPostController = exports.getPostsController = void 0;
 const posts_repository_1 = require("../repositories/posts-repository");
 const getPostsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield posts_repository_1.postsRepository.getPosts();
+    const posts = yield posts_repository_1.postsRepository.getPosts(req.query);
     res
         .status(200)
         .json(posts);
@@ -33,7 +33,7 @@ const findPostController = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.findPostController = findPostController;
 const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield posts_repository_1.postsRepository.getPosts(req.params.blogId);
+    const posts = yield posts_repository_1.postsRepository.getPosts(req.query, req.params.blogId);
     if (posts) {
         res
             .status(200)

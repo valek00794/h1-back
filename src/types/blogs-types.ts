@@ -8,10 +8,10 @@ export type BlogType = {
     isMembership: boolean
 }
 
-export type BlogDBType = Pick<BlogType, keyof BlogType> & {
+export type BlogDBType = BlogType & {
     _id: ObjectId,
 }
 
-export type BlogViewType = Pick<BlogType, keyof BlogType> & {
+export type BlogViewType = BlogType & {
     id: ObjectId,
 }

@@ -13,15 +13,36 @@ exports.postsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
 const blogs_repository_1 = require("./blogs-repository");
+const defaultSearchQueryParameters = {
+    pageNumber: 1,
+    pageSize: 10,
+    sortBy: 'createdAt',
+    sortDirection: 'desc',
+    searchNameTerm: null
+};
 exports.postsRepository = {
-    getPosts(blogId) {
+    getPosts(query, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
+            const sanitizationQuery = this.getSanitizationQuery(query);
             let findOptions = {};
+            findOptions = sanitizationQuery.searchNameTerm !== null ? { title: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {};
             if (blogId) {
-                findOptions = { "blogId": new mongodb_1.ObjectId(blogId) };
+                findOptions = Object.assign(Object.assign({}, findOptions), { blogId: new mongodb_1.ObjectId(blogId) });
             }
-            const posts = yield db_1.postsCollection.find(findOptions).toArray();
-            return posts.map(post => this.mapToOutput(post));
+            const posts = yield db_1.postsCollection
+                .find(findOptions)
+                .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+                .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
+                .limit(sanitizationQuery.pageSize)
+                .toArray();
+            const postsCount = yield db_1.postsCollection.countDocuments(findOptions);
+            return {
+                pagesCount: Math.ceil(postsCount / sanitizationQuery.pageSize),
+                page: sanitizationQuery.pageNumber,
+                pageSize: sanitizationQuery.pageSize,
+                totalCount: postsCount,
+                items: posts.map(post => this.mapToOutput(post))
+            };
         });
     },
     findPost(id) {
@@ -108,6 +129,15 @@ exports.postsRepository = {
             blogId: post.blogId,
             blogName: post.blogName,
             createdAt: post.createdAt
+        };
+    },
+    getSanitizationQuery(query) {
+        return {
+            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
+            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
+            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
+            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         };
     }
 };

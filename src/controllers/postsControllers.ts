@@ -1,11 +1,10 @@
 import { Request, Response } from 'express'
-import { PostViewType } from '../types/posts-types'
-import { APIErrorResult } from '../types/errors-types'
-import { postsRepository } from '../repositories/posts-repository';
-import { InsertOneResult } from 'mongodb';
 
-export const getPostsController = async (req: Request, res: Response<PostViewType[]>) => {
-    const posts = await postsRepository.getPosts()
+import { PaginatorPostViewType, PostViewType } from '../types/posts-types'
+import { postsRepository } from '../repositories/posts-repository';
+
+export const getPostsController = async (req: Request, res: Response<PaginatorPostViewType>) => {
+    const posts = await postsRepository.getPosts(req.query)
     res
         .status(200)
         .json(posts)
@@ -24,8 +23,8 @@ export const findPostController = async (req: Request, res: Response<false | Pos
     }
 }
 
-export const findPostsOfBlogController = async (req: Request, res: Response<false | PostViewType[]>) => {
-    const posts = await postsRepository.getPosts(req.params.blogId)
+export const findPostsOfBlogController = async (req: Request, res: Response<false | PaginatorPostViewType>) => {
+    const posts = await postsRepository.getPosts(req.query, req.params.blogId)
     if (posts) {
         res
             .status(200)
