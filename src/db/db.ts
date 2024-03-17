@@ -1,18 +1,13 @@
-import { DBType } from "../types/db-types";
-import { MongoClient } from "mongodb";
+import { DBType } from "../types/db-types"
+import { MongoClient } from "mongodb"
 import dotenv from 'dotenv'
-import { PostType } from "../types/posts-types";
-import { BlogType } from "../types/blogs-types";
+
+import { PostType } from "../types/posts-types"
+import { BlogType } from "../types/blogs-types"
+import { SETTINGS } from "../settings"
 dotenv.config()
 
-
-const mongoURI = process.env.MONGO_URL;
-
-if (!mongoURI) {
-throw new Error ('MongoDB Url not found')
-}
-
-const client = new MongoClient(mongoURI)
+const client = new MongoClient(SETTINGS.DB.mongoURI)
 export const runDb = async () => {
   try {
     await client.connect()
@@ -64,9 +59,9 @@ export const db: DBType = {
   ],
 }
 
-export const postsCollection = client.db().collection<PostType>('posts')
+export const postsCollection = client.db().collection<PostType>(SETTINGS.DB.collection.POST_COLLECTION_NAME)
 
-export const blogsCollection = client.db().collection<BlogType>('blogs')
+export const blogsCollection = client.db().collection<BlogType>(SETTINGS.DB.collection.BLOG_COLLECTION_NAME)
 
 export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {

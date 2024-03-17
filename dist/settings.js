@@ -13,4 +13,11 @@ exports.SETTINGS = {
         clearLocalDb: '/testing/videos/all-data',
     },
     ADMIN_AUTH: 'admin:qwerty',
+    DB: {
+        collection: {
+            POST_COLLECTION_NAME: process.env.POST_COLLECTION_NAME || 'posts',
+            BLOG_COLLECTION_NAME: process.env.BLOG_COLLECTION_NAME || 'blogs'
+        },
+        mongoURI: process.env.MONGO_URL || 'mongodb://localhost:27017/sprint1localdb'
+    }
 };

@@ -15,12 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setMongoDB = exports.setDB = exports.blogsCollection = exports.postsCollection = exports.db = exports.runDb = void 0;
 const mongodb_1 = require("mongodb");
 const dotenv_1 = __importDefault(require("dotenv"));
+const settings_1 = require("../settings");
 dotenv_1.default.config();
-const mongoURI = process.env.MONGO_URL;
-if (!mongoURI) {
-    throw new Error('MongoDB Url not found');
-}
-const client = new mongodb_1.MongoClient(mongoURI);
+const client = new mongodb_1.MongoClient(settings_1.SETTINGS.DB.mongoURI);
 const runDb = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield client.connect();
@@ -72,8 +69,8 @@ exports.db = {
         }
     ],
 };
-exports.postsCollection = client.db().collection('posts');
-exports.blogsCollection = client.db().collection('blogs');
+exports.postsCollection = client.db().collection(settings_1.SETTINGS.DB.collection.POST_COLLECTION_NAME);
+exports.blogsCollection = client.db().collection(settings_1.SETTINGS.DB.collection.BLOG_COLLECTION_NAME);
 const setDB = (dataset) => {
     if (!dataset) {
         exports.db.videos = [];
