@@ -42,7 +42,7 @@ export const blogsRepository = {
         }
 
         const blogInsertId = (await blogsCollection.insertOne(newBlog)).insertedId
-        return await this.findBlog(blogInsertId.toString())
+        return blogInsertId.toString()
     },
     async updateBlog(body: BlogType, id: string) {
         const blog = await this.findBlog(id)

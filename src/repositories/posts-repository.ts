@@ -4,7 +4,7 @@ import { CreatePostType, PostDbType, PostType, PostViewType } from '../types/pos
 import { blogsRepository } from './blogs-repository'
 
 export const postsRepository = {
-    async getPosts(blogId? : string): Promise<PostViewType[]> {
+    async getPosts(blogId?: string): Promise<PostViewType[]> {
         let findOptions = {}
         if (blogId) {
             findOptions = { "blogId": new ObjectId(blogId) }
@@ -38,22 +38,22 @@ export const postsRepository = {
         }
     },
     async createPost(body: CreatePostType, blogId?: string) {
-        let getBloggId  = blogId?.match(/^[0-9a-fA-F]{24}$/) ? blogId : body.blogId
+        let getBlogId = blogId?.match(/^[0-9a-fA-F]{24}$/) ? blogId : body.blogId
 
         const newPost: PostType = {
             title: body.title,
             shortDescription: body.shortDescription,
             content: body.content,
-            blogId: new ObjectId(getBloggId),
+            blogId: new ObjectId(getBlogId),
             blogName: '',
             createdAt: new Date().toISOString()
         }
-        const blog = await blogsRepository.findBlog(getBloggId)
+        const blog = await blogsRepository.findBlog(getBlogId)
         if (blog) {
             newPost.blogName = blog.name
         }
         const postInsertId = (await postsCollection.insertOne(newPost)).insertedId
-        return await this.findPost(postInsertId.toString())
+        return postInsertId.toString()
     },
     async updatePost(body: CreatePostType, id: string) {
         const post = await this.findPost(id)

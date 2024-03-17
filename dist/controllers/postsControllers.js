@@ -61,8 +61,9 @@ const deletePostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.deletePostController = deletePostController;
 const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newPost = yield posts_repository_1.postsRepository.createPost(req.body);
-    if (newPost) {
+    const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body);
+    if (postInsertedId) {
+        const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
         res
             .status(201)
             .json(newPost);
@@ -75,8 +76,9 @@ const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createPostController = createPostController;
 const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newPost = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
-    if (newPost) {
+    const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
+    if (postInsertedId) {
+        const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
         res
             .status(201)
             .json(newPost);
@@ -89,8 +91,8 @@ const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void
 });
 exports.createPostForBlogController = createPostForBlogController;
 const updatePostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedPost = yield posts_repository_1.postsRepository.updatePost(req.body, req.params.id);
-    if (updatedPost) {
+    const isUpdatedPost = yield posts_repository_1.postsRepository.updatePost(req.body, req.params.id);
+    if (isUpdatedPost) {
         res
             .status(204)
             .send();

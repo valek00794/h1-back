@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { CreatePostType, PostViewType } from '../types/posts-types'
+import { PostViewType } from '../types/posts-types'
 import { APIErrorResult } from '../types/errors-types'
 import { postsRepository } from '../repositories/posts-repository';
 import { InsertOneResult } from 'mongodb';
@@ -52,8 +52,9 @@ export const deletePostController = async (req: Request, res: Response) => {
 }
 
 export const createPostController = async (req: Request, res: Response<false | PostViewType>) => {
-    const newPost = await postsRepository.createPost(req.body)
-    if (newPost) {
+    const postInsertedId = await postsRepository.createPost(req.body)
+    if (postInsertedId) {
+        const newPost = await postsRepository.findPost(postInsertedId)
         res
             .status(201)
             .json(newPost)
@@ -65,8 +66,9 @@ export const createPostController = async (req: Request, res: Response<false | P
 }
 
 export const createPostForBlogController = async (req: Request, res: Response<false | PostViewType>) => {
-    const newPost = await postsRepository.createPost(req.body, req.params.blogId)
-    if (newPost) {
+    const postInsertedId = await postsRepository.createPost(req.body, req.params.blogId)
+    if (postInsertedId) {
+        const newPost = await postsRepository.findPost(postInsertedId)
         res
             .status(201)
             .json(newPost)
@@ -77,9 +79,9 @@ export const createPostForBlogController = async (req: Request, res: Response<fa
     }
 }
 
-export const updatePostController = async (req: Request, res: Response<Promise<false | InsertOneResult<PostViewType>> | APIErrorResult>) => {
-    const updatedPost = await postsRepository.updatePost(req.body, req.params.id)
-    if (updatedPost) {
+export const updatePostController = async (req: Request, res: Response) => {
+    const isUpdatedPost = await postsRepository.updatePost(req.body, req.params.id)
+    if (isUpdatedPost) {
         res
             .status(204)
             .send()

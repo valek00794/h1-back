@@ -61,7 +61,7 @@ exports.blogsRepository = {
                 isMembership: false
             };
             const blogInsertId = (yield db_1.blogsCollection.insertOne(newBlog)).insertedId;
-            return yield this.findBlog(blogInsertId.toString());
+            return blogInsertId.toString();
         });
     },
     updateBlog(body, id) {

@@ -58,21 +58,21 @@ exports.postsRepository = {
     },
     createPost(body, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let getBloggId = (blogId === null || blogId === void 0 ? void 0 : blogId.match(/^[0-9a-fA-F]{24}$/)) ? blogId : body.blogId;
+            let getBlogId = (blogId === null || blogId === void 0 ? void 0 : blogId.match(/^[0-9a-fA-F]{24}$/)) ? blogId : body.blogId;
             const newPost = {
                 title: body.title,
                 shortDescription: body.shortDescription,
                 content: body.content,
-                blogId: new mongodb_1.ObjectId(getBloggId),
+                blogId: new mongodb_1.ObjectId(getBlogId),
                 blogName: '',
                 createdAt: new Date().toISOString()
             };
-            const blog = yield blogs_repository_1.blogsRepository.findBlog(getBloggId);
+            const blog = yield blogs_repository_1.blogsRepository.findBlog(getBlogId);
             if (blog) {
                 newPost.blogName = blog.name;
             }
             const postInsertId = (yield db_1.postsCollection.insertOne(newPost)).insertedId;
-            return yield this.findPost(postInsertId.toString());
+            return postInsertId.toString();
         });
     },
     updatePost(body, id) {
