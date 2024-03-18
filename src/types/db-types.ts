@@ -1,4 +1,4 @@
-import { OutputVideoType } from "./video-types";
+import { OutputVideoType } from "./videos-types"
 
 export type DBType = {
     videos: OutputVideoType[],

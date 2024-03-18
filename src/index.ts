@@ -1,25 +1,32 @@
-import { SETTINGS } from './settings'
 import express from 'express'
 
-import { getVideosController } from './controllers/getVideosController'
-import { findVideoController } from './controllers/findVideoController'
-import { createVideoController } from './controllers/createVideoController'
-import { deleteVideoController } from './controllers/deleteVideoController'
-import { updateVideoController } from './controllers/updateVideoController'
+import { SETTINGS } from './settings'
+
+import { runDb } from './db/db'
+
+import { videosRouter } from './routers/videos-router'
+import { postsRouter } from './routers/posts-router'
+import { blogsRouter } from './routers/blogs-router'
+import { clearLocalDbController } from './controllers/clearLocalDbController'
 import { clearDbController } from './controllers/clearDbController'
 
- 
+
 const app = express()
 app.use(express.json())
- 
-app.listen(SETTINGS.PORT, () => {
-  console.log(`Example app listening on port ${SETTINGS.PORT}`)
-})
 
-app.get(SETTINGS.PATH.videos, getVideosController)
-app.get(SETTINGS.PATH.videosById, findVideoController)
-app.post(SETTINGS.PATH.videos, createVideoController)
-app.delete(SETTINGS.PATH.videosById, deleteVideoController)
-app.put(SETTINGS.PATH.videosById, updateVideoController)
-app.delete(SETTINGS.PATH.videosById, clearDbController)
+app.use(SETTINGS.PATH.videos, videosRouter)
+app.use(SETTINGS.PATH.posts, postsRouter)
+app.use(SETTINGS.PATH.blogs, blogsRouter)
 
+app.delete(SETTINGS.PATH.clearDb, clearDbController)
+app.delete(SETTINGS.PATH.clearLocalDb, clearLocalDbController)
+
+
+const startApp = async () => {
+  await runDb()
+  app.listen(SETTINGS.PORT, () => {
+    console.log(`Example app listening on port ${SETTINGS.PORT}`)
+  })
+}
+
+startApp()

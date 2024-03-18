@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "name": "h1-back",
+    "name": "sprint-1-back",
     "builds": [
         { 
             "src": "/src/index.ts", 
