@@ -116,11 +116,11 @@ exports.blogsRepository = {
     },
     getSanitizationQuery(query) {
         return {
-            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
-            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
-            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
+            pageNumber: (query === null || query === void 0 ? void 0 : query.pageNumber) ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
+            pageSize: (query === null || query === void 0 ? void 0 : query.pageSize) ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+            sortBy: (query === null || query === void 0 ? void 0 : query.sortBy) ? query.sortBy : defaultSearchQueryParameters.sortBy,
+            sortDirection: (query === null || query === void 0 ? void 0 : query.sortDirection) ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
+            searchNameTerm: (query === null || query === void 0 ? void 0 : query.searchNameTerm) ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         };
     }
 };

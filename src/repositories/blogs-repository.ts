@@ -98,13 +98,13 @@ export const blogsRepository = {
             isMembership: blog.isMembership,
         }
     },
-    getSanitizationQuery(query: SearchQueryParametersType) {
+    getSanitizationQuery(query?: SearchQueryParametersType) {
         return {
-            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
-            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
-            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-            searchNameTerm: query.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
+            pageNumber: query?.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
+            pageSize: query?.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+            sortBy: query?.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
+            sortDirection: query?.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
+            searchNameTerm: query?.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
         }
     }
 }
