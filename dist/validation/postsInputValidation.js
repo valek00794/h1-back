@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postsInputValidation = void 0;
+exports.postsBlogIdInputValidation = exports.postsInputValidation = void 0;
 const express_validator_1 = require("express-validator");
 const blogs_repository_1 = require("../repositories/blogs-repository");
 const VALIDATE_PHARAMS = {
@@ -27,9 +27,11 @@ exports.postsInputValidation = [
     (0, express_validator_1.body)('content').trim()
         .notEmpty().withMessage('The field is required')
         .isLength({ max: VALIDATE_PHARAMS.contentMaxLength }).withMessage(`The field length must be less than ${VALIDATE_PHARAMS.contentMaxLength}`),
-    (0, express_validator_1.check)('blogId').trim()
+];
+exports.postsBlogIdInputValidation = [
+    (0, express_validator_1.body)('blogId').trim()
         .notEmpty().withMessage('The field is required'),
-    (0, express_validator_1.check)('blogId').custom((value) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, express_validator_1.body)('blogId').custom((value) => __awaiter(void 0, void 0, void 0, function* () {
         const blogs = yield blogs_repository_1.blogsRepository.getBlogs();
         const blogIdIncludes = blogs.items.findIndex(el => { var _a; return ((_a = el.id) === null || _a === void 0 ? void 0 : _a.toString()) === value; });
         if (blogIdIncludes === -1) {

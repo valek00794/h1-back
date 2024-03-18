@@ -17,9 +17,12 @@ export const postsInputValidation = [
     body('content').trim()
         .notEmpty().withMessage('The field is required')
         .isLength({ max: VALIDATE_PHARAMS.contentMaxLength }).withMessage(`The field length must be less than ${VALIDATE_PHARAMS.contentMaxLength}`),
-    check('blogId').trim()
+]
+
+export const postsBlogIdInputValidation = [
+    body('blogId').trim()
         .notEmpty().withMessage('The field is required'),
-    check('blogId').custom(async (value) => {
+    body('blogId').custom(async (value) => {
         const blogs = await blogsRepository.getBlogs()
         const blogIdIncludes = blogs.items.findIndex(el => el.id?.toString() === value)
         if (blogIdIncludes === -1) {

@@ -9,6 +9,6 @@ const authMiddleware_1 = require("../middlewares/authMiddleware");
 exports.postsRouter = (0, express_1.Router)();
 exports.postsRouter.get('/', postsControllers_1.getPostsController);
 exports.postsRouter.get('/:id', postsControllers_1.findPostController);
-exports.postsRouter.post('/', authMiddleware_1.authMiddleware, postsInputValidation_1.postsInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, postsControllers_1.createPostController);
-exports.postsRouter.put('/:id', authMiddleware_1.authMiddleware, postsInputValidation_1.postsInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, postsControllers_1.updatePostController);
+exports.postsRouter.post('/', authMiddleware_1.authMiddleware, postsInputValidation_1.postsInputValidation, postsInputValidation_1.postsBlogIdInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, postsControllers_1.createPostController);
+exports.postsRouter.put('/:id', authMiddleware_1.authMiddleware, postsInputValidation_1.postsInputValidation, postsInputValidation_1.postsBlogIdInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, postsControllers_1.updatePostController);
 exports.postsRouter.delete('/:id', authMiddleware_1.authMiddleware, postsControllers_1.deletePostController);
