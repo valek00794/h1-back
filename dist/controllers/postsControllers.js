@@ -84,17 +84,19 @@ const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void
             .status(404)
             .send();
     }
-    const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
-    if (postInsertedId) {
-        const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
-        res
-            .status(201)
-            .json(newPost);
-    }
     else {
-        res
-            .status(400)
-            .send();
+        const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
+        if (postInsertedId) {
+            const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
+            res
+                .status(201)
+                .json(newPost);
+        }
+        else {
+            res
+                .status(400)
+                .send();
+        }
     }
 });
 exports.createPostForBlogController = createPostForBlogController;

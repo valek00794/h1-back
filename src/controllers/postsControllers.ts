@@ -71,17 +71,18 @@ export const createPostForBlogController = async (req: Request, res: Response<fa
         res
             .status(404)
             .send()
-    }
-    const postInsertedId = await postsRepository.createPost(req.body, req.params.blogId)
-    if (postInsertedId) {
-        const newPost = await postsRepository.findPost(postInsertedId)
-        res
-            .status(201)
-            .json(newPost)
     } else {
-        res
-            .status(400)
-            .send()
+        const postInsertedId = await postsRepository.createPost(req.body, req.params.blogId)
+        if (postInsertedId) {
+            const newPost = await postsRepository.findPost(postInsertedId)
+            res
+                .status(201)
+                .json(newPost)
+        } else {
+            res
+                .status(400)
+                .send()
+        }
     }
 }
 
