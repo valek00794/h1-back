@@ -38,8 +38,8 @@ export const deleteBlogController = async (req: Request, res: Response) => {
 
 export const createBlogController = async (req: Request, res: Response<false | BlogViewType>) => {
     const blogInsertedId = await blogsRepository.createBlog(req.body)
-    if (blogInsertedId) {
-        const newBlog = await blogsRepository.findBlog(blogInsertedId)
+    const newBlog = await blogsRepository.findBlog(blogInsertedId)
+    if (newBlog) {
         res
             .status(201)
             .json(newBlog)

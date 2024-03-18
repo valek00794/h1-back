@@ -24,17 +24,17 @@ export const findPostController = async (req: Request, res: Response<false | Pos
     }
 }
 
-export const findPostsOfBlogController = async (req: Request, res: Response<false | PaginatorPostViewType>) => {
-    const posts = await postsRepository.getPosts(req.query, req.params.blogId)
-    if (posts) {
-        res
-            .status(200)
-            .json(posts)
-
-    } else {
+export const findPostsOfBlogController = async (req: Request, res: Response<PaginatorPostViewType>) => {
+    const blog = await blogsRepository.findBlog(req.params.blogId)
+    if (!blog) {
         res
             .status(404)
             .send()
+    } else {
+        const posts = await postsRepository.getPosts(req.query, req.params.blogId)
+        res
+            .status(200)
+            .json(posts)
     }
 }
 
