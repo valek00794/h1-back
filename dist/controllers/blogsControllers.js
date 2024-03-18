@@ -48,8 +48,8 @@ const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.deleteBlogController = deleteBlogController;
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogInsertedId = yield blogs_repository_1.blogsRepository.createBlog(req.body);
-    if (blogInsertedId) {
-        const newBlog = yield blogs_repository_1.blogsRepository.findBlog(blogInsertedId);
+    const newBlog = yield blogs_repository_1.blogsRepository.findBlog(blogInsertedId);
+    if (newBlog) {
         res
             .status(201)
             .json(newBlog);

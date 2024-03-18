@@ -34,16 +34,17 @@ const findPostController = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.findPostController = findPostController;
 const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield posts_repository_1.postsRepository.getPosts(req.query, req.params.blogId);
-    if (posts) {
-        res
-            .status(200)
-            .json(posts);
-    }
-    else {
+    const blog = yield blogs_repository_1.blogsRepository.findBlog(req.params.blogId);
+    if (!blog) {
         res
             .status(404)
             .send();
+    }
+    else {
+        const posts = yield posts_repository_1.postsRepository.getPosts(req.query, req.params.blogId);
+        res
+            .status(200)
+            .json(posts);
     }
 });
 exports.findPostsOfBlogController = findPostsOfBlogController;
