@@ -12,7 +12,7 @@ export const blogsRouter = Router();
 blogsRouter.get('/', getBlogsController)
 blogsRouter.get('/:id', findBlogController)
 blogsRouter.get('/:blogId/posts', findPostsOfBlogController)
-blogsRouter.post('/:blogId/posts', postsInputValidation, inputValidationMiddleware, createPostForBlogController)
+blogsRouter.post('/:blogId/posts', authMiddleware, postsInputValidation, inputValidationMiddleware, createPostForBlogController)
 blogsRouter.post('/', authMiddleware, blogsInputValidation, inputValidationMiddleware, createBlogController)
 blogsRouter.put('/:id', authMiddleware, blogsInputValidation, inputValidationMiddleware, updateBlogController)
 blogsRouter.delete('/:id', authMiddleware, deleteBlogController)

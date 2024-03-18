@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import { PaginatorPostViewType, PostViewType } from '../types/posts-types'
 import { postsRepository } from '../repositories/posts-repository';
+import { blogsRepository } from '../repositories/blogs-repository';
 
 export const getPostsController = async (req: Request, res: Response<PaginatorPostViewType>) => {
     const posts = await postsRepository.getPosts(req.query)
@@ -65,6 +66,12 @@ export const createPostController = async (req: Request, res: Response<false | P
 }
 
 export const createPostForBlogController = async (req: Request, res: Response<false | PostViewType>) => {
+    const blog = await blogsRepository.findBlog(req.params.blogId)
+    if (!blog) {
+        res
+            .status(404)
+            .send()
+    }
     const postInsertedId = await postsRepository.createPost(req.body, req.params.blogId)
     if (postInsertedId) {
         const newPost = await postsRepository.findPost(postInsertedId)

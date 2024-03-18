@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePostController = exports.createPostForBlogController = exports.createPostController = exports.deletePostController = exports.findPostsOfBlogController = exports.findPostController = exports.getPostsController = void 0;
 const posts_repository_1 = require("../repositories/posts-repository");
+const blogs_repository_1 = require("../repositories/blogs-repository");
 const getPostsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const posts = yield posts_repository_1.postsRepository.getPosts(req.query);
     res
@@ -76,6 +77,12 @@ const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createPostController = createPostController;
 const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const blog = yield blogs_repository_1.blogsRepository.findBlog(req.params.blogId);
+    if (!blog) {
+        res
+            .status(404)
+            .send();
+    }
     const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
     if (postInsertedId) {
         const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
