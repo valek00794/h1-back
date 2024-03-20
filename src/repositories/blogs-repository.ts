@@ -36,7 +36,7 @@ export const blogsRepository = {
         }
     },
     async findBlog(id: string) {
-        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
             return false
         }
         const blog = await blogsCollection.findOne({ _id: new ObjectId(id) })
@@ -47,7 +47,7 @@ export const blogsRepository = {
     },
 
     async deleteBlog(id: string) {
-        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
             return false
         }
         const blog = await blogsCollection.deleteOne({ _id: new ObjectId(id) })

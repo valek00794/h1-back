@@ -8,11 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
+const app_1 = require("./app");
 const settings_1 = require("./settings");
 const db_1 = require("./db/db");
 const videos_router_1 = require("./routers/videos-router");
@@ -20,16 +17,14 @@ const posts_router_1 = require("./routers/posts-router");
 const blogs_router_1 = require("./routers/blogs-router");
 const clearLocalDbController_1 = require("./controllers/clearLocalDbController");
 const clearDbController_1 = require("./controllers/clearDbController");
-const app = (0, express_1.default)();
-app.use(express_1.default.json());
-app.use(settings_1.SETTINGS.PATH.videos, videos_router_1.videosRouter);
-app.use(settings_1.SETTINGS.PATH.posts, posts_router_1.postsRouter);
-app.use(settings_1.SETTINGS.PATH.blogs, blogs_router_1.blogsRouter);
-app.delete(settings_1.SETTINGS.PATH.clearDb, clearDbController_1.clearDbController);
-app.delete(settings_1.SETTINGS.PATH.clearLocalDb, clearLocalDbController_1.clearLocalDbController);
+app_1.app.use(settings_1.SETTINGS.PATH.videos, videos_router_1.videosRouter);
+app_1.app.use(settings_1.SETTINGS.PATH.posts, posts_router_1.postsRouter);
+app_1.app.use(settings_1.SETTINGS.PATH.blogs, blogs_router_1.blogsRouter);
+app_1.app.delete(settings_1.SETTINGS.PATH.clearDb, clearDbController_1.clearDbController);
+app_1.app.delete(settings_1.SETTINGS.PATH.clearLocalDb, clearLocalDbController_1.clearLocalDbController);
 const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.runDb)();
-    app.listen(settings_1.SETTINGS.PORT, () => {
+    app_1.app.listen(settings_1.SETTINGS.PORT, () => {
         console.log(`Example app listening on port ${settings_1.SETTINGS.PORT}`);
     });
 });

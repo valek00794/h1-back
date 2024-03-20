@@ -1,4 +1,4 @@
-import express from 'express'
+import {app} from './app'
 
 import { SETTINGS } from './settings'
 
@@ -10,9 +10,6 @@ import { blogsRouter } from './routers/blogs-router'
 import { clearLocalDbController } from './controllers/clearLocalDbController'
 import { clearDbController } from './controllers/clearDbController'
 
-
-const app = express()
-app.use(express.json())
 
 app.use(SETTINGS.PATH.videos, videosRouter)
 app.use(SETTINGS.PATH.posts, postsRouter)
