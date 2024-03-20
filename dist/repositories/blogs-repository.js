@@ -42,7 +42,7 @@ exports.blogsRepository = {
     },
     findBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
                 return false;
             }
             const blog = yield db_1.blogsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
@@ -54,7 +54,7 @@ exports.blogsRepository = {
     },
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
                 return false;
             }
             const blog = yield db_1.blogsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
