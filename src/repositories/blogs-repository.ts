@@ -43,7 +43,7 @@ export const blogsRepository = {
         if (blog === null) {
             return false
         }
-        return this.mapToOutput(blog!)
+        return this.mapToOutput(blog)
     },
 
     async deleteBlog(id: string) {

@@ -40,7 +40,7 @@ export const findPostsOfBlogController = async (req: Request, res: Response<Pagi
 
 export const deletePostController = async (req: Request, res: Response) => {
     const postIsDeleted = await postsRepository.deletePost(req.params.id)
-    if (postIsDeleted) {
+    if (!postIsDeleted) {
         res
             .status(404)
             .send()
@@ -71,31 +71,30 @@ export const createPostForBlogController = async (req: Request, res: Response<fa
         res
             .status(404)
             .send()
-    } else {
-        const postInsertedId = await postsRepository.createPost(req.body, req.params.blogId)
-        if (postInsertedId) {
-            const newPost = await postsRepository.findPost(postInsertedId)
-            res
-                .status(201)
-                .json(newPost)
-        } else {
-            res
-                .status(400)
-                .send()
-        }
+        return
     }
+    const postInsertedId = await postsRepository.createPost(req.body, req.params.blogId)
+    if (!postInsertedId) {
+        res
+            .status(400)
+            .send()
+        return
+    }
+    const newPost = await postsRepository.findPost(postInsertedId)
+    res
+        .status(201)
+        .json(newPost)
 }
 
 export const updatePostController = async (req: Request, res: Response) => {
     const isUpdatedPost = await postsRepository.updatePost(req.body, req.params.id)
-    if (isUpdatedPost) {
-        res
-            .status(204)
-            .send()
-
-    } else {
+    if (!isUpdatedPost) {
         res
             .status(404)
             .send()
+        return
     }
+    res
+        .status(204)
+        .send()
 }
