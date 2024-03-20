@@ -61,7 +61,7 @@ const deletePostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.deletePostController = deletePostController;
 const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body);
-    if (postInsertedId) {
+    if (!postInsertedId) {
         res
             .status(400)
             .send();

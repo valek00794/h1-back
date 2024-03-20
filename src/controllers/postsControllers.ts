@@ -53,7 +53,7 @@ export const deletePostController = async (req: Request, res: Response) => {
 
 export const createPostController = async (req: Request, res: Response<false | PostViewType>) => {
     const postInsertedId = await postsRepository.createPost(req.body)
-    if (postInsertedId) {
+    if (!postInsertedId) {
         res
             .status(400)
             .send()
