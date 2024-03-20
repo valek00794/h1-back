@@ -38,29 +38,26 @@ export const postsRepository = {
         }
     },
     async findPost(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            const post = await postsCollection.findOne({ "_id": new ObjectId(id) })
-            if (!post) {
-                return false
-            } else {
-                return this.mapToOutput(post!)
-            }
-        } else {
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
             return false
         }
+        const post = await postsCollection.findOne({ _id: new ObjectId(id) })
+        if (!post) {
+            return false
+        }
+        return this.mapToOutput(post!)
     },
 
     async deletePost(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            const post = await postsCollection.deleteOne({ "_id": new ObjectId(id) })
-            if (post.deletedCount === 0) {
-                return false
-            } else {
-                return true
-            }
-        } else {
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
             return false
         }
+        const post = await postsCollection.deleteOne({ _id: new ObjectId(id) })
+        if (post.deletedCount === 0) {
+            return false
+        }
+        return true
+
     },
     async createPost(body: CreatePostType, blogId?: string) {
         let getBlogId = blogId?.match(/^[0-9a-fA-F]{24}$/) ? blogId : body.blogId
@@ -77,29 +74,28 @@ export const postsRepository = {
         if (blog) {
             newPost.blogName = blog.name
         }
-        const postInsertId = (await postsCollection.insertOne(newPost)).insertedId
-        return postInsertId.toString()
+        const postInsert = await postsCollection.insertOne(newPost)
+        return postInsert.insertedId.toString()
     },
     async updatePost(body: CreatePostType, id: string) {
         const post = await this.findPost(id)
         if (!post) {
             return false
-        } else {
-            const updatedPost: PostType = {
-                title: body.title,
-                shortDescription: body.shortDescription,
-                content: body.content,
-                blogId: new ObjectId(body.blogId),
-                blogName: '',
-                createdAt: post.createdAt
-            }
-            const blog = await blogsRepository.findBlog(body.blogId.toString())
-            if (blog) {
-                updatedPost.blogName = blog.name
-            }
-            await postsCollection.updateOne({ "_id": new ObjectId(id) }, { "$set": updatedPost })
-            return true
         }
+        const updatedPost: PostType = {
+            title: body.title,
+            shortDescription: body.shortDescription,
+            content: body.content,
+            blogId: new ObjectId(body.blogId),
+            blogName: '',
+            createdAt: post.createdAt
+        }
+        const blog = await blogsRepository.findBlog(body.blogId.toString())
+        if (blog) {
+            updatedPost.blogName = blog.name
+        }
+        await postsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedPost })
+        return true
     },
     mapToOutput(post: PostDbType) {
         return {

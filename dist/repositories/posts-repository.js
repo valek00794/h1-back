@@ -45,34 +45,26 @@ exports.postsRepository = {
     },
     findPost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/)) {
-                const post = yield db_1.postsCollection.findOne({ "_id": new mongodb_1.ObjectId(id) });
-                if (!post) {
-                    return false;
-                }
-                else {
-                    return this.mapToOutput(post);
-                }
-            }
-            else {
+            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
                 return false;
             }
+            const post = yield db_1.postsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            if (!post) {
+                return false;
+            }
+            return this.mapToOutput(post);
         });
     },
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/)) {
-                const post = yield db_1.postsCollection.deleteOne({ "_id": new mongodb_1.ObjectId(id) });
-                if (post.deletedCount === 0) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-            else {
+            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
                 return false;
             }
+            const post = yield db_1.postsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            if (post.deletedCount === 0) {
+                return false;
+            }
+            return true;
         });
     },
     createPost(body, blogId) {
@@ -90,8 +82,8 @@ exports.postsRepository = {
             if (blog) {
                 newPost.blogName = blog.name;
             }
-            const postInsertId = (yield db_1.postsCollection.insertOne(newPost)).insertedId;
-            return postInsertId.toString();
+            const postInsert = yield db_1.postsCollection.insertOne(newPost);
+            return postInsert.insertedId.toString();
         });
     },
     updatePost(body, id) {
@@ -100,22 +92,20 @@ exports.postsRepository = {
             if (!post) {
                 return false;
             }
-            else {
-                const updatedPost = {
-                    title: body.title,
-                    shortDescription: body.shortDescription,
-                    content: body.content,
-                    blogId: new mongodb_1.ObjectId(body.blogId),
-                    blogName: '',
-                    createdAt: post.createdAt
-                };
-                const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId.toString());
-                if (blog) {
-                    updatedPost.blogName = blog.name;
-                }
-                yield db_1.postsCollection.updateOne({ "_id": new mongodb_1.ObjectId(id) }, { "$set": updatedPost });
-                return true;
+            const updatedPost = {
+                title: body.title,
+                shortDescription: body.shortDescription,
+                content: body.content,
+                blogId: new mongodb_1.ObjectId(body.blogId),
+                blogName: '',
+                createdAt: post.createdAt
+            };
+            const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId.toString());
+            if (blog) {
+                updatedPost.blogName = blog.name;
             }
+            yield db_1.postsCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: updatedPost });
+            return true;
         });
     },
     mapToOutput(post) {

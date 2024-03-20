@@ -36,29 +36,25 @@ export const blogsRepository = {
         }
     },
     async findBlog(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            const blog = await blogsCollection.findOne({ "_id": new ObjectId(id) })
-            if (blog === null) {
-                return false
-            } else {
-                return this.mapToOutput(blog!)
-            }
-        } else {
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
             return false
         }
+        const blog = await blogsCollection.findOne({ _id: new ObjectId(id) })
+        if (blog === null) {
+            return false
+        }
+        return this.mapToOutput(blog!)
     },
 
     async deleteBlog(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/)) {
-            const blog = await blogsCollection.deleteOne({ "_id": new ObjectId(id) })
-            if (blog.deletedCount === 0) {
-                return false
-            } else {
-                return true
-            }
-        } else {
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
             return false
         }
+        const blog = await blogsCollection.deleteOne({ _id: new ObjectId(id) })
+        if (blog.deletedCount === 0) {
+            return false
+        }
+        return true
     },
     async createBlog(body: BlogType) {
         const newBlog: BlogType = {
@@ -76,17 +72,16 @@ export const blogsRepository = {
         const blog = await this.findBlog(id)
         if (!blog) {
             return false
-        } else {
-            const updatedblog: BlogType = {
-                name: body.name,
-                description: body.description,
-                websiteUrl: body.websiteUrl,
-                createdAt: blog.createdAt,
-                isMembership: false,
-            }
-            await blogsCollection.updateOne({ "_id": new ObjectId(id) }, { "$set": updatedblog })
-            return true
         }
+        const updatedblog: BlogType = {
+            name: body.name,
+            description: body.description,
+            websiteUrl: body.websiteUrl,
+            createdAt: blog.createdAt,
+            isMembership: false,
+        }
+        await blogsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedblog })
+        return true
     },
     mapToOutput(blog: BlogDBType) {
         return {
