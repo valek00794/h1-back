@@ -48,7 +48,7 @@ const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0
 exports.findPostsOfBlogController = findPostsOfBlogController;
 const deletePostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postIsDeleted = yield posts_repository_1.postsRepository.deletePost(req.params.id);
-    if (postIsDeleted) {
+    if (!postIsDeleted) {
         res
             .status(404)
             .send();
@@ -79,34 +79,31 @@ const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void
         res
             .status(404)
             .send();
+        return;
     }
-    else {
-        const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
-        if (postInsertedId) {
-            const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
-            res
-                .status(201)
-                .json(newPost);
-        }
-        else {
-            res
-                .status(400)
-                .send();
-        }
+    const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
+    if (!postInsertedId) {
+        res
+            .status(400)
+            .send();
+        return;
     }
+    const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
+    res
+        .status(201)
+        .json(newPost);
 });
 exports.createPostForBlogController = createPostForBlogController;
 const updatePostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const isUpdatedPost = yield posts_repository_1.postsRepository.updatePost(req.body, req.params.id);
-    if (isUpdatedPost) {
-        res
-            .status(204)
-            .send();
-    }
-    else {
+    if (!isUpdatedPost) {
         res
             .status(404)
             .send();
+        return;
     }
+    res
+        .status(204)
+        .send();
 });
 exports.updatePostController = updatePostController;
