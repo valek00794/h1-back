@@ -11,54 +11,54 @@ export const getBlogsController = async (req: Request, res: Response<PaginatorBl
 
 export const findBlogController = async (req: Request, res: Response<false | BlogViewType>) => {
     const blog = await blogsRepository.findBlog(req.params.id)
-    if (blog) {
-        res
-            .status(200)
-            .json(blog)
-
-    } else {
+    if (!blog) {
         res
             .status(404)
             .send()
+        return
     }
+    res
+        .status(200)
+        .json(blog)
+
 }
 
 export const deleteBlogController = async (req: Request, res: Response) => {
     const blogIsDeleted = await blogsRepository.deleteBlog(req.params.id)
-    if (blogIsDeleted) {
-        res
-            .status(204)
-            .send()
-    } else {
+    if (!blogIsDeleted) {
         res
             .status(404)
             .send()
+        return
     }
+    res
+        .status(204)
+        .send()
 }
 
 export const createBlogController = async (req: Request, res: Response<false | BlogViewType>) => {
     const blogInsertedId = await blogsRepository.createBlog(req.body)
     const newBlog = await blogsRepository.findBlog(blogInsertedId)
-    if (newBlog) {
-        res
-            .status(201)
-            .json(newBlog)
-    } else {
+    if (!newBlog) {
         res
             .status(404)
             .send()
+        return
     }
+    res
+        .status(201)
+        .json(newBlog)
 }
 
 export const updateBlogController = async (req: Request, res: Response<boolean>) => {
     const updatedBlog = await blogsRepository.updateBlog(req.body, req.params.id)
-    if (updatedBlog) {
-        res
-            .status(204)
-            .send()
-    } else {
+    if (!updatedBlog) {
         res
             .status(404)
             .send()
+            return
     }
+    res
+        .status(204)
+        .send()
 }

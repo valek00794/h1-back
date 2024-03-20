@@ -42,34 +42,26 @@ exports.blogsRepository = {
     },
     findBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/)) {
-                const blog = yield db_1.blogsCollection.findOne({ "_id": new mongodb_1.ObjectId(id) });
-                if (blog === null) {
-                    return false;
-                }
-                else {
-                    return this.mapToOutput(blog);
-                }
-            }
-            else {
+            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
                 return false;
             }
+            const blog = yield db_1.blogsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            if (blog === null) {
+                return false;
+            }
+            return this.mapToOutput(blog);
         });
     },
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/)) {
-                const blog = yield db_1.blogsCollection.deleteOne({ "_id": new mongodb_1.ObjectId(id) });
-                if (blog.deletedCount === 0) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-            else {
+            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
                 return false;
             }
+            const blog = yield db_1.blogsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            if (blog.deletedCount === 0) {
+                return false;
+            }
+            return true;
         });
     },
     createBlog(body) {
@@ -91,17 +83,15 @@ exports.blogsRepository = {
             if (!blog) {
                 return false;
             }
-            else {
-                const updatedblog = {
-                    name: body.name,
-                    description: body.description,
-                    websiteUrl: body.websiteUrl,
-                    createdAt: blog.createdAt,
-                    isMembership: false,
-                };
-                yield db_1.blogsCollection.updateOne({ "_id": new mongodb_1.ObjectId(id) }, { "$set": updatedblog });
-                return true;
-            }
+            const updatedblog = {
+                name: body.name,
+                description: body.description,
+                websiteUrl: body.websiteUrl,
+                createdAt: blog.createdAt,
+                isMembership: false,
+            };
+            yield db_1.blogsCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: updatedblog });
+            return true;
         });
     },
     mapToOutput(blog) {

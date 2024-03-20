@@ -20,58 +20,54 @@ const getBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.getBlogsController = getBlogsController;
 const findBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blog = yield blogs_repository_1.blogsRepository.findBlog(req.params.id);
-    if (blog) {
-        res
-            .status(200)
-            .json(blog);
-    }
-    else {
+    if (!blog) {
         res
             .status(404)
             .send();
+        return;
     }
+    res
+        .status(200)
+        .json(blog);
 });
 exports.findBlogController = findBlogController;
 const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogIsDeleted = yield blogs_repository_1.blogsRepository.deleteBlog(req.params.id);
-    if (blogIsDeleted) {
-        res
-            .status(204)
-            .send();
-    }
-    else {
+    if (!blogIsDeleted) {
         res
             .status(404)
             .send();
+        return;
     }
+    res
+        .status(204)
+        .send();
 });
 exports.deleteBlogController = deleteBlogController;
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogInsertedId = yield blogs_repository_1.blogsRepository.createBlog(req.body);
     const newBlog = yield blogs_repository_1.blogsRepository.findBlog(blogInsertedId);
-    if (newBlog) {
-        res
-            .status(201)
-            .json(newBlog);
-    }
-    else {
+    if (!newBlog) {
         res
             .status(404)
             .send();
+        return;
     }
+    res
+        .status(201)
+        .json(newBlog);
 });
 exports.createBlogController = createBlogController;
 const updateBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedBlog = yield blogs_repository_1.blogsRepository.updateBlog(req.body, req.params.id);
-    if (updatedBlog) {
-        res
-            .status(204)
-            .send();
-    }
-    else {
+    if (!updatedBlog) {
         res
             .status(404)
             .send();
+        return;
     }
+    res
+        .status(204)
+        .send();
 });
 exports.updateBlogController = updateBlogController;
