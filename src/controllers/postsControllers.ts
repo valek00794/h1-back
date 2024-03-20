@@ -13,15 +13,15 @@ export const getPostsController = async (req: Request, res: Response<PaginatorPo
 
 export const findPostController = async (req: Request, res: Response<false | PostViewType>) => {
     const post = await postsRepository.findPost(req.params.id)
-    if (post) {
-        res
-            .status(200)
-            .json(post)
-    } else {
+    if (!post) {
         res
             .status(404)
             .send()
+        return
     }
+    res
+        .status(200)
+        .json(post)
 }
 
 export const findPostsOfBlogController = async (req: Request, res: Response<PaginatorPostViewType>) => {
@@ -30,39 +30,39 @@ export const findPostsOfBlogController = async (req: Request, res: Response<Pagi
         res
             .status(404)
             .send()
-    } else {
-        const posts = await postsRepository.getPosts(req.query, req.params.blogId)
-        res
-            .status(200)
-            .json(posts)
+        return
     }
+    const posts = await postsRepository.getPosts(req.query, req.params.blogId)
+    res
+        .status(200)
+        .json(posts)
 }
 
 export const deletePostController = async (req: Request, res: Response) => {
     const postIsDeleted = await postsRepository.deletePost(req.params.id)
     if (postIsDeleted) {
         res
-            .status(204)
-            .send()
-    } else {
-        res
             .status(404)
             .send()
+        return
     }
+    res
+        .status(204)
+        .send()
 }
 
 export const createPostController = async (req: Request, res: Response<false | PostViewType>) => {
     const postInsertedId = await postsRepository.createPost(req.body)
     if (postInsertedId) {
-        const newPost = await postsRepository.findPost(postInsertedId)
-        res
-            .status(201)
-            .json(newPost)
-    } else {
         res
             .status(400)
             .send()
+        return
     }
+    const newPost = await postsRepository.findPost(postInsertedId)
+    res
+        .status(201)
+        .json(newPost)
 }
 
 export const createPostForBlogController = async (req: Request, res: Response<false | PostViewType>) => {

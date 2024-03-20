@@ -21,16 +21,15 @@ const getPostsController = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.getPostsController = getPostsController;
 const findPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield posts_repository_1.postsRepository.findPost(req.params.id);
-    if (post) {
-        res
-            .status(200)
-            .json(post);
-    }
-    else {
+    if (!post) {
         res
             .status(404)
             .send();
+        return;
     }
+    res
+        .status(200)
+        .json(post);
 });
 exports.findPostController = findPostController;
 const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,42 +38,39 @@ const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0
         res
             .status(404)
             .send();
+        return;
     }
-    else {
-        const posts = yield posts_repository_1.postsRepository.getPosts(req.query, req.params.blogId);
-        res
-            .status(200)
-            .json(posts);
-    }
+    const posts = yield posts_repository_1.postsRepository.getPosts(req.query, req.params.blogId);
+    res
+        .status(200)
+        .json(posts);
 });
 exports.findPostsOfBlogController = findPostsOfBlogController;
 const deletePostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postIsDeleted = yield posts_repository_1.postsRepository.deletePost(req.params.id);
     if (postIsDeleted) {
         res
-            .status(204)
-            .send();
-    }
-    else {
-        res
             .status(404)
             .send();
+        return;
     }
+    res
+        .status(204)
+        .send();
 });
 exports.deletePostController = deletePostController;
 const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body);
     if (postInsertedId) {
-        const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
-        res
-            .status(201)
-            .json(newPost);
-    }
-    else {
         res
             .status(400)
             .send();
+        return;
     }
+    const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
+    res
+        .status(201)
+        .json(newPost);
 });
 exports.createPostController = createPostController;
 const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
