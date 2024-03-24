@@ -11,10 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBlogController = exports.createBlogController = exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
 const blogs_repository_1 = require("../repositories/blogs-repository");
+const settings_1 = require("../settings");
 const getBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const blogs = yield blogs_repository_1.blogsRepository.getBlogs(req.query);
     res
-        .status(200)
+        .status(settings_1.CodeResponses.OK_200)
         .json(blogs);
 });
 exports.getBlogsController = getBlogsController;
@@ -22,12 +23,12 @@ const findBlogController = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const blog = yield blogs_repository_1.blogsRepository.findBlog(req.params.id);
     if (!blog) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(200)
+        .status(settings_1.CodeResponses.OK_200)
         .json(blog);
 });
 exports.findBlogController = findBlogController;
@@ -35,12 +36,12 @@ const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const blogIsDeleted = yield blogs_repository_1.blogsRepository.deleteBlog(req.params.id);
     if (!blogIsDeleted) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(204)
+        .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
 });
 exports.deleteBlogController = deleteBlogController;
@@ -48,7 +49,7 @@ const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const blogInsertedId = yield blogs_repository_1.blogsRepository.createBlog(req.body);
     const newBlog = yield blogs_repository_1.blogsRepository.findBlog(blogInsertedId);
     res
-        .status(201)
+        .status(settings_1.CodeResponses.CREATED_201)
         .json(newBlog);
 });
 exports.createBlogController = createBlogController;
@@ -56,12 +57,12 @@ const updateBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const updatedBlog = yield blogs_repository_1.blogsRepository.updateBlog(req.body, req.params.id);
     if (!updatedBlog) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(204)
+        .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
 });
 exports.updateBlogController = updateBlogController;
