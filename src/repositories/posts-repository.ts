@@ -38,7 +38,7 @@ export const postsRepository = {
         }
     },
     async findPost(id: string) {
-        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
             return false
         }
         const post = await postsCollection.findOne({ _id: new ObjectId(id) })
@@ -49,7 +49,7 @@ export const postsRepository = {
     },
 
     async deletePost(id: string) {
-        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
             return false
         }
         const post = await postsCollection.deleteOne({ _id: new ObjectId(id) })

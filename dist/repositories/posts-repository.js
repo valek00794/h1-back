@@ -45,7 +45,7 @@ exports.postsRepository = {
     },
     findPost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
                 return false;
             }
             const post = yield db_1.postsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
@@ -57,7 +57,7 @@ exports.postsRepository = {
     },
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
                 return false;
             }
             const post = yield db_1.postsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });

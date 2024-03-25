@@ -12,10 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePostController = exports.createPostForBlogController = exports.createPostController = exports.deletePostController = exports.findPostsOfBlogController = exports.findPostController = exports.getPostsController = void 0;
 const posts_repository_1 = require("../repositories/posts-repository");
 const blogs_repository_1 = require("../repositories/blogs-repository");
+const settings_1 = require("../settings");
 const getPostsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const posts = yield posts_repository_1.postsRepository.getPosts(req.query);
     res
-        .status(200)
+        .status(settings_1.CodeResponses.OK_200)
         .json(posts);
 });
 exports.getPostsController = getPostsController;
@@ -23,12 +24,12 @@ const findPostController = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const post = yield posts_repository_1.postsRepository.findPost(req.params.id);
     if (!post) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(200)
+        .status(settings_1.CodeResponses.OK_200)
         .json(post);
 });
 exports.findPostController = findPostController;
@@ -36,13 +37,13 @@ const findPostsOfBlogController = (req, res) => __awaiter(void 0, void 0, void 0
     const blog = yield blogs_repository_1.blogsRepository.findBlog(req.params.blogId);
     if (!blog) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     const posts = yield posts_repository_1.postsRepository.getPosts(req.query, req.params.blogId);
     res
-        .status(200)
+        .status(settings_1.CodeResponses.OK_200)
         .json(posts);
 });
 exports.findPostsOfBlogController = findPostsOfBlogController;
@@ -50,12 +51,12 @@ const deletePostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const postIsDeleted = yield posts_repository_1.postsRepository.deletePost(req.params.id);
     if (!postIsDeleted) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(204)
+        .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
 });
 exports.deletePostController = deletePostController;
@@ -63,13 +64,13 @@ const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body);
     if (!postInsertedId) {
         res
-            .status(400)
+            .status(settings_1.CodeResponses.BAD_REQUEST_400)
             .send();
         return;
     }
     const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
     res
-        .status(201)
+        .status(settings_1.CodeResponses.CREATED_201)
         .json(newPost);
 });
 exports.createPostController = createPostController;
@@ -77,20 +78,20 @@ const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void
     const blog = yield blogs_repository_1.blogsRepository.findBlog(req.params.blogId);
     if (!blog) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
     if (!postInsertedId) {
         res
-            .status(400)
+            .status(settings_1.CodeResponses.BAD_REQUEST_400)
             .send();
         return;
     }
     const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
     res
-        .status(201)
+        .status(settings_1.CodeResponses.CREATED_201)
         .json(newPost);
 });
 exports.createPostForBlogController = createPostForBlogController;
@@ -98,12 +99,12 @@ const updatePostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const isUpdatedPost = yield posts_repository_1.postsRepository.updatePost(req.body, req.params.id);
     if (!isUpdatedPost) {
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(204)
+        .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
 });
 exports.updatePostController = updatePostController;

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteVideoController = exports.createVideoController = exports.updateVideoController = exports.findVideoController = exports.getVideosController = void 0;
 const db_1 = require("../db/db");
 const videos_types_1 = require("../types/videos-types");
+const settings_1 = require("../settings");
 const VALIDATE_PHARAMS = {
     titleMaxLength: 40,
     authorMaxLength: 20,
@@ -21,7 +22,7 @@ const validationErrorsMassages = {
 let apiErrors = [];
 const getVideosController = (req, res) => {
     res
-        .status(200)
+        .status(settings_1.CodeResponses.OK_200)
         .json(db_1.db.videos);
 };
 exports.getVideosController = getVideosController;
@@ -31,14 +32,14 @@ const findVideoController = (req, res) => {
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .json({
             errorsMessages: apiErrors
         });
     }
     else {
         res
-            .status(200)
+            .status(settings_1.CodeResponses.OK_200)
             .json(db_1.db.videos[idVideo]);
     }
 };
@@ -49,7 +50,7 @@ const updateVideoController = (req, res) => {
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
         res
-            .status(404)
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
             .json({
             errorsMessages: apiErrors
         });
@@ -118,12 +119,12 @@ const updateVideoController = (req, res) => {
             };
             db_1.db.videos[idVideo] = Object.assign(Object.assign({ id: db_1.db.videos[idVideo].id }, updatedVideo), { createdAt: db_1.db.videos[idVideo].createdAt });
             res
-                .status(204)
+                .status(settings_1.CodeResponses.NO_CONTENT_204)
                 .send();
         }
         else {
             res
-                .status(400)
+                .status(settings_1.CodeResponses.BAD_REQUEST_400)
                 .json({
                 errorsMessages: apiErrors
             });
@@ -186,12 +187,12 @@ const createVideoController = (req, res) => {
         };
         db_1.db.videos.push(newVideo);
         res
-            .status(201)
+            .status(settings_1.CodeResponses.CREATED_201)
             .json(newVideo);
     }
     else {
         res
-            .status(400)
+            .status(settings_1.CodeResponses.BAD_REQUEST_400)
             .json({
             errorsMessages: apiErrors
         });
