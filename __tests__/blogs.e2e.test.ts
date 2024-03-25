@@ -242,7 +242,7 @@ describe('/blogs', () => {
             }]
         })
     })
-    it('10. - DELETE blog by correct ID', async () => {
+    it('11. - DELETE blog by correct ID', async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
