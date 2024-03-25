@@ -24,6 +24,6 @@
   "scripts": {
     "dev": "yarn nodemon --inspect dist/index.js",
     "watch": "tsc -w",
-    "jest": "jest -i"
+    "jest": "jest -i --forceExit"
   }
 }

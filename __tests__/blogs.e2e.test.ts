@@ -42,11 +42,11 @@ describe('/blogs', () => {
         await client.close()
     })
 
-    it('1. GET blogs = []', async () => {
+    it('1. GET /blogs = []', async () => {
         await request(app).get(SETTINGS.PATH.blogs).expect(emptyBlogs)
     })
 
-    it('2. - POST does not create the blog with incorrect empty data', async function () {
+    it('2. - POST /blogs does not create the Blog with incorrect empty data', async function () {
         const newIncorrectBlog = {
             name: '',
             description: '',
@@ -67,7 +67,7 @@ describe('/blogs', () => {
         const res = await request(app).get(SETTINGS.PATH.blogs)
         expect(res.body).toEqual(emptyBlogs)
     })
-    it('3. - POST does not create the blog with incorrect data', async function () {
+    it('3. - POST /blogs does not create the Blog with incorrect data', async function () {
         await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -84,7 +84,7 @@ describe('/blogs', () => {
         expect(res.body).toEqual(emptyBlogs)
     })
 
-    it('4. - POST does create the blog with correct data', async function () {
+    it('4. - POST /blogs does create the Blog with correct data', async function () {
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -101,11 +101,11 @@ describe('/blogs', () => {
             })
     })
 
-    it('5. - GET blog by ID with incorrect id', async () => {
+    it('5. - GET /blogs/{id} Blog by ID with incorrect id', async () => {
         await request(app).get(`${SETTINGS.PATH.blogs}/RandomId`).expect(CodeResponses.NOT_FOUND_404)
     })
 
-    it('6. + GET blog by ID with correct id', async () => {
+    it('6. + GET /blogs/{id} Blog by ID with correct id', async () => {
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -118,7 +118,7 @@ describe('/blogs', () => {
             .expect(CodeResponses.OK_200, createdBlog)
     })
 
-    it('7. - PUT blog with incorrect id', async () => {
+    it('7. - PUT /blogs/{id} Blog with incorrect id', async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await request(app)
             .put(SETTINGS.PATH.blogs + '/RandomId')
@@ -131,7 +131,7 @@ describe('/blogs', () => {
     })
 
 
-    it('8. - PUT blog with incorrect data', async () => {
+    it('8. - PUT /blogs/{id} Blog with incorrect data', async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
@@ -167,7 +167,7 @@ describe('/blogs', () => {
 
     })
 
-    it('9. - PUT blog by ID with correct data', async () => {
+    it('9. - PUT /blogs/{id} Blog by ID with correct data', async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
@@ -207,7 +207,7 @@ describe('/blogs', () => {
             }]
         })
     })
-    it('10. - DELETE blog by incorrect ID', async () => {
+    it('10. - DELETE /blogs/{id} Blog by incorrect ID', async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
@@ -242,7 +242,7 @@ describe('/blogs', () => {
             }]
         })
     })
-    it('11. - DELETE blog by correct ID', async () => {
+    it('11. - DELETE /blogs/{id} Blog by correct ID', async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
