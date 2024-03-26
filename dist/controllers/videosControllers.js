@@ -23,12 +23,12 @@ let apiErrors = [];
 const getVideosController = (req, res) => {
     res
         .status(settings_1.CodeResponses.OK_200)
-        .json(db_1.db.videos);
+        .json(db_1.dbLocal.videos);
 };
 exports.getVideosController = getVideosController;
 const findVideoController = (req, res) => {
     apiErrors = [];
-    const idVideo = db_1.db.videos.findIndex(video => video.id === +req.params.id);
+    const idVideo = db_1.dbLocal.videos.findIndex(video => video.id === +req.params.id);
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
         res
@@ -40,13 +40,13 @@ const findVideoController = (req, res) => {
     else {
         res
             .status(settings_1.CodeResponses.OK_200)
-            .json(db_1.db.videos[idVideo]);
+            .json(db_1.dbLocal.videos[idVideo]);
     }
 };
 exports.findVideoController = findVideoController;
 const updateVideoController = (req, res) => {
     apiErrors = [];
-    const idVideo = db_1.db.videos.findIndex(video => video.id === +req.params.id);
+    const idVideo = db_1.dbLocal.videos.findIndex(video => video.id === +req.params.id);
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
         res
@@ -98,7 +98,7 @@ const updateVideoController = (req, res) => {
             else {
                 apiErrors.push({ field: "canBeDownloaded", message: validationErrorsMassages.canBeDownloaded });
             }
-            if (publicationDate.toString() !== "Invalid Date" && publicationDate > new Date(db_1.db.videos[idVideo].createdAt)) {
+            if (publicationDate.toString() !== "Invalid Date" && publicationDate > new Date(db_1.dbLocal.videos[idVideo].createdAt)) {
                 isPublicationDateValidated = true;
             }
             else {
@@ -117,7 +117,7 @@ const updateVideoController = (req, res) => {
                 publicationDate: publicationDate.toISOString(),
                 availableResolutions: availableResolutions
             };
-            db_1.db.videos[idVideo] = Object.assign(Object.assign({ id: db_1.db.videos[idVideo].id }, updatedVideo), { createdAt: db_1.db.videos[idVideo].createdAt });
+            db_1.dbLocal.videos[idVideo] = Object.assign(Object.assign({ id: db_1.dbLocal.videos[idVideo].id }, updatedVideo), { createdAt: db_1.dbLocal.videos[idVideo].createdAt });
             res
                 .status(settings_1.CodeResponses.NO_CONTENT_204)
                 .send();
@@ -185,7 +185,7 @@ const createVideoController = (req, res) => {
             publicationDate: publicationDate.toISOString(),
             availableResolutions: availableResolutions
         };
-        db_1.db.videos.push(newVideo);
+        db_1.dbLocal.videos.push(newVideo);
         res
             .status(settings_1.CodeResponses.CREATED_201)
             .json(newVideo);
@@ -201,7 +201,7 @@ const createVideoController = (req, res) => {
 exports.createVideoController = createVideoController;
 const deleteVideoController = (req, res) => {
     apiErrors = [];
-    const idVideo = db_1.db.videos.findIndex(video => video.id === +req.params.id);
+    const idVideo = db_1.dbLocal.videos.findIndex(video => video.id === +req.params.id);
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
         res
@@ -211,7 +211,7 @@ const deleteVideoController = (req, res) => {
         });
     }
     else {
-        db_1.db.videos.splice(idVideo, 1);
+        db_1.dbLocal.videos.splice(idVideo, 1);
         res
             .status(204)
             .send();

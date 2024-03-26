@@ -6,6 +6,7 @@ import { blogsRouter } from './routers/blogs-router'
 import { clearLocalDbController } from './controllers/clearLocalDbController'
 import { clearDbController } from './controllers/clearDbController'
 import { SETTINGS } from './settings'
+import { usersRouter } from './routers/users-router'
 
 
 export const app = express()
@@ -14,6 +15,7 @@ app.use(express.json())
 app.use(SETTINGS.PATH.videos, videosRouter)
 app.use(SETTINGS.PATH.posts, postsRouter)
 app.use(SETTINGS.PATH.blogs, blogsRouter)
+app.use(SETTINGS.PATH.users, usersRouter)
 
 app.delete(SETTINGS.PATH.clearDb, clearDbController)
 app.delete(SETTINGS.PATH.clearLocalDb, clearLocalDbController)
