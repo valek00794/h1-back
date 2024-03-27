@@ -10,11 +10,11 @@ const VALIDATE_PHARAMS = {
     login: {
         minLength: 3,
         maxLength: 10,
-        pattern: '^[a-zA-Z0-9_-]*$'
+        pattern: new RegExp(/^[a-zA-Z0-9_-]*$/)
     },
     email: {
-        pattern: '^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$'
-    }
+        pattern: new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+    },
 };
 exports.usersInputValidation = [
     (0, express_validator_1.body)('password').trim()
@@ -29,6 +29,7 @@ exports.usersInputValidation = [
         .withMessage(`The field length should be from ${VALIDATE_PHARAMS.login.minLength} to ${VALIDATE_PHARAMS.login.maxLength}`)
         .matches(VALIDATE_PHARAMS.login.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.login.pattern}`),
     (0, express_validator_1.body)('email').trim()
-        .notEmpty().withMessage('The field is required')
+        .notEmpty()
+        .withMessage('The field is required')
         .matches(VALIDATE_PHARAMS.email.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.email.pattern}`)
 ];

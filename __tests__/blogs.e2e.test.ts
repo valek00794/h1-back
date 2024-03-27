@@ -35,11 +35,14 @@ describe('/blogs', () => {
 
     beforeAll(async () => {
         await client.connect()
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
     })
 
     afterAll(async () => {
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await client.close()
+    })
+    beforeEach(async () => {
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
     })
 
     it('1. GET /blogs = []', async () => {
@@ -119,7 +122,6 @@ describe('/blogs', () => {
     })
 
     it('7. - PUT /blogs/{id} Blog with incorrect id', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await request(app)
             .put(SETTINGS.PATH.blogs + '/RandomId')
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -132,7 +134,6 @@ describe('/blogs', () => {
 
 
     it('8. - PUT /blogs/{id} Blog with incorrect data', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -168,7 +169,6 @@ describe('/blogs', () => {
     })
 
     it('9. - PUT /blogs/{id} Blog by ID with correct data', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -208,7 +208,6 @@ describe('/blogs', () => {
         })
     })
     it('10. - DELETE /blogs/{id} Blog by incorrect ID', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -243,7 +242,6 @@ describe('/blogs', () => {
         })
     })
     it('11. - DELETE /blogs/{id} Blog by correct ID', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const res = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })

@@ -72,7 +72,7 @@ exports.dbLocal = {
 const db = client.db();
 exports.postsCollection = db.collection(settings_1.SETTINGS.DB.collection.POST_COLLECTION_NAME);
 exports.blogsCollection = db.collection(settings_1.SETTINGS.DB.collection.BLOG_COLLECTION_NAME);
-exports.usersCollection = db.collection(settings_1.SETTINGS.DB.collection.BLOG_COLLECTION_NAME);
+exports.usersCollection = db.collection(settings_1.SETTINGS.DB.collection.USER_COLLECTION_NAME);
 const setDB = (dataset) => {
     if (!dataset) {
         exports.dbLocal.videos = [];
@@ -84,5 +84,6 @@ exports.setDB = setDB;
 const setMongoDB = () => {
     exports.postsCollection.drop();
     exports.blogsCollection.drop();
+    exports.usersCollection.drop();
 };
 exports.setMongoDB = setMongoDB;

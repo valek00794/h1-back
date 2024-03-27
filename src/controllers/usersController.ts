@@ -1,8 +1,5 @@
 import { Request, Response } from 'express'
 
-import { PaginatorPostViewType, PostViewType } from '../types/posts-types'
-import { postsRepository } from '../repositories/posts-repository';
-import { blogsRepository } from '../repositories/blogs-repository';
 import { CodeResponses } from '../settings';
 import { usersService } from '../services/users-service';
 import { usersRepository } from '../repositories/users-repository';

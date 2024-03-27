@@ -40,6 +40,7 @@ exports.usersService = {
             const user = yield users_repository_1.usersRepository.findUserByLoginOrEmail(loginOrEmail);
             if (user === null)
                 return false;
+            //return bcrypt.compare(password, user.passwordHash)
             const passwordHash = yield this._generateHash(password, user.passwordSalt);
             if (user.passwordHash !== passwordHash)
                 return false;

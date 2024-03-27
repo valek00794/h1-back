@@ -66,7 +66,7 @@ export const postsCollection = db.collection<PostType>(SETTINGS.DB.collection.PO
 
 export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOG_COLLECTION_NAME)
 
-export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.BLOG_COLLECTION_NAME)
+export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.USER_COLLECTION_NAME)
 
 export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {
@@ -80,4 +80,5 @@ export const setDB = (dataset?: Partial<DBType>) => {
 export const setMongoDB = () => {
   postsCollection.drop()
   blogsCollection.drop()
+  usersCollection.drop()
 }

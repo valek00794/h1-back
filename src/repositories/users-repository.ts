@@ -58,12 +58,12 @@ export const usersRepository = {
             createdAt: user.createdAt
         }
     },
-    getSanitizationQuery(query: SearchQueryParametersType) {
+    getSanitizationQuery(query?: SearchQueryParametersType) {
         return {
-            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
-            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
-            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
+            pageNumber: query?.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
+            pageSize: query?.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+            sortBy: query?.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
+            sortDirection: query?.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
             searchLoginTerm: query?.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchLoginTerm,
             searchEmailTerm: query?.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchEmailTerm,
         }
