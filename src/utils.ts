@@ -14,11 +14,11 @@ const defaultSearchQueryParameters = {
 
 export const getSanitizationQuery = (query?: SearchQueryParametersType) => {
     return {
-        pageNumber: query?.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-        pageSize: query?.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
+        pageNumber: !isNaN(query?.pageNumber!) ? +query!.pageNumber : defaultSearchQueryParameters.pageNumber,
+        pageSize:  !isNaN(query?.pageSize!) ? +query!.pageSize : defaultSearchQueryParameters.pageSize,
         sortBy: query?.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
         sortDirection: query?.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-        searchLoginTerm: query?.searchEmailTerm ? query.searchEmailTerm : defaultSearchQueryParameters.searchLoginTerm,
+        searchLoginTerm: query?.searchLoginTerm ? query.searchLoginTerm : defaultSearchQueryParameters.searchLoginTerm,
         searchEmailTerm: query?.searchEmailTerm ? query.searchEmailTerm : defaultSearchQueryParameters.searchEmailTerm,
         searchNameTerm: query?.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
     }

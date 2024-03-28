@@ -33,8 +33,12 @@ exports.usersQueryRepository = {
     getAllUsers(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
-            let findOptions = sanitizationQuery.searchLoginTerm !== null ? { name: { $regex: sanitizationQuery.searchLoginTerm, $options: 'i' } } :
-                sanitizationQuery.searchEmailTerm !== null ? { name: { $regex: sanitizationQuery.searchEmailTerm, $options: 'i' } } : {};
+            let findOptions = {
+                $and: [
+                    sanitizationQuery.searchLoginTerm !== null ? { login: { $regex: sanitizationQuery.searchLoginTerm, $options: 'i' } } : {},
+                    sanitizationQuery.searchEmailTerm !== null ? { email: { $regex: sanitizationQuery.searchEmailTerm, $options: 'i' } } : {}
+                ]
+            };
             const users = yield db_1.usersCollection
                 .find(findOptions)
                 .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)

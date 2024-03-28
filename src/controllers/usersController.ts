@@ -13,7 +13,7 @@ export const createUserController = async (req: Request, res: Response) => {
 }
 
 export const getUsersController = async (req: Request, res: Response) => {
-    const users = await usersQueryRepository.getAllUsers()
+    const users = await usersQueryRepository.getAllUsers(req.query)
     res
         .status(CodeResponses.OK_200)
         .json(users)

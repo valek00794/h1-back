@@ -25,6 +25,7 @@ describe('/login', () => {
     const client = new MongoClient(SETTINGS.DB.mongoURI)
 
     beforeAll(async () => {
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await client.connect()
     })
 
@@ -50,23 +51,12 @@ describe('/login', () => {
     })
 
     it('2. - POST /login does not auth the User with correct email and incorrect password', async function () {
-        const resUser = await request(app)
+        await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
             .expect(CodeResponses.CREATED_201)
-        const user = resUser.body
 
-        const resUsers = await request(app)
-            .get(SETTINGS.PATH.users)
-            .set({ 'authorization': 'Basic ' + codedAuth })
-        expect(resUsers.body).toEqual({
-            pagesCount: 1,
-            page: 1,
-            pageSize: 10,
-            totalCount: 1,
-            items: [user]
-        })
         await request(app)
             .post(SETTINGS.PATH.login)
             .send({ loginOrEmail: newCorrectUser.email, password: 'wrongPswd' })
@@ -75,23 +65,11 @@ describe('/login', () => {
     })
 
     it('3. - POST /login does auth the User with correct data email+password', async function () {
-        const resUser = await request(app)
+        await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
             .expect(CodeResponses.CREATED_201)
-        const user = resUser.body
-
-        const resUsers = await request(app)
-            .get(SETTINGS.PATH.users)
-            .set({ 'authorization': 'Basic ' + codedAuth })
-        expect(resUsers.body).toEqual({
-            pagesCount: 1,
-            page: 1,
-            pageSize: 10,
-            totalCount: 1,
-            items: [user]
-        })
         await request(app)
             .post(SETTINGS.PATH.login)
             .send({ loginOrEmail: newCorrectUser.email, password: newCorrectUser.password })
@@ -100,27 +78,14 @@ describe('/login', () => {
     })
 
     it('4. - POST /login does auth the User with correct data ;ogin+password', async function () {
-        const resUser = await request(app)
+        await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
             .expect(CodeResponses.CREATED_201)
-        const user = resUser.body
-
-        const resUsers = await request(app)
-            .get(SETTINGS.PATH.users)
-            .set({ 'authorization': 'Basic ' + codedAuth })
-        expect(resUsers.body).toEqual({
-            pagesCount: 1,
-            page: 1,
-            pageSize: 10,
-            totalCount: 1,
-            items: [user]
-        })
         await request(app)
             .post(SETTINGS.PATH.login)
             .send({ loginOrEmail: newCorrectUser.login, password: newCorrectUser.password })
             .expect(CodeResponses.NO_CONTENT_204)
-
     })
 })

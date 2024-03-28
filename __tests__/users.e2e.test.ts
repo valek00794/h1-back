@@ -31,15 +31,22 @@ const newIncorrectUser2 = {
 }
 
 const newCorrectUser = {
-    login: 'userAdmin',
+    login: 'Dimych',
     password: 'qwerty22',
-    email: 'admin@google.com'
+    email: 'dimych@gmail.com'
+}
+
+const newCorrectUser2 = {
+    login: 'Natalia',
+    password: '123456',
+    email: 'kuzyuberdina@gmail.com'
 }
 
 describe('/users', () => {
     const client = new MongoClient(SETTINGS.DB.mongoURI)
 
     beforeAll(async () => {
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await client.connect()
     })
 
@@ -47,6 +54,7 @@ describe('/users', () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await client.close()
     })
+
     beforeEach(async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
     })
@@ -57,9 +65,46 @@ describe('/users', () => {
             .set({ 'authorization': 'Basic ' + codedAuth })
             .expect(emptyUsers)
     })
-    //тест получения юзеров  с квери параметрами
 
-    it('2. - POST /Users does not create the User with incorrect empty data', async function () {
+    it('2. - GET /users with query searchstring ', async function () {
+        const resUser1 = await request(app)
+            .post(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .send({ ...newCorrectUser })
+            .expect(CodeResponses.CREATED_201)
+
+        const resUser2 = await request(app)
+            .post(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .send({ ...newCorrectUser2 })
+            .expect(CodeResponses.CREATED_201)
+
+        const users = await request(app)
+            .get(SETTINGS.PATH.users + '?searchEmailTerm=kuzyuberdina')
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .expect(CodeResponses.OK_200)
+        expect(users.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [resUser2.body]
+        })
+
+        const users2 = await request(app)
+            .get(SETTINGS.PATH.users + '?searchLoginTerm=dim')
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .expect(CodeResponses.OK_200)
+        expect(users2.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [resUser1.body]
+        })
+    })
+
+    it('3. - POST /Users does not create the User with incorrect empty data', async function () {
         await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -78,7 +123,7 @@ describe('/users', () => {
         expect(res.body).toEqual(emptyUsers)
     })
 
-    it('3. - POST /Users does not create the User with incorrect data', async function () {
+    it('4. - POST /Users does not create the User with incorrect data', async function () {
         await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -96,7 +141,7 @@ describe('/users', () => {
         expect(res.body).toEqual(emptyUsers)
     })
 
-    it('4. - POST /Users does not create the User with incorrect data', async function () {
+    it('5. - POST /Users does not create the User with incorrect data', async function () {
         await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -114,7 +159,12 @@ describe('/users', () => {
         expect(res.body).toEqual(emptyUsers)
     })
 
-    it('5. - POST /Users does create the User with correct data', async function () {
+    it('6. - POST /Users does create the User with correct data', async function () {
+        const resUsers = await request(app)
+            .get(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+        expect(resUsers.body).toEqual(emptyUsers)
+        
         const resUser = await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -122,10 +172,10 @@ describe('/users', () => {
             .expect(CodeResponses.CREATED_201)
         const user = resUser.body
 
-        const resUsers = await request(app)
+        const resUsers2 = await request(app)
             .get(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
-        expect(resUsers.body).toEqual({
+        expect(resUsers2.body).toEqual({
             pagesCount: 1,
             page: 1,
             pageSize: 10,
@@ -134,7 +184,7 @@ describe('/users', () => {
         })
     })
 
-    it('6. - DELETE /users/{id} User by incorrect ID', async function () {
+    it('7. - DELETE /users/{id} User by incorrect ID', async function () {
         const resUser = await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -168,7 +218,7 @@ describe('/users', () => {
             items: [user]
         })
     })
-    it('7. - DELETE /users/{id} User by correct ID', async function () {
+    it('8. - DELETE /users/{id} User by correct ID', async function () {
         const resUser = await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
