@@ -20,7 +20,7 @@ export const usersQueryRepository = {
     async getAllUsers(query?: any): Promise<PaginatorUsersViewType> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {
-            $and: [
+            $or: [
                 sanitizationQuery.searchLoginTerm !== null ? { login: { $regex: sanitizationQuery.searchLoginTerm, $options: 'i' } } : {},
                 sanitizationQuery.searchEmailTerm !== null ? { email: { $regex: sanitizationQuery.searchEmailTerm, $options: 'i' } } : {}
             ]

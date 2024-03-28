@@ -16,8 +16,8 @@ const newIncorrectLoginData = {
 }
 
 const newCorrectUser = {
-    login: 'userAdmin',
-    password: 'qwerty22',
+    login: 'lg-706298',
+    password: 'qwerty1',
     email: 'admin@google.com'
 }
 
@@ -64,7 +64,21 @@ describe('/login', () => {
 
     })
 
-    it('3. - POST /login does auth the User with correct data email+password', async function () {
+    it('3. - POST /login does not auth the User with correct email and incorrect password', async function () {
+        await request(app)
+            .post(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .send({ ...newCorrectUser })
+            .expect(CodeResponses.CREATED_201)
+
+        await request(app)
+            .post(SETTINGS.PATH.login)
+            .send({ loginOrEmail: 'wronglogin', password: 'wrongPswd' })
+            .expect(CodeResponses.UNAUTHORIZED_401)
+
+    })
+
+    it('4. - POST /login does auth the User with correct data email+password', async function () {
         await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -77,7 +91,7 @@ describe('/login', () => {
 
     })
 
-    it('4. - POST /login does auth the User with correct data ;ogin+password', async function () {
+    it('5. - POST /login does auth the User with correct data ;ogin+password', async function () {
         await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
