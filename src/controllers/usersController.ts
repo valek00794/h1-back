@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import { CodeResponses } from '../settings';
 import { usersService } from '../services/users-service';
+import { usersQueryRepository } from '../repositories/users-query-repository';
 import { usersRepository } from '../repositories/users-repository';
 
 export const createUserController = async (req: Request, res: Response) => {
@@ -12,7 +13,7 @@ export const createUserController = async (req: Request, res: Response) => {
 }
 
 export const getUsersController = async (req: Request, res: Response) => {
-    const users = await usersRepository.getAllUsers()
+    const users = await usersQueryRepository.getAllUsers()
     res
         .status(CodeResponses.OK_200)
         .json(users)

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const users_query_repository_1 = require("../repositories/users-query-repository");
 const users_repository_1 = require("../repositories/users-repository");
 exports.usersService = {
     createUser(login, email, password) {
@@ -24,7 +25,6 @@ exports.usersService = {
                 login,
                 email,
                 passwordHash,
-                passwordSalt,
                 createdAt: new Date().toISOString()
             };
             return users_repository_1.usersRepository.createUser(newUser);
@@ -37,14 +37,10 @@ exports.usersService = {
     },
     checkCredential(loginOrEmail, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_repository_1.usersRepository.findUserByLoginOrEmail(loginOrEmail);
+            const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(loginOrEmail);
             if (user === null)
                 return false;
-            //return bcrypt.compare(password, user.passwordHash)
-            const passwordHash = yield this._generateHash(password, user.passwordSalt);
-            if (user.passwordHash !== passwordHash)
-                return false;
-            return true;
+            return bcrypt_1.default.compare(password, user.passwordHash);
         });
     },
 };

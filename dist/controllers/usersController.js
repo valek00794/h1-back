@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUserController = exports.getUsersController = exports.createUserController = void 0;
 const settings_1 = require("../settings");
 const users_service_1 = require("../services/users-service");
+const users_query_repository_1 = require("../repositories/users-query-repository");
 const users_repository_1 = require("../repositories/users-repository");
 const createUserController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password);
@@ -21,7 +22,7 @@ const createUserController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createUserController = createUserController;
 const getUsersController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield users_repository_1.usersRepository.getAllUsers();
+    const users = yield users_query_repository_1.usersQueryRepository.getAllUsers();
     res
         .status(settings_1.CodeResponses.OK_200)
         .json(users);

@@ -30,6 +30,12 @@ const newIncorrectUser2 = {
     email: 'admin@google.com'
 }
 
+const newCorrectUser = {
+    login: 'userAdmin',
+    password: 'qwerty22',
+    email: 'admin@google.com'
+}
+
 describe('/users', () => {
     const client = new MongoClient(SETTINGS.DB.mongoURI)
 
@@ -106,5 +112,88 @@ describe('/users', () => {
             .get(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
         expect(res.body).toEqual(emptyUsers)
+    })
+
+    it('5. - POST /Users does  create the User with correct data', async function () {
+        const resUser = await request(app)
+            .post(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .send({ ...newCorrectUser })
+            .expect(CodeResponses.CREATED_201)
+        const user = resUser.body
+
+        const resUsers = await request(app)
+            .get(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+        expect(resUsers.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [user]
+        })
+    })
+
+    it('6. - DELETE /users/{id} User by incorrect ID', async function () {
+        const resUser = await request(app)
+            .post(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .send({ ...newCorrectUser })
+            .expect(CodeResponses.CREATED_201)
+        const user = resUser.body
+
+        const resUsers = await request(app)
+            .get(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+        expect(resUsers.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [user]
+        })
+        await request(app)
+            .delete(SETTINGS.PATH.users + '/RandomId')
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .expect(CodeResponses.NOT_FOUND_404)
+
+        const resUsers2 = await request(app)
+            .get(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+        expect(resUsers2.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [user]
+        })
+    })
+    it('7. - DELETE /users/{id} User by correct ID', async function () {
+        const resUser = await request(app)
+            .post(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .send({ ...newCorrectUser })
+            .expect(CodeResponses.CREATED_201)
+        const user = resUser.body
+
+        const resUsers = await request(app)
+            .get(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+        expect(resUsers.body).toEqual({
+            pagesCount: 1,
+            page: 1,
+            pageSize: 10,
+            totalCount: 1,
+            items: [user]
+        })
+        await request(app)
+            .delete(SETTINGS.PATH.users + '/' + user.id)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+            .expect(CodeResponses.NO_CONTENT_204)
+
+        const resUsers2 = await request(app)
+            .get(SETTINGS.PATH.users)
+            .set({ 'authorization': 'Basic ' + codedAuth })
+        expect(resUsers2.body).toEqual(emptyUsers)
     })
 })

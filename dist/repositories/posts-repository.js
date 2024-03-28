@@ -13,16 +13,11 @@ exports.postsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
 const blogs_repository_1 = require("./blogs-repository");
-const defaultSearchQueryParameters = {
-    pageNumber: 1,
-    pageSize: 10,
-    sortBy: 'createdAt',
-    sortDirection: 'desc',
-};
+const utils_1 = require("../utils");
 exports.postsRepository = {
     getPosts(query, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const sanitizationQuery = this.getSanitizationQuery(query);
+            const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
             let findOptions = {};
             if (blogId) {
                 findOptions = { blogId: new mongodb_1.ObjectId(blogId) };
@@ -45,7 +40,7 @@ exports.postsRepository = {
     },
     findPost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+            if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
             const post = yield db_1.postsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
@@ -57,7 +52,7 @@ exports.postsRepository = {
     },
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+            if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
             const post = yield db_1.postsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
@@ -69,7 +64,7 @@ exports.postsRepository = {
     },
     createPost(body, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let getBlogId = (blogId === null || blogId === void 0 ? void 0 : blogId.match(/^[0-9a-fA-F]{24}$/)) ? blogId : body.blogId;
+            let getBlogId = blogId && mongodb_1.ObjectId.isValid(blogId) ? blogId : body.blogId;
             const newPost = {
                 title: body.title,
                 shortDescription: body.shortDescription,
@@ -119,12 +114,4 @@ exports.postsRepository = {
             createdAt: post.createdAt
         };
     },
-    getSanitizationQuery(query) {
-        return {
-            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
-            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
-            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-        };
-    }
 };

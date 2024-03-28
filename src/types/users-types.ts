@@ -1,11 +1,14 @@
 import { ObjectId } from "mongodb"
 
-export type UserDbViewType = UserType & {
-    _id: ObjectId
+export type UserDbViewType = UserDBType & {
+    _id?: ObjectId
 }
 
-export type UserViewType = UserType & {
-    id: ObjectId
+export type UserViewType = {
+    id: ObjectId,
+    login: string,
+    email: string,
+    createdAt: string
 }
 
 export type UserDBType = {
@@ -13,7 +16,6 @@ export type UserDBType = {
     email: string,
     createdAt: string
     passwordHash: string,
-    passwordSalt: string,
 }
 
 export type PaginatorUsersViewType = {
@@ -22,22 +24,5 @@ export type PaginatorUsersViewType = {
     pageSize: number,
     totalCount: number,
     items: UserViewType[]
-}
-
-type UserInputType = {
-    login: string,
-    password: string,
-    email: string,
-}
-
-type LoginType = {
-    loginOrEmail: ObjectId
-    password: string,
-}
-
-type UserType = {
-    login: string,
-    email: string,
-    createdAt: string
 }
 
