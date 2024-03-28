@@ -16,7 +16,7 @@ const utils_1 = require("../utils");
 exports.usersQueryRepository = {
     findUserByLoginOrEmail(loginOrEmail) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersCollection.findOne({ $or: [{ email: loginOrEmail }, { userName: loginOrEmail }] });
+            return yield db_1.usersCollection.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
         });
     },
     findUserById(id) {

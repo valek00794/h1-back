@@ -114,7 +114,7 @@ describe('/users', () => {
         expect(res.body).toEqual(emptyUsers)
     })
 
-    it('5. - POST /Users does  create the User with correct data', async function () {
+    it('5. - POST /Users does create the User with correct data', async function () {
         const resUser = await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })

@@ -8,7 +8,7 @@ export const SETTINGS = {
         posts: '/posts',
         blogs: '/blogs',
         users: '/users',
-        logn: '/login',
+        login: '/login',
         clearDb: '/testing/all-data',
         clearLocalDb: '/testing/videos/all-data',
     },
@@ -27,8 +27,8 @@ export const CodeResponses = {
     OK_200: 200,
     CREATED_201: 201,
     NO_CONTENT_204: 204,
-    UNAUTHORIZED_401: 401,
+    
     BAD_REQUEST_400: 400,
-
+    UNAUTHORIZED_401: 401,
     NOT_FOUND_404: 404
 }

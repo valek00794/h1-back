@@ -5,7 +5,7 @@ import { getSanitizationQuery } from "../utils";
 
 export const usersQueryRepository = {
     async findUserByLoginOrEmail(loginOrEmail: string) {
-        return await usersCollection.findOne({ $or: [{ email: loginOrEmail }, { userName: loginOrEmail }] })
+        return await usersCollection.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
     },
 
     async findUserById(id: string): Promise<UserDbViewType | false> {

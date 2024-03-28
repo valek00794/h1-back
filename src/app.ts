@@ -17,7 +17,7 @@ app.use(SETTINGS.PATH.videos, videosRouter)
 app.use(SETTINGS.PATH.posts, postsRouter)
 app.use(SETTINGS.PATH.blogs, blogsRouter)
 app.use(SETTINGS.PATH.users, usersRouter)
-app.use(SETTINGS.PATH.logn, authRouter)
+app.use(SETTINGS.PATH.login, authRouter)
 
 app.delete(SETTINGS.PATH.clearDb, clearDbController)
 app.delete(SETTINGS.PATH.clearLocalDb, clearLocalDbController)
