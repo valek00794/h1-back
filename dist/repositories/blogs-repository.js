@@ -12,17 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
-const defaultSearchQueryParameters = {
-    pageNumber: 1,
-    pageSize: 10,
-    sortBy: 'createdAt',
-    sortDirection: 'desc',
-    searchNameTerm: null
-};
+const utils_1 = require("../utils");
 exports.blogsRepository = {
     getBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            const sanitizationQuery = this.getSanitizationQuery(query);
+            const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
             const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {};
             const blogs = yield db_1.blogsCollection
                 .find(findOptions)
@@ -42,7 +36,7 @@ exports.blogsRepository = {
     },
     findBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+            if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
             const blog = yield db_1.blogsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
@@ -54,7 +48,7 @@ exports.blogsRepository = {
     },
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+            if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
             const blog = yield db_1.blogsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
@@ -104,13 +98,4 @@ exports.blogsRepository = {
             isMembership: blog.isMembership,
         };
     },
-    getSanitizationQuery(query) {
-        return {
-            pageNumber: (query === null || query === void 0 ? void 0 : query.pageNumber) ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-            pageSize: (query === null || query === void 0 ? void 0 : query.pageSize) ? +query.pageSize : defaultSearchQueryParameters.pageSize,
-            sortBy: (query === null || query === void 0 ? void 0 : query.sortBy) ? query.sortBy : defaultSearchQueryParameters.sortBy,
-            sortDirection: (query === null || query === void 0 ? void 0 : query.sortDirection) ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-            searchNameTerm: (query === null || query === void 0 ? void 0 : query.searchNameTerm) ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
-        };
-    }
 };

@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import { PostType } from "../types/posts-types"
 import { BlogType } from "../types/blogs-types"
 import { SETTINGS } from "../settings"
+import { UserDBType } from "../types/users-types"
 dotenv.config()
 
 const client = new MongoClient(SETTINGS.DB.mongoURI)
@@ -18,7 +19,7 @@ export const runDb = async () => {
   }
 }
 
-export const db: DBType = {
+export const dbLocal: DBType = {
   videos: [
     {
       "id": 1,
@@ -59,20 +60,25 @@ export const db: DBType = {
   ],
 }
 
-export const postsCollection = client.db().collection<PostType>(SETTINGS.DB.collection.POST_COLLECTION_NAME)
+const db = client.db();
 
-export const blogsCollection = client.db().collection<BlogType>(SETTINGS.DB.collection.BLOG_COLLECTION_NAME)
+export const postsCollection = db.collection<PostType>(SETTINGS.DB.collection.POST_COLLECTION_NAME)
+
+export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOG_COLLECTION_NAME)
+
+export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.USER_COLLECTION_NAME)
 
 export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {
-    db.videos = []
+    dbLocal.videos = []
     return
   }
 
-  db.videos = dataset.videos || db.videos
+  dbLocal.videos = dataset.videos || dbLocal.videos
 }
 
 export const setMongoDB = () => {
   postsCollection.drop()
   blogsCollection.drop()
+  usersCollection.drop()
 }

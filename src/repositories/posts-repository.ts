@@ -1,20 +1,13 @@
-import { ObjectId, SortDirection } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 import { postsCollection } from '../db/db'
 import { CreatePostType, PaginatorPostViewType, PostDbType, PostType } from '../types/posts-types'
 import { blogsRepository } from './blogs-repository'
-import { SearchQueryParametersType } from '../types/query-types'
-
-const defaultSearchQueryParameters = {
-    pageNumber: 1,
-    pageSize: 10,
-    sortBy: 'createdAt',
-    sortDirection: 'desc' as SortDirection,
-}
+import { getSanitizationQuery } from '../utils'
 
 export const postsRepository = {
     async getPosts(query: any, blogId?: string): Promise<PaginatorPostViewType> {
-        const sanitizationQuery = this.getSanitizationQuery(query)
+        const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
         if (blogId) {
             findOptions = { blogId: new ObjectId(blogId) }
@@ -38,7 +31,7 @@ export const postsRepository = {
         }
     },
     async findPost(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+        if (!ObjectId.isValid(id)) {
             return false
         }
         const post = await postsCollection.findOne({ _id: new ObjectId(id) })
@@ -49,7 +42,7 @@ export const postsRepository = {
     },
 
     async deletePost(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+        if (!ObjectId.isValid(id)) {
             return false
         }
         const post = await postsCollection.deleteOne({ _id: new ObjectId(id) })
@@ -60,7 +53,7 @@ export const postsRepository = {
 
     },
     async createPost(body: CreatePostType, blogId?: string) {
-        let getBlogId = blogId?.match(/^[0-9a-fA-F]{24}$/) ? blogId : body.blogId
+        let getBlogId = blogId && ObjectId.isValid(blogId) ? blogId : body.blogId
 
         const newPost: PostType = {
             title: body.title,
@@ -108,12 +101,4 @@ export const postsRepository = {
             createdAt: post.createdAt
         }
     },
-    getSanitizationQuery(query: SearchQueryParametersType) {
-        return {
-            pageNumber: query.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-            pageSize: query.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
-            sortBy: query.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
-            sortDirection: query.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-        }
-    }
 }

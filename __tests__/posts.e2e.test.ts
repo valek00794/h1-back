@@ -51,11 +51,14 @@ describe('/posts', () => {
 
     beforeAll(async () => {
         await client.connect()
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
     })
 
     afterAll(async () => {
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await client.close()
+    })
+    beforeEach(async () => {
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
     })
 
     it('1. GET /posts = []', async () => {
@@ -122,7 +125,6 @@ describe('/posts', () => {
     })
 
     it('4.2. - POST /blogs/{blogId}/posts does create the Post with correct data for special blog ID', async function () {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const resBlog = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -195,7 +197,6 @@ describe('/posts', () => {
     })
 
     it('7. - PUT /posts/{id} Post with incorrect id', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const resBlog = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -214,7 +215,6 @@ describe('/posts', () => {
 
 
     it('8. - PUT /posts/{id}  Post with correct data', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const resBlog = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -257,7 +257,6 @@ describe('/posts', () => {
     })
 
     it('9. - PUT /posts/{id}  Post by ID with correct data', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const resBlog = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -311,7 +310,6 @@ describe('/posts', () => {
         })
     })
     it('10. - DELETE /posts/{id}  Post by incorrect ID', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const resBlog = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
@@ -354,7 +352,6 @@ describe('/posts', () => {
         })
     })
     it('11. - DELETE /posts/{id}  Post by correct ID', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         const resBlog = await request(app)
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })

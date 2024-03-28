@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { db } from '../db/db'
+import { dbLocal } from '../db/db'
 import { CreateVideoType, OutputVideoType, Resolutions, UpdateVideoType } from '../types/videos-types'
 import { APIErrorResult, FieldError } from '../types/errors-types';
 import { CodeResponses } from '../settings';
@@ -26,12 +26,12 @@ let apiErrors: FieldError[] = []
 export const getVideosController = (req: Request, res: Response<OutputVideoType[]>) => {
     res
     .status(CodeResponses.OK_200)
-    .json(db.videos)
+    .json(dbLocal.videos)
 }
 
 export const findVideoController = (req: Request, res: Response<APIErrorResult | OutputVideoType>) => {
     apiErrors = []
-    const idVideo = db.videos.findIndex(video => video.id === +req.params.id)
+    const idVideo = dbLocal.videos.findIndex(video => video.id === +req.params.id)
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id })
         res
@@ -42,13 +42,13 @@ export const findVideoController = (req: Request, res: Response<APIErrorResult |
     } else {
         res
             .status(CodeResponses.OK_200)
-            .json(db.videos[idVideo])
+            .json(dbLocal.videos[idVideo])
     }
 }
 
 export const updateVideoController = (req: Request, res: Response<OutputVideoType | APIErrorResult>) => {
     apiErrors = [];
-    const idVideo = db.videos.findIndex(video => video.id === +req.params.id);
+    const idVideo = dbLocal.videos.findIndex(video => video.id === +req.params.id);
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id })
         res
@@ -102,7 +102,7 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
                 apiErrors.push({ field: "canBeDownloaded", message: validationErrorsMassages.canBeDownloaded })
             }
 
-            if (publicationDate.toString() !== "Invalid Date" && publicationDate > new Date(db.videos[idVideo].createdAt)) {
+            if (publicationDate.toString() !== "Invalid Date" && publicationDate > new Date(dbLocal.videos[idVideo].createdAt)) {
 
                 isPublicationDateValidated = true;
             } else {
@@ -123,7 +123,7 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
                 publicationDate: publicationDate.toISOString(),
                 availableResolutions: availableResolutions
             }
-            db.videos[idVideo] = { id: db.videos[idVideo].id, ...updatedVideo, createdAt: db.videos[idVideo].createdAt }
+            dbLocal.videos[idVideo] = { id: dbLocal.videos[idVideo].id, ...updatedVideo, createdAt: dbLocal.videos[idVideo].createdAt }
             res
                 .status(CodeResponses.NO_CONTENT_204)
                 .send()
@@ -195,7 +195,7 @@ export const createVideoController = (req: Request<CreateVideoType>, res: Respon
             publicationDate: publicationDate.toISOString(),
             availableResolutions: availableResolutions
         }
-        db.videos.push(newVideo)
+        dbLocal.videos.push(newVideo)
         res
             .status(CodeResponses.CREATED_201)
             .json(newVideo)
@@ -210,7 +210,7 @@ export const createVideoController = (req: Request<CreateVideoType>, res: Respon
 
 export const deleteVideoController = (req: Request, res: Response<APIErrorResult>) => {
     apiErrors = []
-    const idVideo = db.videos.findIndex(video => video.id === +req.params.id)
+    const idVideo = dbLocal.videos.findIndex(video => video.id === +req.params.id)
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id })
         res
@@ -219,7 +219,7 @@ export const deleteVideoController = (req: Request, res: Response<APIErrorResult
                 errorsMessages: apiErrors
             })
     } else {
-        db.videos.splice(idVideo, 1)
+        dbLocal.videos.splice(idVideo, 1)
         res
             .status(204)
             .send()

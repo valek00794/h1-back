@@ -1,21 +1,12 @@
-import { ObjectId, SortDirection } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 import { blogsCollection } from '../db/db'
 import { BlogDBType, BlogType, PaginatorBlogViewType } from '../types/blogs-types'
-import { SearchQueryParametersType } from '../types/query-types'
-
-const defaultSearchQueryParameters = {
-    pageNumber: 1,
-    pageSize: 10,
-    sortBy: 'createdAt',
-    sortDirection: 'desc' as SortDirection,
-    searchNameTerm: null
-}
-
+import { getSanitizationQuery } from '../utils'
 
 export const blogsRepository = {
     async getBlogs(query?: any): Promise<PaginatorBlogViewType> {
-        const sanitizationQuery = this.getSanitizationQuery(query)
+        const sanitizationQuery = getSanitizationQuery(query)
         const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
 
         const blogs = await blogsCollection
@@ -36,7 +27,7 @@ export const blogsRepository = {
         }
     },
     async findBlog(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+        if (!ObjectId.isValid(id)) {
             return false
         }
         const blog = await blogsCollection.findOne({ _id: new ObjectId(id) })
@@ -47,7 +38,7 @@ export const blogsRepository = {
     },
 
     async deleteBlog(id: string) {
-        if (id.match(/^[0-9a-fA-F]{24}$/) === null) {
+        if (!ObjectId.isValid(id)) {
             return false
         }
         const blog = await blogsCollection.deleteOne({ _id: new ObjectId(id) })
@@ -93,13 +84,4 @@ export const blogsRepository = {
             isMembership: blog.isMembership,
         }
     },
-    getSanitizationQuery(query?: SearchQueryParametersType) {
-        return {
-            pageNumber: query?.pageNumber ? +query.pageNumber : defaultSearchQueryParameters.pageNumber,
-            pageSize: query?.pageSize ? +query.pageSize : defaultSearchQueryParameters.pageSize,
-            sortBy: query?.sortBy ? query.sortBy : defaultSearchQueryParameters.sortBy,
-            sortDirection: query?.sortDirection ? query.sortDirection : defaultSearchQueryParameters.sortDirection,
-            searchNameTerm: query?.searchNameTerm ? query.searchNameTerm : defaultSearchQueryParameters.searchNameTerm,
-        }
-    }
 }

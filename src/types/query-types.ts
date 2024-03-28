@@ -6,4 +6,6 @@ export type SearchQueryParametersType = {
     sortBy: string,
     sortDirection: SortDirection,
     searchNameTerm: string | null,
+    searchLoginTerm: string | null,
+    searchEmailTerm: string | null,
 }

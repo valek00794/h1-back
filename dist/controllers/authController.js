@@ -9,13 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearDbController = void 0;
-const db_1 = require("../db/db");
+exports.checkAuthController = void 0;
 const settings_1 = require("../settings");
-const clearDbController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.setMongoDB)();
+const users_service_1 = require("../services/users-service");
+const checkAuthController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const isAuth = yield users_service_1.usersService.checkCredential(req.body.loginOrEmail, req.body.password);
+    if (!isAuth) {
+        res
+            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .send();
+        return;
+    }
     res
         .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
 });
-exports.clearDbController = clearDbController;
+exports.checkAuthController = checkAuthController;
