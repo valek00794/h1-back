@@ -19,6 +19,6 @@ exports.app.use(settings_1.SETTINGS.PATH.videos, videos_router_1.videosRouter);
 exports.app.use(settings_1.SETTINGS.PATH.posts, posts_router_1.postsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.blogs, blogs_router_1.blogsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.users, users_router_1.usersRouter);
-exports.app.use(settings_1.SETTINGS.PATH.login, auth_router_1.authRouter);
+exports.app.use(settings_1.SETTINGS.PATH.auth, auth_router_1.authRouter);
 exports.app.delete(settings_1.SETTINGS.PATH.clearDb, clearDbController_1.clearDbController);
 exports.app.delete(settings_1.SETTINGS.PATH.clearLocalDb, clearLocalDbController_1.clearLocalDbController);

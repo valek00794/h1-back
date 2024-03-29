@@ -34,7 +34,7 @@ exports.usersQueryRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
             let findOptions = {
-                $and: [
+                $or: [
                     sanitizationQuery.searchLoginTerm !== null ? { login: { $regex: sanitizationQuery.searchLoginTerm, $options: 'i' } } : {},
                     sanitizationQuery.searchEmailTerm !== null ? { email: { $regex: sanitizationQuery.searchEmailTerm, $options: 'i' } } : {}
                 ]
