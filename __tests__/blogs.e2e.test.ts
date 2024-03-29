@@ -46,6 +46,7 @@ describe('/blogs', () => {
     })
 
     it('1. GET /blogs = []', async () => {
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
         await request(app).get(SETTINGS.PATH.blogs).expect(emptyBlogs)
     })
 
@@ -116,9 +117,11 @@ describe('/blogs', () => {
             .expect(CodeResponses.CREATED_201)
 
         const createdBlog = res.body
-        await request(app)
+        const resCreatedBlog = await request(app)
             .get(SETTINGS.PATH.blogs + '/' + createdBlog.id)
             .expect(CodeResponses.OK_200, createdBlog)
+        expect(resCreatedBlog.body).toEqual(createdBlog)
+
     })
 
     it('7. - PUT /blogs/{id} Blog with incorrect id', async () => {

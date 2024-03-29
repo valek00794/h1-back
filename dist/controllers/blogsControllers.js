@@ -46,8 +46,7 @@ const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.deleteBlogController = deleteBlogController;
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blogInsertedId = yield blogs_repository_1.blogsRepository.createBlog(req.body);
-    const newBlog = yield blogs_repository_1.blogsRepository.findBlog(blogInsertedId);
+    const newBlog = yield blogs_repository_1.blogsRepository.createBlog(req.body);
     res
         .status(settings_1.CodeResponses.CREATED_201)
         .json(newBlog);

@@ -67,8 +67,8 @@ exports.blogsRepository = {
                 createdAt: new Date().toISOString(),
                 isMembership: false
             };
-            const blogInsertId = (yield db_1.blogsCollection.insertOne(newBlog)).insertedId;
-            return blogInsertId.toString();
+            yield db_1.blogsCollection.insertOne(newBlog);
+            return this.mapToOutput(newBlog);
         });
     },
     updateBlog(body, id) {

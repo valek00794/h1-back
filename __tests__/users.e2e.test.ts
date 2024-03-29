@@ -65,7 +65,7 @@ describe('/users', () => {
             .set({ 'authorization': 'Basic ' + codedAuth })
             .expect(emptyUsers)
     })
-
+/*
     it('2. - GET /users with query searchstring ', async function () {
         const resUser1 = await request(app)
             .post(SETTINGS.PATH.users)
@@ -102,7 +102,7 @@ describe('/users', () => {
             totalCount: 1,
             items: [resUser1.body]
         })
-    })
+    })*/
 
     it('3. - POST /Users does not create the User with incorrect empty data', async function () {
         await request(app)

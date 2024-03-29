@@ -9,11 +9,11 @@ export type BlogType = {
 }
 
 export type BlogDBType = BlogType & {
-    _id: ObjectId,
+    _id?: ObjectId,
 }
 
 export type BlogViewType = BlogType & {
-    id: ObjectId,
+    id?: ObjectId,
 }
 
 export type PaginatorBlogViewType = {
