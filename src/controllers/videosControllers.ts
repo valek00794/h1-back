@@ -25,8 +25,8 @@ let apiErrors: FieldError[] = []
 
 export const getVideosController = (req: Request, res: Response<OutputVideoType[]>) => {
     res
-    .status(CodeResponses.OK_200)
-    .json(dbLocal.videos)
+        .status(CodeResponses.OK_200)
+        .json(dbLocal.videos)
 }
 
 export const findVideoController = (req: Request, res: Response<APIErrorResult | OutputVideoType>) => {
@@ -183,7 +183,7 @@ export const createVideoController = (req: Request<CreateVideoType>, res: Respon
     }
 
     const isValidate = validateNewVideo();
-    
+
     if (isValidate) {
         const newVideo: OutputVideoType = {
             id: newId,

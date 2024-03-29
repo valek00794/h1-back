@@ -5,4 +5,4 @@ import { inputValidationMiddleware } from "../middlewares/inputValidationMiddlew
 
 export const authRouter = Router();
 
-authRouter.post('/', authInputValidation, inputValidationMiddleware, checkAuthController)
+authRouter.post('/login', authInputValidation, inputValidationMiddleware, checkAuthController)

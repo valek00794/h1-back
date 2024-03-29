@@ -10,7 +10,7 @@ exports.SETTINGS = {
         posts: '/posts',
         blogs: '/blogs',
         users: '/users',
-        login: '/login',
+        auth: '/auth',
         clearDb: '/testing/all-data',
         clearLocalDb: '/testing/videos/all-data',
     },

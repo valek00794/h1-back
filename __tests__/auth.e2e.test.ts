@@ -39,7 +39,7 @@ describe('/login', () => {
 
     it('1. - POST /login does not auth the User with incorrect data', async function () {
         await request(app)
-            .post(SETTINGS.PATH.login)
+            .post(SETTINGS.PATH.auth + '/login')
             .send({ ...newIncorrectLoginData })
             .expect(CodeResponses.BAD_REQUEST_400, {
                 errorsMessages: [
@@ -58,7 +58,7 @@ describe('/login', () => {
             .expect(CodeResponses.CREATED_201)
 
         await request(app)
-            .post(SETTINGS.PATH.login)
+            .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.email, password: 'wrongPswd' })
             .expect(CodeResponses.UNAUTHORIZED_401)
 
@@ -72,7 +72,7 @@ describe('/login', () => {
             .expect(CodeResponses.CREATED_201)
 
         await request(app)
-            .post(SETTINGS.PATH.login)
+            .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: 'wronglogin', password: 'wrongPswd' })
             .expect(CodeResponses.UNAUTHORIZED_401)
 
@@ -85,7 +85,7 @@ describe('/login', () => {
             .send({ ...newCorrectUser })
             .expect(CodeResponses.CREATED_201)
         await request(app)
-            .post(SETTINGS.PATH.login)
+            .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.email, password: newCorrectUser.password })
             .expect(CodeResponses.NO_CONTENT_204)
 
@@ -98,7 +98,7 @@ describe('/login', () => {
             .send({ ...newCorrectUser })
             .expect(CodeResponses.CREATED_201)
         await request(app)
-            .post(SETTINGS.PATH.login)
+            .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.login, password: newCorrectUser.password })
             .expect(CodeResponses.NO_CONTENT_204)
     })
