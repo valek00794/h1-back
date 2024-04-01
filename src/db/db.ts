@@ -6,6 +6,7 @@ import { PostType } from "../types/posts-types"
 import { BlogType } from "../types/blogs-types"
 import { SETTINGS } from "../settings"
 import { UserDBType } from "../types/users-types"
+import { CommentType } from "../types/comments-types"
 dotenv.config()
 
 const client = new MongoClient(SETTINGS.DB.mongoURI)
@@ -68,6 +69,8 @@ export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BL
 
 export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.USER_COLLECTION_NAME)
 
+export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENT_COLLECTION_NAME)
+
 export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {
     dbLocal.videos = []
@@ -81,4 +84,5 @@ export const setMongoDB = () => {
   postsCollection.drop()
   blogsCollection.drop()
   usersCollection.drop()
+  commentsCollection.drop()
 }
