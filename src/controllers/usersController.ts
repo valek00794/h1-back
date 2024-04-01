@@ -4,6 +4,7 @@ import { CodeResponses } from '../settings';
 import { usersService } from '../services/users-service';
 import { usersQueryRepository } from '../repositories/users-query-repository';
 import { usersRepository } from '../repositories/users-repository';
+import { SearchQueryParametersType } from '../types/query-types';
 
 export const createUserController = async (req: Request, res: Response) => {
     const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
@@ -13,7 +14,15 @@ export const createUserController = async (req: Request, res: Response) => {
 }
 
 export const getUsersController = async (req: Request, res: Response) => {
-    const users = await usersQueryRepository.getAllUsers(req.query)
+    const queryParameters: SearchQueryParametersType = {
+        pageNumber: Number(req.query.pageNumber),
+        pageSize: Number(req.query.pageSize),
+        sortBy: req.query.sortBy as string,
+        sortDirection: req.query.sortDirection as 'asc' | 'desc',
+        searchLoginTerm: req.query.searchLoginTerm as string | null,
+        searchEmailTerm: req.query.searchEmailTerm as string | null,
+      };
+    const users = await usersQueryRepository.getAllUsers(queryParameters)
     res
         .status(CodeResponses.OK_200)
         .json(users)

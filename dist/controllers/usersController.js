@@ -22,7 +22,15 @@ const createUserController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createUserController = createUserController;
 const getUsersController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield users_query_repository_1.usersQueryRepository.getAllUsers(req.query);
+    const queryParameters = {
+        pageNumber: Number(req.query.pageNumber),
+        pageSize: Number(req.query.pageSize),
+        sortBy: req.query.sortBy,
+        sortDirection: req.query.sortDirection,
+        searchLoginTerm: req.query.searchLoginTerm,
+        searchEmailTerm: req.query.searchEmailTerm,
+    };
+    const users = yield users_query_repository_1.usersQueryRepository.getAllUsers(queryParameters);
     res
         .status(settings_1.CodeResponses.OK_200)
         .json(users);
