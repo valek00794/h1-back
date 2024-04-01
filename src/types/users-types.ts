@@ -25,4 +25,3 @@ export type PaginatorUsersViewType = {
     totalCount: number,
     items: UserViewType[]
 }
-

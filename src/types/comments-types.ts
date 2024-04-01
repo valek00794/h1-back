@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-type CommentatorInfo = {
+export type CommentatorInfo = {
   userId: string;
   userLogin: string;
 };
@@ -9,10 +9,15 @@ export type CommentType = {
   content: string;
   commentatorInfo: CommentatorInfo;
   createdAt: string;
+  postId?: ObjectId
+};
+
+export type CommentInputType = {
+  content: string;
 };
 
 export type CommentDbType = CommentType & {
-  _id: ObjectId;
+  _id?: ObjectId;
 };
 
 export type CommentViewType = CommentType & {

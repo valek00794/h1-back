@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCommentController = exports.findCommentController = exports.findCommentsOfPostController = void 0;
+exports.createCommentForPostController = exports.deleteCommentController = exports.findCommentController = exports.findCommentsOfPostController = void 0;
 const settings_1 = require("../settings");
 const comments_repository_1 = require("../repositories/comments-repository");
 const posts_repository_1 = require("../repositories/posts-repository");
@@ -53,3 +53,20 @@ const deleteCommentController = (req, res) => __awaiter(void 0, void 0, void 0, 
         .send();
 });
 exports.deleteCommentController = deleteCommentController;
+const createCommentForPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield posts_repository_1.postsRepository.findPost(req.params.postId);
+    if (!post) {
+        res
+            .status(settings_1.CodeResponses.NOT_FOUND_404)
+            .send();
+        return;
+    }
+    const comment = yield comments_repository_1.commentsRepository.createComment(req.body, req.commentatorInfo, req.params.postId);
+    if (!comment) {
+        res
+            .status(settings_1.CodeResponses.BAD_REQUEST_400)
+            .send();
+        return;
+    }
+});
+exports.createCommentForPostController = createCommentForPostController;

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import { CodeResponses } from '../settings';
-import { CommentType, PaginatorCommentsViewType } from '../types/comments-types';
+import { CommentType, CommentatorInfo, PaginatorCommentsViewType } from '../types/comments-types';
 import { commentsRepository } from '../repositories/comments-repository';
 import { postsRepository } from '../repositories/posts-repository';
 
@@ -44,4 +44,23 @@ export const deleteCommentController = async (req: Request, res: Response) => {
     res
         .status(CodeResponses.NO_CONTENT_204)
         .send()
+}
+
+export const createCommentForPostController = async (req: Request, res: Response) => {
+    const post = await postsRepository.findPost(req.params.postId)
+    if (!post) {
+        res
+            .status(CodeResponses.NOT_FOUND_404)
+            .send()
+        return
+    }
+    const comment = await commentsRepository.createComment(req.body, req.commentatorInfo! as CommentatorInfo, req.params.postId)
+
+
+    if (!comment) {
+        res
+            .status(CodeResponses.BAD_REQUEST_400)
+            .send()
+        return
+    }
 }

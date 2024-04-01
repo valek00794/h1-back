@@ -61,15 +61,30 @@ exports.commentsRepository = {
             return true;
         });
     },
-    mapToOutput(post) {
+    createComment(body, commentatorInfo, postId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newComment = {
+                content: body.content,
+                postId: new mongodb_1.ObjectId(postId),
+                createdAt: new Date().toISOString(),
+                commentatorInfo: {
+                    userId: commentatorInfo.userId,
+                    userLogin: commentatorInfo.userLogin,
+                }
+            };
+            yield db_1.commentsCollection.insertOne(newComment);
+            return this.mapToOutput(newComment);
+        });
+    },
+    mapToOutput(comment) {
         return {
-            id: post._id,
-            content: post.content,
+            id: comment._id,
+            content: comment.content,
             commentatorInfo: {
-                userId: post.commentatorInfo.userId,
-                userLogin: post.commentatorInfo.userId
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userId
             },
-            createdAt: post.createdAt
+            createdAt: comment.createdAt
         };
     },
 };

@@ -1,7 +1,8 @@
 import { ObjectId } from 'mongodb'
 import { commentsCollection } from '../db/db'
-import { CommentDbType, PaginatorCommentsViewType } from '../types/comments-types'
+import { CommentDbType, CommentInputType, CommentType, CommentatorInfo, PaginatorCommentsViewType } from '../types/comments-types'
 import { getSanitizationQuery } from '../utils'
+import { postsRepository } from './posts-repository'
 
 
 export const commentsRepository = {
@@ -52,15 +53,29 @@ export const commentsRepository = {
         return true
 
     },
-    mapToOutput(post: CommentDbType) {
-        return {
-            id: post._id,
-            content: post.content,
+
+    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfo, postId?: string) {
+        const newComment: CommentDbType = {
+            content: body.content,
+            postId: new ObjectId(postId),
+            createdAt: new Date().toISOString(),
             commentatorInfo: {
-                userId: post.commentatorInfo.userId,
-                userLogin: post.commentatorInfo.userId
+                userId: commentatorInfo.userId,
+                userLogin: commentatorInfo.userLogin,
+            }
+        }
+        await commentsCollection.insertOne(newComment)
+        return this.mapToOutput(newComment)
+    },
+    mapToOutput(comment: CommentDbType) {
+        return {
+            id: comment._id!,
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userId
             },
-            createdAt: post.createdAt
+            createdAt: comment.createdAt
         }
     },
 
