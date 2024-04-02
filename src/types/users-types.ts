@@ -26,3 +26,8 @@ export type PaginatorUsersViewType = {
     items: UserViewType[]
 }
 
+export type UserInfo = {
+    userId: string,
+    userLogin: string,
+    email?: string
+  };

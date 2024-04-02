@@ -1,25 +1,31 @@
 import { Request, Response, NextFunction } from "express"
-import { SETTINGS } from "../settings"
+import { jwtService } from "../application/jwt-service"
+import { usersQueryRepository } from "../repositories/users-query-repository"
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers['authorization'] as string
-
-    if (!authHeader) {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    debugger
+    if (!req.headers.authorization) {
         res
             .status(401)
             .send()
         return
     }
 
-    const buff = Buffer.from(authHeader.slice(6), 'base64')
-    const decodedAuth = buff.toString('utf8')
+    const token = req.headers.authorization.split(' ')[1]
+    const userId = await jwtService.getUserIdByToken(token!)
+    if (userId) {
+        if (!req.user) {
+            req.user = {} as any
+        }
+        req.user!.userId = userId
 
-    if (authHeader && (decodedAuth === SETTINGS.ADMIN_AUTH) && (authHeader.slice(0, 6) === 'Basic ')) {
-        next()
-    } else {
-        res
-            .status(401)
-            .send()
-        return
+        const user = await usersQueryRepository.findUserById(userId)
+        if (user) {
+            req.user!.userLogin = user.userLogin
+        }
+        return next()
     }
+    res
+        .status(401)
+        .send()
 }

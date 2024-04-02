@@ -5,5 +5,7 @@ const express_1 = require("express");
 const authInputValidation_1 = require("../validation/authInputValidation");
 const authController_1 = require("../controllers/authController");
 const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddleware");
+const authMiddleware_1 = require("../middlewares/authMiddleware");
 exports.authRouter = (0, express_1.Router)();
 exports.authRouter.post('/login', authInputValidation_1.authInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.checkAuthController);
+exports.authRouter.get('/me', authMiddleware_1.authMiddleware, authController_1.getAuthInfoController);

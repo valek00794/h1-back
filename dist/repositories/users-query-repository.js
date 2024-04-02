@@ -27,7 +27,11 @@ exports.usersQueryRepository = {
             const user = yield db_1.usersCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
             if (user === null)
                 return false;
-            return user;
+            return {
+                email: user.email,
+                userLogin: user.login,
+                userId: id
+            };
         });
     },
     getAllUsers(query) {

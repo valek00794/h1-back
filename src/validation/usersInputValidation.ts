@@ -1,4 +1,5 @@
 import { body } from 'express-validator';
+import { usersQueryRepository } from '../repositories/users-query-repository';
 
 const VALIDATE_PHARAMS = {
     password: {
@@ -26,9 +27,25 @@ export const usersInputValidation = [
         .withMessage('The field is required')
         .isLength({ min: VALIDATE_PHARAMS.login.minLength, max: VALIDATE_PHARAMS.login.maxLength })
         .withMessage(`The field length should be from ${VALIDATE_PHARAMS.login.minLength} to ${VALIDATE_PHARAMS.login.maxLength}`)
-        .matches(VALIDATE_PHARAMS.login.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.login.pattern}`),
+        .matches(VALIDATE_PHARAMS.login.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.login.pattern}`)
+        .custom(async (value) => {
+            const user = await usersQueryRepository.findUserByLoginOrEmail(value)
+            if (user !== null) {
+                throw new Error('User with current login already exists');
+            } else {
+                return value;
+            }
+        }),
     body('email').trim()
         .notEmpty()
         .withMessage('The field is required')
         .matches(VALIDATE_PHARAMS.email.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.email.pattern}`)
+        .custom(async (value) => {
+            const user = await usersQueryRepository.findUserByLoginOrEmail(value)
+            if (user !== null) {
+                throw new Error('User with current email already exists');
+            } else {
+                return value;
+            }
+        })
 ]

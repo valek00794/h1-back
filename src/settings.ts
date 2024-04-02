@@ -9,6 +9,7 @@ export const SETTINGS = {
         blogs: '/blogs',
         users: '/users',
         auth: '/auth',
+        comments: '/comments',
         clearDb: '/testing/all-data',
         clearLocalDb: '/testing/videos/all-data',
     },
@@ -17,9 +18,14 @@ export const SETTINGS = {
         collection: {
             POST_COLLECTION_NAME: process.env.POST_COLLECTION_NAME || '',
             BLOG_COLLECTION_NAME: process.env.BLOG_COLLECTION_NAME || '',
-            USER_COLLECTION_NAME: process.env.USER_COLLECTION_NAME || ''
+            USER_COLLECTION_NAME: process.env.USER_COLLECTION_NAME || '',
+            COMMENT_COLLECTION_NAME: process.env.COMMENT_COLLECTION_NAME || ''
         },
         mongoURI: process.env.MONGO_URL || 'mongodb://localhost:27017/sprint1localdb'
+    },
+    JWT: {
+        SECRET: process.env.JWT_SECRET || '',
+        EXPIRES_TIME: process.env.JWT_EXPIRES_TIME || '12h'
     }
 }
 
@@ -30,5 +36,6 @@ export const CodeResponses = {
 
     BAD_REQUEST_400: 400,
     UNAUTHORIZED_401: 401,
-    NOT_FOUND_404: 404
+    NOT_FOUND_404: 404,
+    FORBIDDEN_403: 403
 }

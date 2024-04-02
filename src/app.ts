@@ -8,6 +8,7 @@ import { clearDbController } from './controllers/clearDbController'
 import { SETTINGS } from './settings'
 import { usersRouter } from './routers/users-router'
 import { authRouter } from './routers/auth-router'
+import { commentsRouter } from './routers/comments-router'
 
 
 export const app = express()
@@ -18,6 +19,7 @@ app.use(SETTINGS.PATH.posts, postsRouter)
 app.use(SETTINGS.PATH.blogs, blogsRouter)
 app.use(SETTINGS.PATH.users, usersRouter)
 app.use(SETTINGS.PATH.auth, authRouter)
+app.use(SETTINGS.PATH.comments, commentsRouter)
 
 app.delete(SETTINGS.PATH.clearDb, clearDbController)
 app.delete(SETTINGS.PATH.clearLocalDb, clearLocalDbController)
