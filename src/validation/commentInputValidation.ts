@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 const VALIDATE_PHARAMS = {
     content: {
         minLength: 20,
-        maxLength:300
+        maxLength: 300
     }
 }
 

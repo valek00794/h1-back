@@ -46,7 +46,7 @@ exports.commentsQueryRepository = {
             if (!comment) {
                 return false;
             }
-            return comment;
+            return this.mapToOutput(comment);
         });
     },
     mapToOutput(comment) {

@@ -41,4 +41,19 @@ exports.commentsRepository = {
             return comments_query_repository_1.commentsQueryRepository.mapToOutput(newComment);
         });
     },
+    updateComment(body, comment) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedComment = {
+                content: body.content,
+                postId: comment.postId,
+                createdAt: comment.createdAt,
+                commentatorInfo: {
+                    userId: comment.commentatorInfo.userId,
+                    userLogin: comment.commentatorInfo.userLogin,
+                }
+            };
+            yield db_1.commentsCollection.updateOne({ _id: comment.id }, { $set: updatedComment });
+            return true;
+        });
+    },
 };
