@@ -54,7 +54,7 @@ export const deleteCommentController = async (req: Request, res: Response) => {
         return
     }
 
-    await commentsRepository.deleteComment(req.params.id)
+    await commentsRepository.deleteComment(req.params.commentId)
     res
         .status(CodeResponses.NO_CONTENT_204)
         .send()
