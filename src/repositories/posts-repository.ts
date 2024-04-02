@@ -67,8 +67,8 @@ export const postsRepository = {
         if (blog) {
             newPost.blogName = blog.name
         }
-        const postInsert = await postsCollection.insertOne(newPost)
-        return postInsert.insertedId.toString()
+        await postsCollection.insertOne(newPost)
+        return this.mapToOutput(newPost)
     },
     async updatePost(body: CreatePostType, id: string) {
         const post = await this.findPost(id)
@@ -92,7 +92,7 @@ export const postsRepository = {
     },
     mapToOutput(post: PostDbType) {
         return {
-            id: post._id,
+            id: post._id!,
             title: post.title,
             shortDescription: post.shortDescription,
             content: post.content,
