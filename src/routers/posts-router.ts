@@ -3,9 +3,9 @@ import { Router } from "express";
 import { createPostController, deletePostController, findPostController, getPostsController, updatePostController } from '../controllers/postsControllers'
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { postsBlogIdInputValidation, postsInputValidation } from "../validation/postsInputValidation";
-import { authMiddleware } from "../middlewares/authMiddleware";
 import { commentInputValidation } from "../validation/commentInputValidation";
 import { createCommentForPostController, getCommentsForPostController } from "../controllers/commentsControllers";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 export const postsRouter = Router();
 

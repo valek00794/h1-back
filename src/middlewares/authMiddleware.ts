@@ -1,31 +1,25 @@
 import { Request, Response, NextFunction } from "express"
-import { jwtService } from "../application/jwt-service"
-import { usersQueryRepository } from "../repositories/users-query-repository"
+import { CodeResponses, SETTINGS } from "../settings"
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    debugger
-    if (!req.headers.authorization) {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers['authorization'] as string
+
+    if (!authHeader) {
         res
-            .status(401)
+            .status(CodeResponses.UNAUTHORIZED_401)
             .send()
         return
     }
 
-    const token = req.headers.authorization.split(' ')[1]
-    const userId = await jwtService.getUserIdByToken(token!)
-    if (userId) {
-        if (!req.user) {
-            req.user = {} as any
-        }
-        req.user!.userId = userId
+    const buff = Buffer.from(authHeader.slice(6), 'base64')
+    const decodedAuth = buff.toString('utf8')
 
-        const user = await usersQueryRepository.findUserById(userId)
-        if (user) {
-            req.user!.userLogin = user.userLogin
-        }
-        return next()
+    if (authHeader && (decodedAuth === SETTINGS.ADMIN_AUTH) && (authHeader.slice(0, 6) === 'Basic ')) {
+        next()
+    } else {
+        res
+            .status(CodeResponses.UNAUTHORIZED_401)
+            .send()
+        return
     }
-    res
-        .status(401)
-        .send()
 }

@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsRouter = void 0;
 const express_1 = require("express");
-const authMiddleware_1 = require("../middlewares/authMiddleware");
 const commentsControllers_1 = require("../controllers/commentsControllers");
 const commentInputValidation_1 = require("../validation/commentInputValidation");
 const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddleware");
+const authJWTMiddleware_1 = require("../middlewares/authJWTMiddleware");
 exports.commentsRouter = (0, express_1.Router)();
 exports.commentsRouter.get('/:id', commentsControllers_1.findCommentController);
-exports.commentsRouter.post('/', authMiddleware_1.authMiddleware, commentsControllers_1.createCommentForPostController);
-exports.commentsRouter.delete('/:commentId', authMiddleware_1.authMiddleware, commentsControllers_1.deleteCommentController);
-exports.commentsRouter.put('/:commentId', authMiddleware_1.authMiddleware, commentInputValidation_1.commentInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsControllers_1.updateCommentForPostController);
+exports.commentsRouter.post('/', authJWTMiddleware_1.authJWTMiddleware, commentsControllers_1.createCommentForPostController);
+exports.commentsRouter.delete('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentsControllers_1.deleteCommentController);
+exports.commentsRouter.put('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.commentInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsControllers_1.updateCommentForPostController);
