@@ -6,6 +6,7 @@ import { postsBlogIdInputValidation, postsInputValidation } from "../validation/
 import { commentInputValidation } from "../validation/commentInputValidation";
 import { createCommentForPostController, getCommentsForPostController } from "../controllers/commentsControllers";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { authJWTMiddleware } from "../middlewares/authJWTMiddleware";
 
 export const postsRouter = Router();
 
@@ -15,5 +16,5 @@ postsRouter.post('/', authMiddleware, postsInputValidation, postsBlogIdInputVali
 postsRouter.put('/:id', authMiddleware, postsInputValidation, postsBlogIdInputValidation, inputValidationMiddleware, updatePostController)
 postsRouter.delete('/:id', authMiddleware, deletePostController)
 
-postsRouter.post('/:postId/comments', authMiddleware, commentInputValidation, inputValidationMiddleware, createCommentForPostController)
+postsRouter.post('/:postId/comments', authJWTMiddleware, commentInputValidation, inputValidationMiddleware, createCommentForPostController)
 postsRouter.get('/:postId/comments', getCommentsForPostController)
