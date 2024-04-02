@@ -3,9 +3,9 @@ import { Router } from "express";
 import { createBlogController, deleteBlogController, findBlogController, getBlogsController, updateBlogController } from '../controllers/blogsControllers'
 import { blogsInputValidation } from "../validation/blogsInputValidation";
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
-import { authMiddleware } from "../middlewares/authMiddleware";
 import { createPostForBlogController, findPostsOfBlogController } from "../controllers/postsControllers";
 import { postsInputValidation } from "../validation/postsInputValidation";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
 export const blogsRouter = Router();
 
