@@ -61,7 +61,7 @@ const deleteCommentController = (req, res) => __awaiter(void 0, void 0, void 0, 
             .send();
         return;
     }
-    yield comments_repository_1.commentsRepository.deleteComment(req.params.id);
+    yield comments_repository_1.commentsRepository.deleteComment(req.params.commentId);
     res
         .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
