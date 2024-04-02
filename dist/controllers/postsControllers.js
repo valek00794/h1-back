@@ -61,14 +61,7 @@ const deletePostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.deletePostController = deletePostController;
 const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body);
-    if (!postInsertedId) {
-        res
-            .status(settings_1.CodeResponses.BAD_REQUEST_400)
-            .send();
-        return;
-    }
-    const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
+    const newPost = yield posts_repository_1.postsRepository.createPost(req.body);
     res
         .status(settings_1.CodeResponses.CREATED_201)
         .json(newPost);
@@ -82,14 +75,7 @@ const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void
             .send();
         return;
     }
-    const postInsertedId = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
-    if (!postInsertedId) {
-        res
-            .status(settings_1.CodeResponses.BAD_REQUEST_400)
-            .send();
-        return;
-    }
-    const newPost = yield posts_repository_1.postsRepository.findPost(postInsertedId);
+    const newPost = yield posts_repository_1.postsRepository.createPost(req.body, req.params.blogId);
     res
         .status(settings_1.CodeResponses.CREATED_201)
         .json(newPost);

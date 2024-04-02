@@ -77,8 +77,8 @@ exports.postsRepository = {
             if (blog) {
                 newPost.blogName = blog.name;
             }
-            const postInsert = yield db_1.postsCollection.insertOne(newPost);
-            return postInsert.insertedId.toString();
+            yield db_1.postsCollection.insertOne(newPost);
+            return this.mapToOutput(newPost);
         });
     },
     updatePost(body, id) {

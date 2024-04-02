@@ -52,21 +52,14 @@ export const deletePostController = async (req: Request, res: Response) => {
         .send()
 }
 
-export const createPostController = async (req: Request, res: Response<false | PostViewType>) => {
-    const postInsertedId = await postsRepository.createPost(req.body)
-    if (!postInsertedId) {
-        res
-            .status(CodeResponses.BAD_REQUEST_400)
-            .send()
-        return
-    }
-    const newPost = await postsRepository.findPost(postInsertedId)
+export const createPostController = async (req: Request, res: Response<PostViewType>) => {
+    const newPost = await postsRepository.createPost(req.body)
     res
         .status(CodeResponses.CREATED_201)
         .json(newPost)
 }
 
-export const createPostForBlogController = async (req: Request, res: Response<false | PostViewType>) => {
+export const createPostForBlogController = async (req: Request, res: Response<PostViewType>) => {
     const blog = await blogsRepository.findBlog(req.params.blogId)
     if (!blog) {
         res
@@ -74,14 +67,8 @@ export const createPostForBlogController = async (req: Request, res: Response<fa
             .send()
         return
     }
-    const postInsertedId = await postsRepository.createPost(req.body, req.params.blogId)
-    if (!postInsertedId) {
-        res
-            .status(CodeResponses.BAD_REQUEST_400)
-            .send()
-        return
-    }
-    const newPost = await postsRepository.findPost(postInsertedId)
+    const newPost = await postsRepository.createPost(req.body, req.params.blogId)
+
     res
         .status(CodeResponses.CREATED_201)
         .json(newPost)

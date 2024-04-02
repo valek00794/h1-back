@@ -17,7 +17,7 @@ export type PostType = {
 }
 
 export type PostDbType = PostType & {
-    _id: ObjectId,
+    _id?: ObjectId,
 }
 
 export type PostViewType = PostType & {
