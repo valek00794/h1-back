@@ -12,43 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
-const utils_1 = require("../utils");
+const comments_query_repository_1 = require("./comments-query-repository");
 exports.commentsRepository = {
-    getComments(query, postId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
-            let findOptions = {};
-            if (postId) {
-                findOptions = { postId: new mongodb_1.ObjectId(postId) };
-            }
-            const comments = yield db_1.commentsCollection
-                .find(findOptions)
-                .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
-                .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
-                .limit(sanitizationQuery.pageSize)
-                .toArray();
-            const commentsCount = yield db_1.commentsCollection.countDocuments(findOptions);
-            return {
-                pagesCount: Math.ceil(commentsCount / sanitizationQuery.pageSize),
-                page: sanitizationQuery.pageNumber,
-                pageSize: sanitizationQuery.pageSize,
-                totalCount: commentsCount,
-                items: comments.map(comment => this.mapToOutput(comment))
-            };
-        });
-    },
-    findComment(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!mongodb_1.ObjectId.isValid(id)) {
-                return false;
-            }
-            const comment = yield db_1.commentsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
-            if (!comment) {
-                return false;
-            }
-            return comment;
-        });
-    },
     deleteComment(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
@@ -73,18 +38,7 @@ exports.commentsRepository = {
                 }
             };
             yield db_1.commentsCollection.insertOne(newComment);
-            return this.mapToOutput(newComment);
+            return comments_query_repository_1.commentsQueryRepository.mapToOutput(newComment);
         });
-    },
-    mapToOutput(comment) {
-        return {
-            id: comment._id,
-            content: comment.content,
-            commentatorInfo: {
-                userId: comment.commentatorInfo.userId,
-                userLogin: comment.commentatorInfo.userId
-            },
-            createdAt: comment.createdAt
-        };
     },
 };

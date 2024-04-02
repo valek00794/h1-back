@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 
 import { CodeResponses } from '../settings';
-import { CommentType, CommentatorInfo, PaginatorCommentsViewType } from '../types/comments-types';
+import { CommentType, PaginatorCommentsViewType } from '../types/comments-types';
 import { commentsRepository } from '../repositories/comments-repository';
 import { postsRepository } from '../repositories/posts-repository';
+import { commentsQueryRepository } from '../repositories/comments-query-repository';
 
 
 export const findCommentsOfPostController = async (req: Request, res: Response<PaginatorCommentsViewType>) => {
@@ -14,14 +15,14 @@ export const findCommentsOfPostController = async (req: Request, res: Response<P
             .send()
         return
     }
-    const posts = await commentsRepository.getComments(req.query, req.params.blogId)
+    const posts = await commentsQueryRepository.getComments(req.query, req.params.blogId)
     res
         .status(CodeResponses.OK_200)
         .json(posts)
 }
 
 export const findCommentController = async (req: Request, res: Response<false | CommentType>) => {
-    const comment = await commentsRepository.findComment(req.params.id)
+    const comment = await commentsQueryRepository.findComment(req.params.id)
     if (!comment) {
         res
             .status(CodeResponses.NOT_FOUND_404)
@@ -47,6 +48,12 @@ export const deleteCommentController = async (req: Request, res: Response) => {
 }
 
 export const createCommentForPostController = async (req: Request, res: Response) => {
+    if (!req.user || !req.user.userId) {
+        res
+            .status(CodeResponses.UNAUTHORIZED_401)
+            .send()
+        return
+    }
     const post = await postsRepository.findPost(req.params.postId)
     if (!post) {
         res
@@ -54,13 +61,26 @@ export const createCommentForPostController = async (req: Request, res: Response
             .send()
         return
     }
-    const comment = await commentsRepository.createComment(req.body, req.commentatorInfo! as CommentatorInfo, req.params.postId)
+    const commentatorInfo = {
+        userId: req.user?.userId!,
+        userLogin: req.user?.userLogin!
+    }
+    const comment = await commentsRepository.createComment(req.body, commentatorInfo, req.params.postId)
+    res
+        .status(CodeResponses.CREATED_201)
+        .send(comment)
+}
 
-
-    if (!comment) {
+export const getCommentsForPostController = async (req: Request, res: Response) => {
+    const post = await postsRepository.findPost(req.params.postId)
+    if (!post) {
         res
-            .status(CodeResponses.BAD_REQUEST_400)
+            .status(CodeResponses.NOT_FOUND_404)
             .send()
         return
     }
+    const comments = await commentsQueryRepository.getComments(req.query, req.params.postId)
+    res
+        .status(CodeResponses.OK_200)
+        .send(comments)
 }

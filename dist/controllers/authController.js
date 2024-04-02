@@ -9,19 +9,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkAuthController = void 0;
+exports.getAuthInfoController = exports.checkAuthController = void 0;
 const settings_1 = require("../settings");
 const users_service_1 = require("../services/users-service");
+const jwt_service_1 = require("../application/jwt-service");
+const users_query_repository_1 = require("../repositories/users-query-repository");
 const checkAuthController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isAuth = yield users_service_1.usersService.checkCredential(req.body.loginOrEmail, req.body.password);
-    if (!isAuth) {
+    const user = yield users_service_1.usersService.checkCredential(req.body.loginOrEmail, req.body.password);
+    if (!user) {
         res
             .status(settings_1.CodeResponses.UNAUTHORIZED_401)
             .send();
         return;
     }
+    const token = yield jwt_service_1.jwtService.createJWT(user);
     res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
-        .send();
+        .status(settings_1.CodeResponses.OK_200)
+        .send(token);
 });
 exports.checkAuthController = checkAuthController;
+const getAuthInfoController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.user || !req.user.userId) {
+        res
+            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .send();
+        return;
+    }
+    const user = yield users_query_repository_1.usersQueryRepository.findUserById(req.user.userId);
+    res
+        .status(settings_1.CodeResponses.OK_200)
+        .send(user);
+});
+exports.getAuthInfoController = getAuthInfoController;

@@ -1,13 +1,9 @@
 import { ObjectId } from 'mongodb';
-
-export type CommentatorInfo = {
-  userId: string;
-  userLogin: string;
-};
+import { UserInfo } from './users-types';
 
 export type CommentType = {
   content: string;
-  commentatorInfo: CommentatorInfo;
+  commentatorInfo: UserInfo;
   createdAt: string;
   postId?: ObjectId
 };

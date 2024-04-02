@@ -40,7 +40,8 @@ exports.usersService = {
             const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(loginOrEmail);
             if (user === null)
                 return false;
-            return bcrypt_1.default.compare(password, user.passwordHash);
+            const isAuth = yield bcrypt_1.default.compare(password, user.passwordHash);
+            return isAuth ? user : false;
         });
     },
 };

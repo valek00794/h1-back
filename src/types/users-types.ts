@@ -25,3 +25,9 @@ export type PaginatorUsersViewType = {
     totalCount: number,
     items: UserViewType[]
 }
+
+export type UserInfo = {
+    userId: string,
+    userLogin: string,
+    email?: string
+  };

@@ -22,6 +22,10 @@ export const SETTINGS = {
             COMMENT_COLLECTION_NAME: process.env.COMMENT_COLLECTION_NAME || ''
         },
         mongoURI: process.env.MONGO_URL || 'mongodb://localhost:27017/sprint1localdb'
+    },
+    JWT: {
+        SECRET: process.env.JWT_SECRET || '',
+        EXPIRES_TIME: process.env.JWT_EXPIRES_TIME || '12h'
     }
 }
 

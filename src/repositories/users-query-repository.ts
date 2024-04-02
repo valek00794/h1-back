@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
+
 import { usersCollection } from "../db/db";
-import { PaginatorUsersViewType, UserDbViewType, UserViewType } from "../types/users-types";
+import { PaginatorUsersViewType, UserDbViewType, UserInfo, UserViewType } from "../types/users-types";
 import { getSanitizationQuery } from "../utils";
 
 export const usersQueryRepository = {
@@ -8,13 +9,17 @@ export const usersQueryRepository = {
         return await usersCollection.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
     },
 
-    async findUserById(id: string): Promise<UserDbViewType | false> {
+    async findUserById(id: string): Promise<UserInfo | false> {
         if (!ObjectId.isValid(id)) {
             return false
         }
         const user = await usersCollection.findOne({ _id: new ObjectId(id) })
         if (user === null) return false
-        return user
+        return {
+            email: user.email,
+            userLogin: user.login,
+            userId: id
+        }
     },
 
     async getAllUsers(query?: any): Promise<PaginatorUsersViewType> {
