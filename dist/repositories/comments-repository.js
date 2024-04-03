@@ -12,48 +12,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
-const comments_query_repository_1 = require("./comments-query-repository");
 exports.commentsRepository = {
+    createComment(newComment) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield db_1.commentsCollection.insertOne(newComment);
+            return newComment;
+        });
+    },
+    updateComment(updatedComment, commentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.commentsCollection.updateOne({ _id: new mongodb_1.ObjectId(commentId) }, { $set: updatedComment });
+        });
+    },
     deleteComment(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!mongodb_1.ObjectId.isValid(id)) {
-                return false;
-            }
-            const comment = yield db_1.commentsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
-            if (comment.deletedCount === 0) {
-                return false;
-            }
-            return true;
-        });
-    },
-    createComment(body, commentatorInfo, postId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const newComment = {
-                content: body.content,
-                postId: new mongodb_1.ObjectId(postId),
-                createdAt: new Date().toISOString(),
-                commentatorInfo: {
-                    userId: commentatorInfo.userId,
-                    userLogin: commentatorInfo.userLogin,
-                }
-            };
-            yield db_1.commentsCollection.insertOne(newComment);
-            return comments_query_repository_1.commentsQueryRepository.mapToOutput(newComment);
-        });
-    },
-    updateComment(body, comment) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const updatedComment = {
-                content: body.content,
-                postId: comment.postId,
-                createdAt: comment.createdAt,
-                commentatorInfo: {
-                    userId: comment.commentatorInfo.userId,
-                    userLogin: comment.commentatorInfo.userLogin,
-                }
-            };
-            yield db_1.commentsCollection.updateOne({ _id: comment.id }, { $set: updatedComment });
-            return true;
+            return yield db_1.commentsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
 };

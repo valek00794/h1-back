@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express"
-import { jwtService } from "../application/jwt-service"
+
+import { jwtService } from "../application/jwt/jwt-service"
 import { usersQueryRepository } from "../repositories/users-query-repository"
 import { CodeResponses } from "../settings"
 

@@ -1,11 +1,12 @@
 import { ObjectId } from "mongodb";
 
 import { usersCollection } from "../db/db";
-import { PaginatorUsersViewType, UserDbViewType, UserInfo, UserViewType } from "../types/users-types";
+import { PaginatorUsersViewType, UserDBType, UserDbViewType, UserInfo, UserViewType } from "../types/users-types";
 import { getSanitizationQuery } from "../utils";
+import { SearchQueryParametersType } from "../types/query-types";
 
 export const usersQueryRepository = {
-    async findUserByLoginOrEmail(loginOrEmail: string) {
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDBType | null> {
         return await usersCollection.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
     },
 
@@ -22,7 +23,7 @@ export const usersQueryRepository = {
         }
     },
 
-    async getAllUsers(query?: any): Promise<PaginatorUsersViewType> {
+    async getAllUsers(query?: SearchQueryParametersType): Promise<PaginatorUsersViewType> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {
             $or: [

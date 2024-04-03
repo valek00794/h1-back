@@ -12,23 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
-const users_query_repository_1 = require("./users-query-repository");
 exports.usersRepository = {
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             yield db_1.usersCollection.insertOne(user);
-            return users_query_repository_1.usersQueryRepository.mapToOutput(user);
+            return user;
         });
     },
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!mongodb_1.ObjectId.isValid(id)) {
-                return false;
-            }
-            const user = yield db_1.usersCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
-            if (user.deletedCount === 0)
-                return false;
-            return true;
+            return yield db_1.usersCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
 };

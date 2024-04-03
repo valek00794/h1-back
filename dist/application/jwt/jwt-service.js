@@ -8,25 +8,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogsRepository = void 0;
-const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
-exports.blogsRepository = {
-    createBlog(newBlog) {
+exports.jwtService = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const settings_1 = require("../../settings");
+exports.jwtService = {
+    createJWT(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.blogsCollection.insertOne(newBlog);
-            return newBlog;
+            const token = jsonwebtoken_1.default.sign({ userId: user._id }, settings_1.SETTINGS.JWT.SECRET, { expiresIn: settings_1.SETTINGS.JWT.EXPIRES_TIME });
+            return {
+                accessToken: token
+            };
         });
     },
-    updateBlog(updatedblog, id) {
+    getUserIdByToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.blogsCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: updatedblog });
+            try {
+                const res = jsonwebtoken_1.default.verify(token, settings_1.SETTINGS.JWT.SECRET);
+                if (typeof res !== 'string') {
+                    return res.userId;
+                }
+            }
+            catch (error) {
+                return null;
+            }
         });
-    },
-    deleteBlog(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.blogsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
-        });
-    },
+    }
 };

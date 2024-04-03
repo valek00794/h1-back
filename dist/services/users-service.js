@@ -16,6 +16,7 @@ exports.usersService = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const users_repository_1 = require("../repositories/users-repository");
+const mongodb_1 = require("mongodb");
 exports.usersService = {
     createUser(login, email, password) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -27,7 +28,8 @@ exports.usersService = {
                 passwordHash,
                 createdAt: new Date().toISOString()
             };
-            return users_repository_1.usersRepository.createUser(newUser);
+            const createdUser = yield users_repository_1.usersRepository.createUser(newUser);
+            return users_query_repository_1.usersQueryRepository.mapToOutput(createdUser);
         });
     },
     _generateHash(password, salt) {
@@ -42,6 +44,17 @@ exports.usersService = {
                 return false;
             const isAuth = yield bcrypt_1.default.compare(password, user.passwordHash);
             return isAuth ? user : false;
+        });
+    },
+    deleteUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!mongodb_1.ObjectId.isValid(id)) {
+                return false;
+            }
+            const res = yield users_repository_1.usersRepository.deleteUserById(id);
+            if (res.deletedCount === 0)
+                return false;
+            return true;
         });
     },
 };

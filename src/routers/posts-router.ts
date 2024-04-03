@@ -15,6 +15,5 @@ postsRouter.get('/:id', findPostController)
 postsRouter.post('/', authMiddleware, postsInputValidation, postsBlogIdInputValidation, inputValidationMiddleware, createPostController)
 postsRouter.put('/:id', authMiddleware, postsInputValidation, postsBlogIdInputValidation, inputValidationMiddleware, updatePostController)
 postsRouter.delete('/:id', authMiddleware, deletePostController)
-
 postsRouter.post('/:postId/comments', authJWTMiddleware, commentInputValidation, inputValidationMiddleware, createCommentForPostController)
 postsRouter.get('/:postId/comments', getCommentsForPostController)

@@ -2,20 +2,22 @@ import { Request, Response } from 'express'
 
 import { CodeResponses } from '../settings';
 import { CommentType, PaginatorCommentsViewType } from '../types/comments-types';
-import { commentsRepository } from '../repositories/comments-repository';
-import { postsRepository } from '../repositories/posts-repository';
 import { commentsQueryRepository } from '../repositories/comments-query-repository';
+import { postsQueryRepository } from '../repositories/posts-query-repository';
+import { SearchQueryParametersType } from '../types/query-types';
+import { commentsService } from '../services/comments-service';
 
 
 export const findCommentsOfPostController = async (req: Request, res: Response<PaginatorCommentsViewType>) => {
-    const post = await postsRepository.findPost(req.params.id)
+    const query = req.query as unknown as SearchQueryParametersType;
+    const post = await postsQueryRepository.findPost(req.params.id)
     if (!post) {
         res
             .status(CodeResponses.NOT_FOUND_404)
             .send()
         return
     }
-    const comments = await commentsQueryRepository.getComments(req.query, req.params.blogId)
+    const comments = await commentsQueryRepository.getComments(query, req.params.blogId)
     res
         .status(CodeResponses.OK_200)
         .json(comments)
@@ -34,7 +36,7 @@ export const findCommentController = async (req: Request, res: Response<false | 
         .json(comment)
 }
 
-export const deleteCommentController = async (req: Request, res: Response) => {
+export const deleteCommentController = async (req: Request, res: Response<boolean>) => {
     const commentatorInfo = {
         userId: req.user?.userId!,
         userLogin: req.user?.userLogin!
@@ -54,7 +56,7 @@ export const deleteCommentController = async (req: Request, res: Response) => {
         return
     }
 
-    await commentsRepository.deleteComment(req.params.commentId)
+    await commentsService.deleteComment(req.params.commentId)
     res
         .status(CodeResponses.NO_CONTENT_204)
         .send()
@@ -67,7 +69,7 @@ export const createCommentForPostController = async (req: Request, res: Response
             .send()
         return
     }
-    const post = await postsRepository.findPost(req.params.postId)
+    const post = await postsQueryRepository.findPost(req.params.postId)
     if (!post) {
         res
             .status(CodeResponses.NOT_FOUND_404)
@@ -78,7 +80,7 @@ export const createCommentForPostController = async (req: Request, res: Response
         userId: req.user?.userId!,
         userLogin: req.user?.userLogin!
     }
-    const comment = await commentsRepository.createComment(req.body, commentatorInfo, req.params.postId)
+    const comment = await commentsService.createComment(req.body, commentatorInfo, req.params.postId)
     res
         .status(CodeResponses.CREATED_201)
         .send(comment)
@@ -109,21 +111,22 @@ export const updateCommentForPostController = async (req: Request, res: Response
             .send()
         return
     }
-    await commentsRepository.updateComment(req.body, comment)
+    await commentsService.updateComment(req.body, comment)
     res
         .status(CodeResponses.NO_CONTENT_204)
         .send()
 }
 
 export const getCommentsForPostController = async (req: Request, res: Response<PaginatorCommentsViewType>) => {
-    const post = await postsRepository.findPost(req.params.postId)
+    const query = req.query as unknown as SearchQueryParametersType;
+    const post = await postsQueryRepository.findPost(req.params.postId)
     if (!post) {
         res
             .status(CodeResponses.NOT_FOUND_404)
             .send()
         return
     }
-    const comments = await commentsQueryRepository.getComments(req.query, req.params.postId)
+    const comments = await commentsQueryRepository.getComments(query, req.params.postId)
     res
         .status(CodeResponses.OK_200)
         .send(comments)

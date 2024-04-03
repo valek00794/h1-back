@@ -1,4 +1,5 @@
 import { body } from 'express-validator';
+
 import { usersQueryRepository } from '../repositories/users-query-repository';
 
 const VALIDATE_PHARAMS = {
