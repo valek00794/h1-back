@@ -12,15 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBlogController = exports.createBlogController = exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
 const blogs_repository_1 = require("../repositories/blogs-repository");
 const settings_1 = require("../settings");
+const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 const getBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blogs = yield blogs_repository_1.blogsRepository.getBlogs(req.query);
+    const query = req.query;
+    const blogs = yield blogs_query_repository_1.blogsQueryRepository.getBlogs(query);
     res
         .status(settings_1.CodeResponses.OK_200)
         .json(blogs);
 });
 exports.getBlogsController = getBlogsController;
 const findBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blog = yield blogs_repository_1.blogsRepository.findBlog(req.params.id);
+    const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(req.params.id);
     if (!blog) {
         res
             .status(settings_1.CodeResponses.NOT_FOUND_404)

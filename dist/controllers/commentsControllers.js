@@ -12,17 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCommentsForPostController = exports.updateCommentForPostController = exports.createCommentForPostController = exports.deleteCommentController = exports.findCommentController = exports.findCommentsOfPostController = void 0;
 const settings_1 = require("../settings");
 const comments_repository_1 = require("../repositories/comments-repository");
-const posts_repository_1 = require("../repositories/posts-repository");
 const comments_query_repository_1 = require("../repositories/comments-query-repository");
+const posts_query_repository_1 = require("../repositories/posts-query-repository");
 const findCommentsOfPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield posts_repository_1.postsRepository.findPost(req.params.id);
+    const query = req.query;
+    const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.id);
     if (!post) {
         res
             .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
-    const comments = yield comments_query_repository_1.commentsQueryRepository.getComments(req.query, req.params.blogId);
+    const comments = yield comments_query_repository_1.commentsQueryRepository.getComments(query, req.params.blogId);
     res
         .status(settings_1.CodeResponses.OK_200)
         .json(comments);
@@ -75,7 +76,7 @@ const createCommentForPostController = (req, res) => __awaiter(void 0, void 0, v
             .send();
         return;
     }
-    const post = yield posts_repository_1.postsRepository.findPost(req.params.postId);
+    const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.postId);
     if (!post) {
         res
             .status(settings_1.CodeResponses.NOT_FOUND_404)
@@ -125,14 +126,15 @@ const updateCommentForPostController = (req, res) => __awaiter(void 0, void 0, v
 });
 exports.updateCommentForPostController = updateCommentForPostController;
 const getCommentsForPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield posts_repository_1.postsRepository.findPost(req.params.postId);
+    const query = req.query;
+    const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.postId);
     if (!post) {
         res
             .status(settings_1.CodeResponses.NOT_FOUND_404)
             .send();
         return;
     }
-    const comments = yield comments_query_repository_1.commentsQueryRepository.getComments(req.query, req.params.postId);
+    const comments = yield comments_query_repository_1.commentsQueryRepository.getComments(query, req.params.postId);
     res
         .status(settings_1.CodeResponses.OK_200)
         .send(comments);

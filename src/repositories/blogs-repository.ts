@@ -1,43 +1,11 @@
 import { ObjectId } from 'mongodb'
 
 import { blogsCollection } from '../db/db'
-import { BlogDBType, BlogType, PaginatorBlogViewType } from '../types/blogs-types'
-import { getSanitizationQuery } from '../utils'
+import { BlogType, BlogViewType } from '../types/blogs-types'
+import { blogsQueryRepository } from './blogs-query-repository'
 
 export const blogsRepository = {
-    async getBlogs(query?: any): Promise<PaginatorBlogViewType> {
-        const sanitizationQuery = getSanitizationQuery(query)
-        const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
-
-        const blogs = await blogsCollection
-            .find(findOptions)
-            .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
-            .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
-            .limit(sanitizationQuery.pageSize)
-            .toArray()
-
-        const blogsCount = await blogsCollection.countDocuments(findOptions)
-
-        return {
-            pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
-            page: sanitizationQuery.pageNumber,
-            pageSize: sanitizationQuery.pageSize,
-            totalCount: blogsCount,
-            items: blogs.map(blog => this.mapToOutput(blog))
-        }
-    },
-    async findBlog(id: string) {
-        if (!ObjectId.isValid(id)) {
-            return false
-        }
-        const blog = await blogsCollection.findOne({ _id: new ObjectId(id) })
-        if (blog === null) {
-            return false
-        }
-        return this.mapToOutput(blog)
-    },
-
-    async deleteBlog(id: string) {
+    async deleteBlog(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
@@ -47,7 +15,7 @@ export const blogsRepository = {
         }
         return true
     },
-    async createBlog(body: BlogType) {
+    async createBlog(body: BlogType): Promise<BlogViewType> {
         const newBlog: BlogType = {
             name: body.name,
             description: body.description,
@@ -57,10 +25,10 @@ export const blogsRepository = {
         }
 
         await blogsCollection.insertOne(newBlog)
-        return this.mapToOutput(newBlog)
+        return blogsQueryRepository.mapToOutput(newBlog) //обычный repo не должен мапить данные
     },
-    async updateBlog(body: BlogType, id: string) {
-        const blog = await this.findBlog(id)
+    async updateBlog(body: BlogType, id: string): Promise<boolean> {
+        const blog = await blogsQueryRepository.findBlog(id)
         if (!blog) {
             return false
         }
@@ -73,15 +41,5 @@ export const blogsRepository = {
         }
         await blogsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedblog })
         return true
-    },
-    mapToOutput(blog: BlogDBType) {
-        return {
-            id: blog._id,
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt: blog.createdAt,
-            isMembership: blog.isMembership,
-        }
     },
 }

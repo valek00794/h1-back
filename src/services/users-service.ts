@@ -17,11 +17,11 @@ export const usersService = {
         return usersRepository.createUser(newUser)
     },
 
-    async _generateHash(password: string, salt: string) {
+    async _generateHash(password: string, salt: string): Promise<string> {
         return await bcrypt.hash(password, salt)
     },
 
-    async checkCredential(loginOrEmail: string, password: string) {
+    async checkCredential(loginOrEmail: string, password: string): Promise<false | UserDBType> {
         const user = await usersQueryRepository.findUserByLoginOrEmail(loginOrEmail)
         if (user === null) return false
         const isAuth = await bcrypt.compare(password, user.passwordHash)

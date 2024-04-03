@@ -8,27 +8,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersRepository = void 0;
-const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
-const users_query_repository_1 = require("./users-query-repository");
-exports.usersRepository = {
-    createUser(user) {
+exports.jwtService = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const settings_1 = require("../../settings");
+exports.jwtService = {
+    createJWT(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.usersCollection.insertOne(user);
-            return users_query_repository_1.usersQueryRepository.mapToOutput(user); //обычный repo не должен мапить данные
+            const token = jsonwebtoken_1.default.sign({ userId: user._id }, settings_1.SETTINGS.JWT.SECRET, { expiresIn: settings_1.SETTINGS.JWT.EXPIRES_TIME });
+            return {
+                accessToken: token
+            };
         });
     },
-    deleteUserById(id) {
+    getUserIdByToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!mongodb_1.ObjectId.isValid(id)) {
-                return false;
+            try {
+                const res = jsonwebtoken_1.default.verify(token, settings_1.SETTINGS.JWT.SECRET);
+                if (typeof res !== 'string') {
+                    return res.userId;
+                }
             }
-            const user = yield db_1.usersCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
-            if (user.deletedCount === 0)
-                return false;
-            return true;
+            catch (error) {
+                return null;
+            }
         });
-    },
+    }
 };

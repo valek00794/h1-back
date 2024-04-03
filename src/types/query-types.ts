@@ -5,7 +5,7 @@ export type SearchQueryParametersType = {
     pageSize: number,
     sortBy: string,
     sortDirection: SortDirection,
-    searchNameTerm: string | null,
-    searchLoginTerm: string | null,
-    searchEmailTerm: string | null,
+    searchNameTerm?: string | null,
+    searchLoginTerm?: string | null,
+    searchEmailTerm?: string | null,
 }

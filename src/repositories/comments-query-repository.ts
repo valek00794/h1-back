@@ -1,11 +1,12 @@
 import { ObjectId } from 'mongodb'
 import { commentsCollection } from '../db/db'
-import { CommentDbType, PaginatorCommentsViewType } from '../types/comments-types'
+import { CommentDbType, CommentViewType, PaginatorCommentsViewType } from '../types/comments-types'
 import { getSanitizationQuery } from '../utils'
+import { SearchQueryParametersType } from '../types/query-types'
 
 
 export const commentsQueryRepository = {
-    async getComments(query: any, postId?: string): Promise<PaginatorCommentsViewType> {
+    async getComments(query?: SearchQueryParametersType, postId?: string): Promise<PaginatorCommentsViewType> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
         if (postId) {
@@ -30,7 +31,7 @@ export const commentsQueryRepository = {
         }
     },
 
-    async findComment(id: string) {
+    async findComment(id: string): Promise<CommentViewType | false> {
         if (!ObjectId.isValid(id)) {
             return false
         }
@@ -40,7 +41,7 @@ export const commentsQueryRepository = {
         }
         return this.mapToOutput(comment!)
     },
-    mapToOutput(comment: CommentDbType) {
+    mapToOutput(comment: CommentDbType): CommentViewType {
         return {
             id: comment._id!,
             content: comment.content,

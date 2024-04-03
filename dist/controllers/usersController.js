@@ -22,7 +22,8 @@ const createUserController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createUserController = createUserController;
 const getUsersController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield users_query_repository_1.usersQueryRepository.getAllUsers(req.query);
+    const query = req.query;
+    const users = yield users_query_repository_1.usersQueryRepository.getAllUsers(query);
     res
         .status(settings_1.CodeResponses.OK_200)
         .json(users);

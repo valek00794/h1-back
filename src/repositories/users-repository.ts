@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb";
+
 import { usersCollection } from "../db/db";
-import { UserDBType } from "../types/users-types";
+import { UserDBType, UserViewType } from "../types/users-types";
 import { usersQueryRepository } from "./users-query-repository";
 
-
 export const usersRepository = {
-    async createUser(user: UserDBType) {
+    async createUser(user: UserDBType): Promise<UserViewType> {
         await usersCollection.insertOne(user)
-        return usersQueryRepository.mapToOutput(user)
+        return usersQueryRepository.mapToOutput(user) //обычный repo не должен мапить данные
     },
 
     async deleteUserById(id: string): Promise<boolean> {

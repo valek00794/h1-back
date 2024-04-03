@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthInfoController = exports.checkAuthController = void 0;
 const settings_1 = require("../settings");
 const users_service_1 = require("../services/users-service");
-const jwt_service_1 = require("../application/jwt-service");
+const jwt_service_1 = require("../application/jwt/jwt-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const checkAuthController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_service_1.usersService.checkCredential(req.body.loginOrEmail, req.body.password);

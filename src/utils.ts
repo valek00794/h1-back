@@ -1,4 +1,5 @@
 import { SortDirection } from "mongodb"
+
 import { SearchQueryParametersType } from "./types/query-types"
 
 const defaultSearchQueryParameters = {
@@ -11,8 +12,7 @@ const defaultSearchQueryParameters = {
     searchNameTerm: null,
 }
 
-
-export const getSanitizationQuery = (query?: SearchQueryParametersType) => {
+export const getSanitizationQuery = (query?: SearchQueryParametersType) : SearchQueryParametersType => {
     return {
         pageNumber: !isNaN(query?.pageNumber!) ? +query!.pageNumber : defaultSearchQueryParameters.pageNumber,
         pageSize:  !isNaN(query?.pageSize!) ? +query!.pageSize : defaultSearchQueryParameters.pageSize,

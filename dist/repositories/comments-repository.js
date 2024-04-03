@@ -38,7 +38,7 @@ exports.commentsRepository = {
                 }
             };
             yield db_1.commentsCollection.insertOne(newComment);
-            return comments_query_repository_1.commentsQueryRepository.mapToOutput(newComment);
+            return comments_query_repository_1.commentsQueryRepository.mapToOutput(newComment); //обычный repo не должен мапить данные
         });
     },
     updateComment(body, comment) {

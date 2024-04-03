@@ -6,7 +6,7 @@ import { UserInfo } from '../types/users-types'
 import { commentsQueryRepository } from './comments-query-repository'
 
 export const commentsRepository = {
-    async deleteComment(id: string) {
+    async deleteComment(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
@@ -17,7 +17,7 @@ export const commentsRepository = {
         return true
     },
 
-    async createComment(body: CommentInputType, commentatorInfo: UserInfo, postId?: string) {
+    async createComment(body: CommentInputType, commentatorInfo: UserInfo, postId?: string): Promise<CommentViewType> {
         const newComment: CommentDbType = {
             content: body.content,
             postId: new ObjectId(postId),
@@ -28,10 +28,10 @@ export const commentsRepository = {
             }
         }
         await commentsCollection.insertOne(newComment)
-        return commentsQueryRepository.mapToOutput(newComment)
+        return commentsQueryRepository.mapToOutput(newComment) //обычный repo не должен мапить данные
     },
 
-    async updateComment(body: CommentInputType, comment: CommentViewType) {
+    async updateComment(body: CommentInputType, comment: CommentViewType): Promise<boolean> {
         const updatedComment: CommentDbType = {
             content: body.content,
             postId: comment.postId,

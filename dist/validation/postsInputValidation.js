@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsBlogIdInputValidation = exports.postsInputValidation = void 0;
 const express_validator_1 = require("express-validator");
-const blogs_repository_1 = require("../repositories/blogs-repository");
+const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 const VALIDATE_PHARAMS = {
     titleMaxLength: 30,
     shortDescriptionMaxLength: 100,
@@ -32,7 +32,7 @@ exports.postsBlogIdInputValidation = [
     (0, express_validator_1.body)('blogId').trim()
         .notEmpty().withMessage('The field is required'),
     (0, express_validator_1.body)('blogId').custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const blogs = yield blogs_repository_1.blogsRepository.getBlogs();
+        const blogs = yield blogs_query_repository_1.blogsQueryRepository.getBlogs();
         const blogIdIncludes = blogs.items.findIndex(el => { var _a; return ((_a = el.id) === null || _a === void 0 ? void 0 : _a.toString()) === value; });
         if (blogIdIncludes === -1) {
             throw new Error('Blog not found');
