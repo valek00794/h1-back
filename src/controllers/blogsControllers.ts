@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 
-import { blogsRepository } from '../repositories/blogs-repository';
 import { BlogViewType, PaginatorBlogViewType } from '../types/blogs-types';
 import { CodeResponses } from '../settings';
 import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
+import { blogsService } from '../services/blogs-service';
 
 export const getBlogsController = async (req: Request, res: Response<PaginatorBlogViewType>) => {
     const query = req.query as unknown as SearchQueryParametersType;
@@ -29,7 +29,7 @@ export const findBlogController = async (req: Request, res: Response<false | Blo
 }
 
 export const deleteBlogController = async (req: Request, res: Response<boolean>) => {
-    const blogIsDeleted = await blogsRepository.deleteBlog(req.params.id)
+    const blogIsDeleted = await blogsService.deleteBlog(req.params.id)
     if (!blogIsDeleted) {
         res
             .status(CodeResponses.NOT_FOUND_404)
@@ -42,14 +42,14 @@ export const deleteBlogController = async (req: Request, res: Response<boolean>)
 }
 
 export const createBlogController = async (req: Request, res: Response<BlogViewType>) => {
-    const newBlog = await blogsRepository.createBlog(req.body)
+    const newBlog = await blogsService.createBlog(req.body)
     res
         .status(CodeResponses.CREATED_201)
         .json(newBlog)
 }
 
 export const updateBlogController = async (req: Request, res: Response<boolean>) => {
-    const updatedBlog = await blogsRepository.updateBlog(req.body, req.params.id)
+    const updatedBlog = await blogsService.updateBlog(req.body, req.params.id)
     if (!updatedBlog) {
         res
             .status(CodeResponses.NOT_FOUND_404)

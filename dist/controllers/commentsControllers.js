@@ -11,9 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCommentsForPostController = exports.updateCommentForPostController = exports.createCommentForPostController = exports.deleteCommentController = exports.findCommentController = exports.findCommentsOfPostController = void 0;
 const settings_1 = require("../settings");
-const comments_repository_1 = require("../repositories/comments-repository");
 const comments_query_repository_1 = require("../repositories/comments-query-repository");
 const posts_query_repository_1 = require("../repositories/posts-query-repository");
+const comments_service_1 = require("../services/comments-service");
 const findCommentsOfPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.id);
@@ -62,7 +62,7 @@ const deleteCommentController = (req, res) => __awaiter(void 0, void 0, void 0, 
             .send();
         return;
     }
-    yield comments_repository_1.commentsRepository.deleteComment(req.params.commentId);
+    yield comments_service_1.commentsService.deleteComment(req.params.commentId);
     res
         .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
@@ -87,7 +87,7 @@ const createCommentForPostController = (req, res) => __awaiter(void 0, void 0, v
         userId: (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId,
         userLogin: (_d = req.user) === null || _d === void 0 ? void 0 : _d.userLogin
     };
-    const comment = yield comments_repository_1.commentsRepository.createComment(req.body, commentatorInfo, req.params.postId);
+    const comment = yield comments_service_1.commentsService.createComment(req.body, commentatorInfo, req.params.postId);
     res
         .status(settings_1.CodeResponses.CREATED_201)
         .send(comment);
@@ -119,7 +119,7 @@ const updateCommentForPostController = (req, res) => __awaiter(void 0, void 0, v
             .send();
         return;
     }
-    yield comments_repository_1.commentsRepository.updateComment(req.body, comment);
+    yield comments_service_1.commentsService.updateComment(req.body, comment);
     res
         .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();

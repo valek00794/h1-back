@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBlogController = exports.createBlogController = exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
-const blogs_repository_1 = require("../repositories/blogs-repository");
 const settings_1 = require("../settings");
 const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
+const blogs_service_1 = require("../services/blogs-service");
 const getBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const blogs = yield blogs_query_repository_1.blogsQueryRepository.getBlogs(query);
@@ -35,7 +35,7 @@ const findBlogController = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.findBlogController = findBlogController;
 const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const blogIsDeleted = yield blogs_repository_1.blogsRepository.deleteBlog(req.params.id);
+    const blogIsDeleted = yield blogs_service_1.blogsService.deleteBlog(req.params.id);
     if (!blogIsDeleted) {
         res
             .status(settings_1.CodeResponses.NOT_FOUND_404)
@@ -48,14 +48,14 @@ const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.deleteBlogController = deleteBlogController;
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newBlog = yield blogs_repository_1.blogsRepository.createBlog(req.body);
+    const newBlog = yield blogs_service_1.blogsService.createBlog(req.body);
     res
         .status(settings_1.CodeResponses.CREATED_201)
         .json(newBlog);
 });
 exports.createBlogController = createBlogController;
 const updateBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedBlog = yield blogs_repository_1.blogsRepository.updateBlog(req.body, req.params.id);
+    const updatedBlog = yield blogs_service_1.blogsService.updateBlog(req.body, req.params.id);
     if (!updatedBlog) {
         res
             .status(settings_1.CodeResponses.NOT_FOUND_404)

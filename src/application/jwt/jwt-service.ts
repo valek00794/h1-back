@@ -10,9 +10,9 @@ export const jwtService = {
         return {
             accessToken: token
         }
-    }
-    ,
-    async getUserIdByToken(token: string){
+    },
+
+    async getUserIdByToken(token: string) {
         try {
             const res = jwt.verify(token, SETTINGS.JWT.SECRET)
             if (typeof res !== 'string') {

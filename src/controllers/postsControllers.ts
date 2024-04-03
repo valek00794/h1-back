@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 
 import { PaginatorPostViewType, PostViewType } from '../types/posts-types'
-import { postsRepository } from '../repositories/posts-repository';
 import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { CodeResponses } from '../settings';
 import { SearchQueryParametersType } from '../types/query-types';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
+import { postsService } from '../services/posts-service';
 
 export const getPostsController = async (req: Request, res: Response<PaginatorPostViewType>) => {
     const query = req.query as unknown as SearchQueryParametersType;
@@ -44,7 +44,7 @@ export const findPostsOfBlogController = async (req: Request, res: Response<Pagi
 }
 
 export const deletePostController = async (req: Request, res: Response<boolean>) => {
-    const postIsDeleted = await postsRepository.deletePost(req.params.id)
+    const postIsDeleted = await postsService.deletePost(req.params.id)
     if (!postIsDeleted) {
         res
             .status(CodeResponses.NOT_FOUND_404)
@@ -57,7 +57,7 @@ export const deletePostController = async (req: Request, res: Response<boolean>)
 }
 
 export const createPostController = async (req: Request, res: Response<PostViewType>) => {
-    const newPost = await postsRepository.createPost(req.body)
+    const newPost = await postsService.createPost(req.body)
     res
         .status(CodeResponses.CREATED_201)
         .json(newPost)
@@ -71,7 +71,7 @@ export const createPostForBlogController = async (req: Request, res: Response<Po
             .send()
         return
     }
-    const newPost = await postsRepository.createPost(req.body, req.params.blogId)
+    const newPost = await postsService.createPost(req.body, req.params.blogId)
 
     res
         .status(CodeResponses.CREATED_201)
@@ -79,7 +79,7 @@ export const createPostForBlogController = async (req: Request, res: Response<Po
 }
 
 export const updatePostController = async (req: Request, res: Response<boolean>) => {
-    const isUpdatedPost = await postsRepository.updatePost(req.body, req.params.id)
+    const isUpdatedPost = await postsService.updatePost(req.body, req.params.id)
     if (!isUpdatedPost) {
         res
             .status(CodeResponses.NOT_FOUND_404)

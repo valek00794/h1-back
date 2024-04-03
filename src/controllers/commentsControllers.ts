@@ -2,10 +2,10 @@ import { Request, Response } from 'express'
 
 import { CodeResponses } from '../settings';
 import { CommentType, PaginatorCommentsViewType } from '../types/comments-types';
-import { commentsRepository } from '../repositories/comments-repository';
 import { commentsQueryRepository } from '../repositories/comments-query-repository';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
+import { commentsService } from '../services/comments-service';
 
 
 export const findCommentsOfPostController = async (req: Request, res: Response<PaginatorCommentsViewType>) => {
@@ -56,7 +56,7 @@ export const deleteCommentController = async (req: Request, res: Response<boolea
         return
     }
 
-    await commentsRepository.deleteComment(req.params.commentId)
+    await commentsService.deleteComment(req.params.commentId)
     res
         .status(CodeResponses.NO_CONTENT_204)
         .send()
@@ -80,7 +80,7 @@ export const createCommentForPostController = async (req: Request, res: Response
         userId: req.user?.userId!,
         userLogin: req.user?.userLogin!
     }
-    const comment = await commentsRepository.createComment(req.body, commentatorInfo, req.params.postId)
+    const comment = await commentsService.createComment(req.body, commentatorInfo, req.params.postId)
     res
         .status(CodeResponses.CREATED_201)
         .send(comment)
@@ -111,7 +111,7 @@ export const updateCommentForPostController = async (req: Request, res: Response
             .send()
         return
     }
-    await commentsRepository.updateComment(req.body, comment)
+    await commentsService.updateComment(req.body, comment)
     res
         .status(CodeResponses.NO_CONTENT_204)
         .send()

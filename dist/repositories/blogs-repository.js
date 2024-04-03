@@ -12,48 +12,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
-const blogs_query_repository_1 = require("./blogs-query-repository");
 exports.blogsRepository = {
+    createBlog(newBlog) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield db_1.blogsCollection.insertOne(newBlog);
+            return newBlog;
+        });
+    },
+    updateBlog(updatedblog, id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.blogsCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: updatedblog });
+        });
+    },
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!mongodb_1.ObjectId.isValid(id)) {
-                return false;
-            }
-            const blog = yield db_1.blogsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
-            if (blog.deletedCount === 0) {
-                return false;
-            }
-            return true;
-        });
-    },
-    createBlog(body) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const newBlog = {
-                name: body.name,
-                description: body.description,
-                websiteUrl: body.websiteUrl,
-                createdAt: new Date().toISOString(),
-                isMembership: false
-            };
-            yield db_1.blogsCollection.insertOne(newBlog);
-            return blogs_query_repository_1.blogsQueryRepository.mapToOutput(newBlog); //обычный repo не должен мапить данные
-        });
-    },
-    updateBlog(body, id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(id);
-            if (!blog) {
-                return false;
-            }
-            const updatedblog = {
-                name: body.name,
-                description: body.description,
-                websiteUrl: body.websiteUrl,
-                createdAt: blog.createdAt,
-                isMembership: false,
-            };
-            yield db_1.blogsCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: updatedblog });
-            return true;
+            return yield db_1.blogsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
 };
