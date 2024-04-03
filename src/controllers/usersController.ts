@@ -23,7 +23,7 @@ export const getUsersController = async (req: Request, res: Response<PaginatorUs
 }
 
 export const deleteUserController = async (req: Request, res: Response<boolean>) => {
-    const userIsDeleted = await usersRepository.deleteUserById(req.params.id)
+    const userIsDeleted = await usersService.deleteUserById(req.params.id)
     if (!userIsDeleted) {
         res
             .status(CodeResponses.NOT_FOUND_404)
