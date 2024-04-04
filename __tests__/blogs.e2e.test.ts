@@ -1,6 +1,6 @@
 import request from 'supertest'
 import dotenv from 'dotenv'
-import { MongoClient } from 'mongodb'
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { app } from '../src/app'
 import { CodeResponses, SETTINGS } from '../src/settings'
@@ -30,16 +30,16 @@ const newIncorrectBlog = {
 const buff = Buffer.from(SETTINGS.ADMIN_AUTH, 'utf8')
 const codedAuth = buff.toString('base64')
 
-describe('/blogs', () => {
-    const client = new MongoClient(SETTINGS.DB.mongoURI)
 
+describe('/blogs', () => {
     beforeAll(async () => {
-        await client.connect()
+        const mongod = await MongoMemoryServer.create();
+        mongod.getUri();
     })
 
     afterAll(async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
-        await client.close()
+
     })
     beforeEach(async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
