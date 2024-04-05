@@ -3,7 +3,6 @@ import { Request, Response } from 'express'
 import { CodeResponses } from '../settings';
 import { usersService } from '../services/users-service';
 import { usersQueryRepository } from '../repositories/users-query-repository';
-import { usersRepository } from '../repositories/users-repository';
 import { SearchQueryParametersType } from '../types/query-types';
 import { PaginatorUsersViewType, UserViewType } from '../types/users-types';
 

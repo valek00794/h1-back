@@ -1,6 +1,6 @@
 import request from 'supertest'
 import dotenv from 'dotenv'
-import { MongoClient } from 'mongodb'
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { app } from '../src/app'
 import { CodeResponses, SETTINGS } from '../src/settings'
@@ -43,16 +43,14 @@ const newCorrectUser2 = {
 }
 
 describe('/users', () => {
-    const client = new MongoClient(SETTINGS.DB.mongoURI)
 
     beforeAll(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
-        await client.connect()
+        const mongod = await MongoMemoryServer.create();
+        mongod.getUri();
     })
 
     afterAll(async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
-        await client.close()
     })
 
     beforeEach(async () => {

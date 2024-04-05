@@ -1,6 +1,6 @@
 import request from 'supertest'
 import dotenv from 'dotenv'
-import { MongoClient } from 'mongodb'
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { app } from '../src/app'
 import { CodeResponses, SETTINGS } from '../src/settings'
@@ -22,16 +22,14 @@ const newCorrectUser = {
 }
 
 describe('/login', () => {
-    const client = new MongoClient(SETTINGS.DB.mongoURI)
 
     beforeAll(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
-        await client.connect()
+        const mongod = await MongoMemoryServer.create();
+        mongod.getUri();
     })
 
     afterAll(async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
-        await client.close()
     })
     beforeEach(async () => {
         await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
@@ -84,22 +82,42 @@ describe('/login', () => {
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
             .expect(CodeResponses.CREATED_201)
-        await request(app)
+        const res = await request(app)
             .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.email, password: newCorrectUser.password })
-            .expect(CodeResponses.NO_CONTENT_204)
+            .expect(CodeResponses.OK_200)
+
+        expect(res.body).toEqual({
+            accessToken: expect.any(String)
+        })
+
+        const decodeToken = Buffer.from(res.body.accessToken, 'base64').toString('utf8')
+        expect(decodeToken).toContain('{"alg":"HS256","typ":"JWT"}');
+        expect(decodeToken).toContain('userId');
+        expect(decodeToken).toContain('iat');
+        expect(decodeToken).toContain('exp');
 
     })
 
-    it('5. - POST /login does auth the User with correct data ;ogin+password', async function () {
+    it('5. - POST /login does auth the User with correct data login+password', async function () {
         await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
             .expect(CodeResponses.CREATED_201)
-        await request(app)
+        const res = await request(app)
             .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.login, password: newCorrectUser.password })
-            .expect(CodeResponses.NO_CONTENT_204)
+            .expect(CodeResponses.OK_200)
+        
+        expect(res.body).toEqual({
+            accessToken: expect.any(String)
+        })
+
+        const decodeToken = Buffer.from(res.body.accessToken, 'base64').toString('utf8')
+        expect(decodeToken).toContain('{"alg":"HS256","typ":"JWT"}');
+        expect(decodeToken).toContain('userId');
+        expect(decodeToken).toContain('iat');
+        expect(decodeToken).toContain('exp');
     })
 })
