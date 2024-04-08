@@ -50,3 +50,6 @@ export const usersInputValidation = [
             }
         })
 ]
+
+export const emailInputValidation = body('email').trim()
+    .notEmpty()

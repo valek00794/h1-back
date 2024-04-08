@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersInputValidation = void 0;
+exports.emailInputValidation = exports.usersInputValidation = void 0;
 const express_validator_1 = require("express-validator");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const VALIDATE_PHARAMS = {
@@ -61,3 +61,5 @@ exports.usersInputValidation = [
         }
     }))
 ];
+exports.emailInputValidation = (0, express_validator_1.body)('email').trim()
+    .notEmpty();
