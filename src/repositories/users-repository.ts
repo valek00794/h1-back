@@ -1,14 +1,24 @@
-import { DeleteResult, ObjectId } from "mongodb";
+import { DeleteResult, ObjectId, UpdateResult } from "mongodb";
 
-import { usersCollection } from "../db/db";
-import { UserDBType } from "../types/users-types";
+import { usersCollection, usersEmailConfirmationCollection } from "../db/db";
+import { UserDBType, UserEmailConfirmationInfo, UserSignUpType } from "../types/users-types";
 
 export const usersRepository = {
-    async createUser(user: UserDBType): Promise<UserDBType> {
-        await usersCollection.insertOne(user)
-        return user
+    async createUser(signUpData: UserSignUpType): Promise<UserDBType> {
+        const newUser = await usersCollection.insertOne(signUpData.user)
+        if (signUpData.emailConfirmation) {
+            await usersEmailConfirmationCollection.insertOne({ userId: newUser.insertedId.toString(), ...signUpData.emailConfirmation })
+        }
+        return signUpData.user
     },
     async deleteUserById(id: string): Promise<DeleteResult> {
+        await usersEmailConfirmationCollection.deleteOne({ userId: id })
         return await usersCollection.deleteOne({ _id: new ObjectId(id) })
+    },
+    async updateConfirmationInfo(userId: ObjectId, emailConfirmationInfo: UserEmailConfirmationInfo) {
+        return await usersEmailConfirmationCollection.updateOne({ userId: userId.toString() }, { $set: { ...emailConfirmationInfo } })
+    },
+    async updateConfirmation(_id: ObjectId): Promise<UpdateResult<UserEmailConfirmationInfo>> {
+        return await usersEmailConfirmationCollection.updateOne({ _id }, { $set: { isConfirmed: true } })
     },
 }

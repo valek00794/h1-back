@@ -6,7 +6,7 @@ import { usersQueryRepository } from '../repositories/users-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
 import { PaginatorUsersViewType, UserViewType } from '../types/users-types';
 
-export const createUserController = async (req: Request, res: Response<UserViewType>)=> {
+export const createUserController = async (req: Request, res: Response<UserViewType| null>)=> {
     const user = await usersService.createUser(req.body.login, req.body.email, req.body.password)
     res
         .status(CodeResponses.CREATED_201)

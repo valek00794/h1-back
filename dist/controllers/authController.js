@@ -14,7 +14,6 @@ const settings_1 = require("../settings");
 const users_service_1 = require("../services/users-service");
 const jwt_service_1 = require("../adapters/jwt/jwt-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
-const email_adatper_1 = require("../adapters/email-adatper");
 const checkAuthController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_service_1.usersService.checkCredential(req.body.loginOrEmail, req.body.password);
     if (!user) {
@@ -37,25 +36,45 @@ const getAuthInfoController = (req, res) => __awaiter(void 0, void 0, void 0, fu
         return;
     }
     const user = yield users_query_repository_1.usersQueryRepository.findUserById(req.user.userId);
+    if (!user) {
+        res
+            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .send();
+        return;
+    }
     res
         .status(settings_1.CodeResponses.OK_200)
         .send(user);
 });
 exports.getAuthInfoController = getAuthInfoController;
 const signUpController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const mail = email_adatper_1.emailAdapter.send(req.body.email, req.body.subject, req.body.message);
+    yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password, true);
     res
         .status(settings_1.CodeResponses.NO_CONTENT_204)
-        .send(mail);
+        .send();
 });
 exports.signUpController = signUpController;
 const signUpConfimationController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const isConfirmed = yield users_service_1.usersService.confirmEmail(req.body.code);
+    if (!isConfirmed) {
+        res
+            .status(settings_1.CodeResponses.BAD_REQUEST_400)
+            .send();
+        return;
+    }
     res
         .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();
 });
 exports.signUpConfimationController = signUpConfimationController;
 const signUpEmailResendingController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const inSended = yield users_service_1.usersService.resentConfirmEmail(req.body.email);
+    if (!inSended) {
+        res
+            .status(settings_1.CodeResponses.BAD_REQUEST_400)
+            .send();
+        return;
+    }
     res
         .status(settings_1.CodeResponses.NO_CONTENT_204)
         .send();

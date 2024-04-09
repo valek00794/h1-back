@@ -19,6 +19,7 @@ export const SETTINGS = {
             POST_COLLECTION_NAME: process.env.POST_COLLECTION_NAME || '',
             BLOG_COLLECTION_NAME: process.env.BLOG_COLLECTION_NAME || '',
             USER_COLLECTION_NAME: process.env.USER_COLLECTION_NAME || '',
+            USER_EMAIL_CONFIRMATIONS_COLLECTION_NAME: process.env.USER_EMAIL_CONFIRMATIONS_COLLECTION_NAME || '',
             COMMENT_COLLECTION_NAME: process.env.COMMENT_COLLECTION_NAME || ''
         },
         mongoURI: process.env.MONGO_URL || 'mongodb://localhost:27017/sprint1localdb'

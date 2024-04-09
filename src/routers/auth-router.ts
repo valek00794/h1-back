@@ -10,6 +10,6 @@ export const authRouter = Router();
 
 authRouter.post('/login', authInputValidation, inputValidationMiddleware, checkAuthController)
 authRouter.get('/me', authJWTMiddleware, getAuthInfoController)
-authRouter.post('/registration', signUpController)
+authRouter.post('/registration', usersInputValidation, inputValidationMiddleware, signUpController)
 authRouter.post('/registration-confirmation', signUpConfimationController)
 authRouter.post('/registration-email-resending', emailInputValidation, inputValidationMiddleware, signUpEmailResendingController)

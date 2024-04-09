@@ -14,12 +14,11 @@ export const emailAdapter = {
         })
 
         const info = await transporter.sendMail({
-            from: `${subject}  <${process.env.EMAIL_SENDER}>`,
+            from: `Backend project  <${process.env.EMAIL_SENDER}>`,
             to: email,
             subject: subject,
             html: message
         })
-        console.log(info)
         return info
     }
 }
