@@ -1,16 +1,16 @@
 import { Request, Response } from 'express'
 
 import { BlogViewType, PaginatorBlogViewType } from '../types/blogs-types';
-import { CodeResponses } from '../settings';
 import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
 import { blogsService } from '../services/blogs-service';
+import { ResultStatus } from '../types/result-types';
 
 export const getBlogsController = async (req: Request, res: Response<PaginatorBlogViewType>) => {
     const query = req.query as unknown as SearchQueryParametersType;
     const blogs = await blogsQueryRepository.getBlogs(query)
     res
-        .status(CodeResponses.OK_200)
+        .status(ResultStatus.OK_200)
         .json(blogs)
 }
 
@@ -18,12 +18,12 @@ export const findBlogController = async (req: Request, res: Response<false | Blo
     const blog = await blogsQueryRepository.findBlog(req.params.id)
     if (!blog) {
         res
-            .status(CodeResponses.NOT_FOUND_404)
+            .status(ResultStatus.NOT_FOUND_404)
             .send()
         return
     }
     res
-        .status(CodeResponses.OK_200)
+        .status(ResultStatus.OK_200)
         .json(blog)
 
 }
@@ -32,19 +32,19 @@ export const deleteBlogController = async (req: Request, res: Response<boolean>)
     const blogIsDeleted = await blogsService.deleteBlog(req.params.id)
     if (!blogIsDeleted) {
         res
-            .status(CodeResponses.NOT_FOUND_404)
+            .status(ResultStatus.NOT_FOUND_404)
             .send()
         return
     }
     res
-        .status(CodeResponses.NO_CONTENT_204)
+        .status(ResultStatus.NO_CONTENT_204)
         .send()
 }
 
 export const createBlogController = async (req: Request, res: Response<BlogViewType>) => {
     const newBlog = await blogsService.createBlog(req.body)
     res
-        .status(CodeResponses.CREATED_201)
+        .status(ResultStatus.CREATED_201)
         .json(newBlog)
 }
 
@@ -52,11 +52,11 @@ export const updateBlogController = async (req: Request, res: Response<boolean>)
     const updatedBlog = await blogsService.updateBlog(req.body, req.params.id)
     if (!updatedBlog) {
         res
-            .status(CodeResponses.NOT_FOUND_404)
+            .status(ResultStatus.NOT_FOUND_404)
             .send()
         return
     }
     res
-        .status(CodeResponses.NO_CONTENT_204)
+        .status(ResultStatus.NO_CONTENT_204)
         .send()
 }

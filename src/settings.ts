@@ -29,14 +29,3 @@ export const SETTINGS = {
         EXPIRES_TIME: process.env.JWT_EXPIRES_TIME || '12h'
     }
 }
-
-export const CodeResponses = {
-    OK_200: 200,
-    CREATED_201: 201,
-    NO_CONTENT_204: 204,
-
-    BAD_REQUEST_400: 400,
-    UNAUTHORIZED_401: 401,
-    NOT_FOUND_404: 404,
-    FORBIDDEN_403: 403
-}

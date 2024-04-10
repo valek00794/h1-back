@@ -2,13 +2,13 @@ import { Request, Response, NextFunction } from "express"
 
 import { jwtService } from "../adapters/jwt/jwt-service"
 import { usersQueryRepository } from "../repositories/users-query-repository"
-import { CodeResponses } from "../settings"
+import { ResultStatus } from "../types/result-types"
 
 export const authJWTMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     debugger
     if (!req.headers.authorization) {
         res
-            .status(CodeResponses.UNAUTHORIZED_401)
+            .status(ResultStatus.UNAUTHORIZED_401)
             .send()
         return
     }
@@ -28,6 +28,6 @@ export const authJWTMiddleware = async (req: Request, res: Response, next: NextF
         return next()
     }
     res
-        .status(CodeResponses.UNAUTHORIZED_401)
+        .status(ResultStatus.UNAUTHORIZED_401)
         .send()
 }

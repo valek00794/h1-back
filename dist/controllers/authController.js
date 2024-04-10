@@ -10,73 +10,88 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signUpEmailResendingController = exports.signUpConfimationController = exports.signUpController = exports.getAuthInfoController = exports.checkAuthController = void 0;
-const settings_1 = require("../settings");
 const users_service_1 = require("../services/users-service");
 const jwt_service_1 = require("../adapters/jwt/jwt-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
+const result_types_1 = require("../types/result-types");
 const checkAuthController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_service_1.usersService.checkCredential(req.body.loginOrEmail, req.body.password);
     if (!user) {
         res
-            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
             .send();
         return;
     }
     const token = yield jwt_service_1.jwtService.createJWT(user);
     res
-        .status(settings_1.CodeResponses.OK_200)
+        .status(result_types_1.ResultStatus.OK_200)
         .send(token);
 });
 exports.checkAuthController = checkAuthController;
 const getAuthInfoController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.user || !req.user.userId) {
         res
-            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
             .send();
         return;
     }
     const user = yield users_query_repository_1.usersQueryRepository.findUserById(req.user.userId);
     if (!user) {
         res
-            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
             .send();
         return;
     }
     res
-        .status(settings_1.CodeResponses.OK_200)
+        .status(result_types_1.ResultStatus.OK_200)
         .send(user);
 });
 exports.getAuthInfoController = getAuthInfoController;
 const signUpController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password, true);
-    res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
-        .send();
+    const result = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password, true);
+    if (result.status === result_types_1.ResultStatus.BAD_REQUEST_400) {
+        res
+            .status(result.status)
+            .json(result.data);
+        return;
+    }
+    if (result.status === result_types_1.ResultStatus.NO_CONTENT_204) {
+        res
+            .status(result.status)
+            .json();
+        return;
+    }
 });
 exports.signUpController = signUpController;
 const signUpConfimationController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const isConfirmed = yield users_service_1.usersService.confirmEmail(req.body.code);
-    if (!isConfirmed) {
+    const confirmResult = yield users_service_1.usersService.confirmEmail(req.body.code);
+    if (confirmResult.status === result_types_1.ResultStatus.BAD_REQUEST_400) {
         res
-            .status(settings_1.CodeResponses.BAD_REQUEST_400)
+            .status(result_types_1.ResultStatus.BAD_REQUEST_400)
+            .send(confirmResult.data);
+        return;
+    }
+    if (confirmResult.status === result_types_1.ResultStatus.NO_CONTENT_204) {
+        res
+            .status(result_types_1.ResultStatus.NO_CONTENT_204)
             .send();
         return;
     }
-    res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
-        .send();
 });
 exports.signUpConfimationController = signUpConfimationController;
 const signUpEmailResendingController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const inSended = yield users_service_1.usersService.resentConfirmEmail(req.body.email);
-    if (!inSended) {
+    const sendResult = yield users_service_1.usersService.resentConfirmEmail(req.body.email);
+    if (sendResult.status === result_types_1.ResultStatus.BAD_REQUEST_400) {
         res
-            .status(settings_1.CodeResponses.BAD_REQUEST_400)
+            .status(result_types_1.ResultStatus.BAD_REQUEST_400)
+            .send(sendResult.data);
+        return;
+    }
+    if (sendResult.status === result_types_1.ResultStatus.NO_CONTENT_204) {
+        res
+            .status(result_types_1.ResultStatus.NO_CONTENT_204)
             .send();
         return;
     }
-    res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
-        .send();
 });
 exports.signUpEmailResendingController = signUpEmailResendingController;

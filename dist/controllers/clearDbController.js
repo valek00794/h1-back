@@ -11,11 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.clearDbController = void 0;
 const db_1 = require("../db/db");
-const settings_1 = require("../settings");
+const result_types_1 = require("../types/result-types");
 const clearDbController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, db_1.setMongoDB)();
     res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
+        .status(result_types_1.ResultStatus.NO_CONTENT_204)
         .send();
 });
 exports.clearDbController = clearDbController;

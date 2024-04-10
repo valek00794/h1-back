@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.emailInputValidation = exports.usersInputValidation = void 0;
+exports.confirmationCodeInputValidation = exports.emailInputValidation = exports.userDataInputValidation = void 0;
 const express_validator_1 = require("express-validator");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const VALIDATE_PHARAMS = {
@@ -26,7 +26,7 @@ const VALIDATE_PHARAMS = {
         pattern: new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     },
 };
-exports.usersInputValidation = [
+exports.userDataInputValidation = [
     (0, express_validator_1.body)('password').trim()
         .notEmpty()
         .withMessage('The field is required')
@@ -62,4 +62,9 @@ exports.usersInputValidation = [
     }))
 ];
 exports.emailInputValidation = (0, express_validator_1.body)('email').trim()
-    .notEmpty();
+    .notEmpty()
+    .withMessage('The field is required')
+    .matches(VALIDATE_PHARAMS.email.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.email.pattern}`);
+exports.confirmationCodeInputValidation = (0, express_validator_1.body)('code').trim()
+    .notEmpty()
+    .withMessage('The field is required');

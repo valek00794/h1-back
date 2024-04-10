@@ -10,21 +10,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUserController = exports.getUsersController = exports.createUserController = void 0;
-const settings_1 = require("../settings");
 const users_service_1 = require("../services/users-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
+const result_types_1 = require("../types/result-types");
 const createUserController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password);
-    res
-        .status(settings_1.CodeResponses.CREATED_201)
-        .json(user);
+    const result = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password);
+    if (result.status === result_types_1.ResultStatus.CREATED_201) {
+        res
+            .status(result.status)
+            .json(result.data);
+        return;
+    }
 });
 exports.createUserController = createUserController;
 const getUsersController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const users = yield users_query_repository_1.usersQueryRepository.getAllUsers(query);
     res
-        .status(settings_1.CodeResponses.OK_200)
+        .status(result_types_1.ResultStatus.OK_200)
         .json(users);
 });
 exports.getUsersController = getUsersController;
@@ -32,12 +35,12 @@ const deleteUserController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const userIsDeleted = yield users_service_1.usersService.deleteUserById(req.params.id);
     if (!userIsDeleted) {
         res
-            .status(settings_1.CodeResponses.NOT_FOUND_404)
+            .status(result_types_1.ResultStatus.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
+        .status(result_types_1.ResultStatus.NO_CONTENT_204)
         .send();
 });
 exports.deleteUserController = deleteUserController;

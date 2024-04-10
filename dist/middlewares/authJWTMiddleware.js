@@ -12,12 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authJWTMiddleware = void 0;
 const jwt_service_1 = require("../adapters/jwt/jwt-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
-const settings_1 = require("../settings");
+const result_types_1 = require("../types/result-types");
 const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     debugger;
     if (!req.headers.authorization) {
         res
-            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
             .send();
         return;
     }
@@ -35,7 +35,7 @@ const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         return next();
     }
     res
-        .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+        .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
         .send();
 });
 exports.authJWTMiddleware = authJWTMiddleware;

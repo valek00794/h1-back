@@ -11,14 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.emailManager = void 0;
 const email_adatper_1 = require("../adapters/email-adatper");
-const settings_1 = require("../settings");
 exports.emailManager = {
     sendEmailConfirmationMessage(email, code) {
         return __awaiter(this, void 0, void 0, function* () {
             const subject = 'Email confirmation';
             const message = `<h1>Thank for your registration</h1>
         <p>To finish registration please follow the link below:
-        <a href=\'http://localhost:${settings_1.SETTINGS.PORT}/auth/registration-confirmation?code=${code}\'> complete registration</a></p>`;
+        <a href=\'https://somesite.com/auth/registration-confirmation?code=${code}\'> complete registration</a></p>`;
             email_adatper_1.emailAdapter.send(email, subject, message);
         });
     }

@@ -33,6 +33,7 @@ exports.jwtService = {
                 }
             }
             catch (error) {
+                console.error('Token verify error');
                 return null;
             }
         });

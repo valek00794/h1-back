@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { FieldValidationError, Result, validationResult } from 'express-validator'
 
-import { FieldError } from '../types/errors-types'
-import { CodeResponses } from '../settings'
+import { FieldError, ResultStatus } from '../types/result-types'
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     let apiErrors: FieldError[] = []
@@ -18,7 +17,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
             }
         });
         res
-            .status(CodeResponses.BAD_REQUEST_400)
+            .status(ResultStatus.BAD_REQUEST_400)
             .json({
                 errorsMessages: apiErrors
             })

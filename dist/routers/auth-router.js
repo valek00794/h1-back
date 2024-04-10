@@ -10,6 +10,6 @@ const usersInputValidation_1 = require("../validation/usersInputValidation");
 exports.authRouter = (0, express_1.Router)();
 exports.authRouter.post('/login', authInputValidation_1.authInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.checkAuthController);
 exports.authRouter.get('/me', authJWTMiddleware_1.authJWTMiddleware, authController_1.getAuthInfoController);
-exports.authRouter.post('/registration', usersInputValidation_1.usersInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.signUpController);
-exports.authRouter.post('/registration-confirmation', authController_1.signUpConfimationController);
+exports.authRouter.post('/registration', usersInputValidation_1.userDataInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.signUpController);
+exports.authRouter.post('/registration-confirmation', usersInputValidation_1.confirmationCodeInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.signUpConfimationController);
 exports.authRouter.post('/registration-email-resending', usersInputValidation_1.emailInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.signUpEmailResendingController);

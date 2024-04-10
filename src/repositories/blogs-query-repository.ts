@@ -27,7 +27,7 @@ export const blogsQueryRepository = {
             items: blogs.map(blog => this.mapToOutput(blog))
         }
     },
-    
+
     async findBlog(id: string): Promise<false | BlogViewType> {
         if (!ObjectId.isValid(id)) {
             return false
