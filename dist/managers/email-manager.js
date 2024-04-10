@@ -9,13 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearDbController = void 0;
-const db_1 = require("../db/db");
-const result_types_1 = require("../types/result-types");
-const clearDbController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.setMongoDB)();
-    res
-        .status(result_types_1.ResultStatus.NO_CONTENT_204)
-        .send();
-});
-exports.clearDbController = clearDbController;
+exports.emailManager = void 0;
+const email_adatper_1 = require("../adapters/email-adatper");
+exports.emailManager = {
+    sendEmailConfirmationMessage(email, code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const subject = 'Email confirmation';
+            const message = `<h1>Thank for your registration</h1>
+        <p>To finish registration please follow the link below:
+        <a href=\'https://somesite.com/auth/registration-confirmation?code=${code}\'> complete registration</a></p>`;
+            email_adatper_1.emailAdapter.send(email, subject, message);
+        });
+    }
+};

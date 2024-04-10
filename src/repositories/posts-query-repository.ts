@@ -30,7 +30,7 @@ export const postsQueryRepository = {
             items: posts.map(post => this.mapToOutput(post))
         }
     },
-    
+
     async findPost(id: string): Promise<false | PostViewType> {
         if (!ObjectId.isValid(id)) {
             return false

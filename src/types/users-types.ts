@@ -30,4 +30,16 @@ export type UserInfo = {
     userId: string,
     userLogin: string,
     email?: string
-  };
+}
+
+export type UserEmailConfirmationInfo = {
+    userId?: string,
+    confirmationCode: string,
+    expirationDate: Date,
+    isConfirmed: boolean
+}
+
+export type UserSignUpType = {
+    user: UserDBType,
+    emailConfirmation: UserEmailConfirmationInfo | false
+}

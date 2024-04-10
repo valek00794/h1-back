@@ -13,15 +13,29 @@ exports.usersRepository = void 0;
 const mongodb_1 = require("mongodb");
 const db_1 = require("../db/db");
 exports.usersRepository = {
-    createUser(user) {
+    createUser(signUpData) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.usersCollection.insertOne(user);
-            return user;
+            const newUser = yield db_1.usersCollection.insertOne(signUpData.user);
+            if (signUpData.emailConfirmation) {
+                yield db_1.usersEmailConfirmationCollection.insertOne(Object.assign({ userId: newUser.insertedId.toString() }, signUpData.emailConfirmation));
+            }
+            return signUpData.user;
         });
     },
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield db_1.usersEmailConfirmationCollection.deleteOne({ userId: id });
             return yield db_1.usersCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+        });
+    },
+    updateConfirmationInfo(userId, emailConfirmationInfo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.usersEmailConfirmationCollection.updateOne({ userId: userId.toString() }, { $set: Object.assign({}, emailConfirmationInfo) });
+        });
+    },
+    updateConfirmation(_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.usersEmailConfirmationCollection.updateOne({ _id }, { $set: { isConfirmed: true } });
         });
     },
 };

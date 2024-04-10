@@ -10,14 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBlogController = exports.createBlogController = exports.deleteBlogController = exports.findBlogController = exports.getBlogsController = void 0;
-const settings_1 = require("../settings");
 const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 const blogs_service_1 = require("../services/blogs-service");
+const result_types_1 = require("../types/result-types");
 const getBlogsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const blogs = yield blogs_query_repository_1.blogsQueryRepository.getBlogs(query);
     res
-        .status(settings_1.CodeResponses.OK_200)
+        .status(result_types_1.ResultStatus.OK_200)
         .json(blogs);
 });
 exports.getBlogsController = getBlogsController;
@@ -25,12 +25,12 @@ const findBlogController = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(req.params.id);
     if (!blog) {
         res
-            .status(settings_1.CodeResponses.NOT_FOUND_404)
+            .status(result_types_1.ResultStatus.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(settings_1.CodeResponses.OK_200)
+        .status(result_types_1.ResultStatus.OK_200)
         .json(blog);
 });
 exports.findBlogController = findBlogController;
@@ -38,19 +38,19 @@ const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const blogIsDeleted = yield blogs_service_1.blogsService.deleteBlog(req.params.id);
     if (!blogIsDeleted) {
         res
-            .status(settings_1.CodeResponses.NOT_FOUND_404)
+            .status(result_types_1.ResultStatus.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
+        .status(result_types_1.ResultStatus.NO_CONTENT_204)
         .send();
 });
 exports.deleteBlogController = deleteBlogController;
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newBlog = yield blogs_service_1.blogsService.createBlog(req.body);
     res
-        .status(settings_1.CodeResponses.CREATED_201)
+        .status(result_types_1.ResultStatus.CREATED_201)
         .json(newBlog);
 });
 exports.createBlogController = createBlogController;
@@ -58,12 +58,12 @@ const updateBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const updatedBlog = yield blogs_service_1.blogsService.updateBlog(req.body, req.params.id);
     if (!updatedBlog) {
         res
-            .status(settings_1.CodeResponses.NOT_FOUND_404)
+            .status(result_types_1.ResultStatus.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(settings_1.CodeResponses.NO_CONTENT_204)
+        .status(result_types_1.ResultStatus.NO_CONTENT_204)
         .send();
 });
 exports.updateBlogController = updateBlogController;

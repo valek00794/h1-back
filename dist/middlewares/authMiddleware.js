@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const settings_1 = require("../settings");
+const result_types_1 = require("../types/result-types");
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
         res
-            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
             .send();
         return;
     }
@@ -17,7 +18,7 @@ const authMiddleware = (req, res, next) => {
     }
     else {
         res
-            .status(settings_1.CodeResponses.UNAUTHORIZED_401)
+            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
             .send();
         return;
     }

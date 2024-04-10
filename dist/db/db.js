@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMongoDB = exports.setDB = exports.commentsCollection = exports.usersCollection = exports.blogsCollection = exports.postsCollection = exports.dbLocal = exports.runDb = void 0;
+exports.setMongoDB = exports.setDB = exports.commentsCollection = exports.usersEmailConfirmationCollection = exports.usersCollection = exports.blogsCollection = exports.postsCollection = exports.dbLocal = exports.runDb = void 0;
 const mongodb_1 = require("mongodb");
 const dotenv_1 = __importDefault(require("dotenv"));
 const settings_1 = require("../settings");
@@ -73,6 +73,7 @@ const db = client.db();
 exports.postsCollection = db.collection(settings_1.SETTINGS.DB.collection.POST_COLLECTION_NAME);
 exports.blogsCollection = db.collection(settings_1.SETTINGS.DB.collection.BLOG_COLLECTION_NAME);
 exports.usersCollection = db.collection(settings_1.SETTINGS.DB.collection.USER_COLLECTION_NAME);
+exports.usersEmailConfirmationCollection = db.collection(settings_1.SETTINGS.DB.collection.USER_EMAIL_CONFIRMATIONS_COLLECTION_NAME);
 exports.commentsCollection = db.collection(settings_1.SETTINGS.DB.collection.COMMENT_COLLECTION_NAME);
 const setDB = (dataset) => {
     if (!dataset) {

@@ -19,6 +19,7 @@ export const jwtService = {
                 return res.userId
             }
         } catch (error) {
+            console.error('Token verify error')
             return null
         }
     }

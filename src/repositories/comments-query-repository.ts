@@ -42,7 +42,7 @@ export const commentsQueryRepository = {
         }
         return this.mapToOutput(comment!)
     },
-    
+
     mapToOutput(comment: CommentDbType): CommentViewType {
         return {
             id: comment._id!,

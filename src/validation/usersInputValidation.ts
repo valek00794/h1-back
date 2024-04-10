@@ -17,7 +17,7 @@ const VALIDATE_PHARAMS = {
     },
 }
 
-export const usersInputValidation = [
+export const userDataInputValidation = [
     body('password').trim()
         .notEmpty()
         .withMessage('The field is required')
@@ -50,3 +50,12 @@ export const usersInputValidation = [
             }
         })
 ]
+
+export const emailInputValidation = body('email').trim()
+    .notEmpty()
+    .withMessage('The field is required')
+    .matches(VALIDATE_PHARAMS.email.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.email.pattern}`)
+
+export const confirmationCodeInputValidation = body('code').trim()
+    .notEmpty()
+    .withMessage('The field is required')

@@ -8,5 +8,5 @@ const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddl
 const authMiddleware_1 = require("../middlewares/authMiddleware");
 exports.usersRouter = (0, express_1.Router)();
 exports.usersRouter.get('/', authMiddleware_1.authMiddleware, usersController_1.getUsersController);
-exports.usersRouter.post('/', authMiddleware_1.authMiddleware, usersInputValidation_1.usersInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, usersController_1.createUserController);
+exports.usersRouter.post('/', authMiddleware_1.authMiddleware, usersInputValidation_1.userDataInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, usersController_1.createUserController);
 exports.usersRouter.delete('/:id', authMiddleware_1.authMiddleware, usersController_1.deleteUserController);
