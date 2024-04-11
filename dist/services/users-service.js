@@ -114,6 +114,10 @@ exports.usersService = {
                     message: "User with current confirmation code not found",
                     field: "code"
                 });
+                return {
+                    status: result_types_1.ResultStatus.BAD_REQUEST_400,
+                    data: errorsMessages
+                };
             }
             if (userConfirmationInfo !== null) {
                 if (userConfirmationInfo.isConfirmed) {
@@ -159,6 +163,10 @@ exports.usersService = {
                     message: "User with current email not found",
                     field: "email"
                 });
+                return {
+                    status: result_types_1.ResultStatus.BAD_REQUEST_400,
+                    data: errorsMessages
+                };
             }
             const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(user._id.toString());
             if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {
@@ -184,6 +192,8 @@ exports.usersService = {
                     message: "Error sending confirmation email",
                     field: "Email sender"
                 });
+            }
+            if (errorsMessages.errorsMessages.length !== 0) {
                 return {
                     status: result_types_1.ResultStatus.BAD_REQUEST_400,
                     data: errorsMessages

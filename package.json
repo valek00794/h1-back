@@ -14,6 +14,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.4.0",
     "mongodb-memory-server": "^9.1.8",
+    "ngrok": "^5.0.0-beta.2",
     "nodemailer": "^6.9.13",
     "uuidv4": "^6.2.13"
   },
