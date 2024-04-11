@@ -95,6 +95,10 @@ export const usersService = {
                 message: "User with current confirmation code not found",
                 field: "code"
             })
+            return {
+                status: ResultStatus.BAD_REQUEST_400,
+                data: errorsMessages
+            }
         }
         if (userConfirmationInfo !== null) {
             if (userConfirmationInfo.isConfirmed) {
@@ -138,6 +142,10 @@ export const usersService = {
                 message: "User with current email not found",
                 field: "email"
             })
+            return {
+                status: ResultStatus.BAD_REQUEST_400,
+                data: errorsMessages
+            }
         }
         const userConfirmationInfo = await usersQueryRepository.findUserConfirmationInfo(user!._id!.toString())
         if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {
@@ -163,6 +171,8 @@ export const usersService = {
                 message: "Error sending confirmation email",
                 field: "Email sender"
             })
+        }
+        if (errorsMessages.errorsMessages.length !== 0) {
             return {
                 status: ResultStatus.BAD_REQUEST_400,
                 data: errorsMessages
