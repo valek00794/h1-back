@@ -8,14 +8,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearDbController = void 0;
-const db_1 = require("../db/db");
-const settings_1 = require("../settings");
-const clearDbController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.setMongoDB)();
-    res
-        .status(settings_1.StatusCodes.NO_CONTENT_204)
-        .send();
-});
-exports.clearDbController = clearDbController;
+exports.bcryptArapter = void 0;
+const bcrypt_1 = __importDefault(require("bcrypt"));
+exports.bcryptArapter = {
+    generateHash(password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const passwordSalt = yield bcrypt_1.default.genSalt(10);
+            return yield bcrypt_1.default.hash(password, passwordSalt);
+        });
+    },
+    checkPassword(password, passwordHash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield bcrypt_1.default.compare(password, passwordHash);
+        });
+    },
+};

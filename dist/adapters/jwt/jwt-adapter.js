@@ -18,33 +18,26 @@ const settings_1 = require("../../settings");
 exports.jwtAdapter = {
     createJWT(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const accessToken = jsonwebtoken_1.default.sign({ userId }, settings_1.SETTINGS.JWT.SECRET, { expiresIn: settings_1.SETTINGS.JWT.AT_EXPIRES_TIME });
-            const refreshToken = jsonwebtoken_1.default.sign({ userId }, settings_1.SETTINGS.JWT.SECRET, { expiresIn: settings_1.SETTINGS.JWT.RT_EXPIRES_TIME });
+            const accessToken = jsonwebtoken_1.default.sign({ userId }, settings_1.SETTINGS.JWT.AT_SECRET, { expiresIn: settings_1.SETTINGS.JWT.AT_EXPIRES_TIME });
+            const refreshToken = jsonwebtoken_1.default.sign({ userId }, settings_1.SETTINGS.JWT.RT_SECRET, { expiresIn: settings_1.SETTINGS.JWT.RT_EXPIRES_TIME });
             return {
                 accessToken: accessToken,
                 refreshToken: refreshToken
             };
         });
     },
-    renewTokens(token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userId = yield this.getUserIdByToken(token);
-            const uodatedTokents = this.createJWT(userId);
-            return uodatedTokents;
-        });
-    },
-    getUserIdByToken(token) {
+    getUserIdByToken(token, secret) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const res = jsonwebtoken_1.default.verify(token, settings_1.SETTINGS.JWT.SECRET);
+                const res = jsonwebtoken_1.default.verify(token, secret);
                 if (typeof res !== 'string') {
                     return res.userId;
                 }
             }
             catch (error) {
                 console.error('Token verify error');
-                return null;
             }
+            return null;
         });
     }
 };

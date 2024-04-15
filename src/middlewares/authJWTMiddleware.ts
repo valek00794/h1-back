@@ -1,33 +1,34 @@
 import { Request, Response, NextFunction } from "express"
 
-import { jwtService } from "../adapters/jwt/jwt-service"
+import { jwtAdapter } from "../adapters/jwt/jwt-adapter"
 import { usersQueryRepository } from "../repositories/users-query-repository"
-import { ResultStatus } from "../types/result-types"
+import { SETTINGS, StatusCodes } from "../settings"
+import { UserInfo } from "../types/users-types"
 
 export const authJWTMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    debugger
+    const cookie_refresh_token = req.cookies.refreshToken
     if (!req.headers.authorization) {
         res
-            .status(ResultStatus.UNAUTHORIZED_401)
+            .status(StatusCodes.UNAUTHORIZED_401)
             .send()
         return
     }
 
     const token = req.headers.authorization.split(' ')[1]
-    const userId = await jwtService.getUserIdByToken(token!)
+    const userId = await jwtAdapter.getUserIdByToken(token!, SETTINGS.JWT.AT_SECRET)
     if (userId) {
         if (!req.user) {
-            req.user = {} as any
+            req.user = {} as UserInfo 
         }
         req.user!.userId = userId
 
         const user = await usersQueryRepository.findUserById(userId)
         if (user) {
-            req.user!.userLogin = user.userLogin
+            req.user!.login = user.login
         }
         return next()
     }
     res
-        .status(ResultStatus.UNAUTHORIZED_401)
+        .status(StatusCodes.UNAUTHORIZED_401)
         .send()
 }

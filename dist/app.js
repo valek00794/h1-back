@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const videos_router_1 = require("./routers/videos-router");
 const posts_router_1 = require("./routers/posts-router");
 const blogs_router_1 = require("./routers/blogs-router");
@@ -16,6 +17,7 @@ const auth_router_1 = require("./routers/auth-router");
 const comments_router_1 = require("./routers/comments-router");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
+exports.app.use((0, cookie_parser_1.default)());
 exports.app.use(settings_1.SETTINGS.PATH.videos, videos_router_1.videosRouter);
 exports.app.use(settings_1.SETTINGS.PATH.posts, posts_router_1.postsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.blogs, blogs_router_1.blogsRouter);

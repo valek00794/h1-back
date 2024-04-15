@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.inputValidationMiddleware = void 0;
 const express_validator_1 = require("express-validator");
-const result_types_1 = require("../types/result-types");
+const settings_1 = require("../settings");
 const inputValidationMiddleware = (req, res, next) => {
     let apiErrors = [];
     const result = (0, express_validator_1.validationResult)(req);
@@ -18,7 +18,7 @@ const inputValidationMiddleware = (req, res, next) => {
             }
         });
         res
-            .status(result_types_1.ResultStatus.BAD_REQUEST_400)
+            .status(settings_1.StatusCodes.BAD_REQUEST_400)
             .json({
             errorsMessages: apiErrors
         });

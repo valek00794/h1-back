@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteVideoController = exports.createVideoController = exports.updateVideoController = exports.findVideoController = exports.getVideosController = void 0;
 const db_1 = require("../db/db");
 const videos_types_1 = require("../types/videos-types");
-const result_types_1 = require("../types/result-types");
+const settings_1 = require("../settings");
 const VALIDATE_PHARAMS = {
     titleMaxLength: 40,
     authorMaxLength: 20,
@@ -22,7 +22,7 @@ const validationErrorsMassages = {
 let apiErrors = [];
 const getVideosController = (req, res) => {
     res
-        .status(result_types_1.ResultStatus.OK_200)
+        .status(settings_1.StatusCodes.OK_200)
         .json(db_1.dbLocal.videos);
 };
 exports.getVideosController = getVideosController;
@@ -32,14 +32,14 @@ const findVideoController = (req, res) => {
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .json({
             errorsMessages: apiErrors
         });
     }
     else {
         res
-            .status(result_types_1.ResultStatus.OK_200)
+            .status(settings_1.StatusCodes.OK_200)
             .json(db_1.dbLocal.videos[idVideo]);
     }
 };
@@ -50,7 +50,7 @@ const updateVideoController = (req, res) => {
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id });
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .json({
             errorsMessages: apiErrors
         });
@@ -119,12 +119,12 @@ const updateVideoController = (req, res) => {
             };
             db_1.dbLocal.videos[idVideo] = Object.assign(Object.assign({ id: db_1.dbLocal.videos[idVideo].id }, updatedVideo), { createdAt: db_1.dbLocal.videos[idVideo].createdAt });
             res
-                .status(result_types_1.ResultStatus.NO_CONTENT_204)
+                .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();
         }
         else {
             res
-                .status(result_types_1.ResultStatus.BAD_REQUEST_400)
+                .status(settings_1.StatusCodes.BAD_REQUEST_400)
                 .json({
                 errorsMessages: apiErrors
             });
@@ -187,12 +187,12 @@ const createVideoController = (req, res) => {
         };
         db_1.dbLocal.videos.push(newVideo);
         res
-            .status(result_types_1.ResultStatus.CREATED_201)
+            .status(settings_1.StatusCodes.CREATED_201)
             .json(newVideo);
     }
     else {
         res
-            .status(result_types_1.ResultStatus.BAD_REQUEST_400)
+            .status(settings_1.StatusCodes.BAD_REQUEST_400)
             .json({
             errorsMessages: apiErrors
         });

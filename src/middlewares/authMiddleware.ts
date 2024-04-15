@@ -1,14 +1,13 @@
 import { Request, Response, NextFunction } from "express"
 
-import { SETTINGS } from "../settings"
-import { ResultStatus } from "../types/result-types"
+import { SETTINGS, StatusCodes } from "../settings"
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'] as string
 
     if (!authHeader) {
         res
-            .status(ResultStatus.UNAUTHORIZED_401)
+            .status(StatusCodes.UNAUTHORIZED_401)
             .send()
         return
     }
@@ -20,7 +19,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         next()
     } else {
         res
-            .status(ResultStatus.UNAUTHORIZED_401)
+            .status(StatusCodes.UNAUTHORIZED_401)
             .send()
         return
     }

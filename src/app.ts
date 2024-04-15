@@ -1,4 +1,5 @@
 import express from 'express'
+import cookieParser from 'cookie-parser'
 
 import { videosRouter } from './routers/videos-router'
 import { postsRouter } from './routers/posts-router'
@@ -10,9 +11,9 @@ import { usersRouter } from './routers/users-router'
 import { authRouter } from './routers/auth-router'
 import { commentsRouter } from './routers/comments-router'
 
-
 export const app = express()
 app.use(express.json())
+app.use(cookieParser())
 
 app.use(SETTINGS.PATH.videos, videosRouter)
 app.use(SETTINGS.PATH.posts, postsRouter)

@@ -34,7 +34,7 @@ exports.usersQueryRepository = {
                 return false;
             return {
                 email: user.email,
-                userLogin: user.login,
+                login: user.login,
                 userId: id
             };
         });
