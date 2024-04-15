@@ -71,5 +71,5 @@ export const usersService = {
         const res = await usersRepository.deleteUserById(id)
         if (res.deletedCount === 0) return false
         return true
-    },
+    }
 }
