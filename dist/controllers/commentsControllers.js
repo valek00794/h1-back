@@ -13,19 +13,19 @@ exports.getCommentsForPostController = exports.updateCommentForPostController = 
 const comments_query_repository_1 = require("../repositories/comments-query-repository");
 const posts_query_repository_1 = require("../repositories/posts-query-repository");
 const comments_service_1 = require("../services/comments-service");
-const result_types_1 = require("../types/result-types");
+const settings_1 = require("../settings");
 const findCommentsOfPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.id);
     if (!post) {
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
     const comments = yield comments_query_repository_1.commentsQueryRepository.getComments(query, req.params.blogId);
     res
-        .status(result_types_1.ResultStatus.OK_200)
+        .status(settings_1.StatusCodes.OK_200)
         .json(comments);
 });
 exports.findCommentsOfPostController = findCommentsOfPostController;
@@ -33,12 +33,12 @@ const findCommentController = (req, res) => __awaiter(void 0, void 0, void 0, fu
     const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(req.params.id);
     if (!comment) {
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(result_types_1.ResultStatus.OK_200)
+        .status(settings_1.StatusCodes.OK_200)
         .json(comment);
 });
 exports.findCommentController = findCommentController;
@@ -46,25 +46,25 @@ const deleteCommentController = (req, res) => __awaiter(void 0, void 0, void 0, 
     var _a, _b;
     const commentatorInfo = {
         userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
-        userLogin: (_b = req.user) === null || _b === void 0 ? void 0 : _b.userLogin
+        userLogin: (_b = req.user) === null || _b === void 0 ? void 0 : _b.login
     };
     const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(req.params.commentId);
     if (!comment) {
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
     if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
         comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
         res
-            .status(result_types_1.ResultStatus.FORBIDDEN_403)
+            .status(settings_1.StatusCodes.FORBIDDEN_403)
             .send();
         return;
     }
     yield comments_service_1.commentsService.deleteComment(req.params.commentId);
     res
-        .status(result_types_1.ResultStatus.NO_CONTENT_204)
+        .status(settings_1.StatusCodes.NO_CONTENT_204)
         .send();
 });
 exports.deleteCommentController = deleteCommentController;
@@ -72,24 +72,24 @@ const createCommentForPostController = (req, res) => __awaiter(void 0, void 0, v
     var _c, _d;
     if (!req.user || !req.user.userId) {
         res
-            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
+            .status(settings_1.StatusCodes.UNAUTHORIZED_401)
             .send();
         return;
     }
     const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.postId);
     if (!post) {
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
     const commentatorInfo = {
         userId: (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId,
-        userLogin: (_d = req.user) === null || _d === void 0 ? void 0 : _d.userLogin
+        userLogin: (_d = req.user) === null || _d === void 0 ? void 0 : _d.login
     };
     const comment = yield comments_service_1.commentsService.createComment(req.body, commentatorInfo, req.params.postId);
     res
-        .status(result_types_1.ResultStatus.CREATED_201)
+        .status(settings_1.StatusCodes.CREATED_201)
         .send(comment);
 });
 exports.createCommentForPostController = createCommentForPostController;
@@ -97,31 +97,31 @@ const updateCommentForPostController = (req, res) => __awaiter(void 0, void 0, v
     var _e, _f;
     if (!req.user || !req.user.userId) {
         res
-            .status(result_types_1.ResultStatus.UNAUTHORIZED_401)
+            .status(settings_1.StatusCodes.UNAUTHORIZED_401)
             .send();
         return;
     }
     const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(req.params.commentId);
     if (!comment) {
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
     const commentatorInfo = {
         userId: (_e = req.user) === null || _e === void 0 ? void 0 : _e.userId,
-        userLogin: (_f = req.user) === null || _f === void 0 ? void 0 : _f.userLogin
+        userLogin: (_f = req.user) === null || _f === void 0 ? void 0 : _f.login
     };
     if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
         comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
         res
-            .status(result_types_1.ResultStatus.FORBIDDEN_403)
+            .status(settings_1.StatusCodes.FORBIDDEN_403)
             .send();
         return;
     }
     yield comments_service_1.commentsService.updateComment(req.body, comment);
     res
-        .status(result_types_1.ResultStatus.NO_CONTENT_204)
+        .status(settings_1.StatusCodes.NO_CONTENT_204)
         .send();
 });
 exports.updateCommentForPostController = updateCommentForPostController;
@@ -130,13 +130,13 @@ const getCommentsForPostController = (req, res) => __awaiter(void 0, void 0, voi
     const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.postId);
     if (!post) {
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
     const comments = yield comments_query_repository_1.commentsQueryRepository.getComments(query, req.params.postId);
     res
-        .status(result_types_1.ResultStatus.OK_200)
+        .status(settings_1.StatusCodes.OK_200)
         .send(comments);
 });
 exports.getCommentsForPostController = getCommentsForPostController;

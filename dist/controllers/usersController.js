@@ -12,12 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUserController = exports.getUsersController = exports.createUserController = void 0;
 const users_service_1 = require("../services/users-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
-const result_types_1 = require("../types/result-types");
+const settings_1 = require("../settings");
 const createUserController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password);
-    if (result.status === result_types_1.ResultStatus.CREATED_201) {
+    if (result.status === settings_1.ResultStatus.Created) {
         res
-            .status(result.status)
+            .status(settings_1.StatusCodes.CREATED_201)
             .json(result.data);
         return;
     }
@@ -27,7 +27,7 @@ const getUsersController = (req, res) => __awaiter(void 0, void 0, void 0, funct
     const query = req.query;
     const users = yield users_query_repository_1.usersQueryRepository.getAllUsers(query);
     res
-        .status(result_types_1.ResultStatus.OK_200)
+        .status(settings_1.StatusCodes.OK_200)
         .json(users);
 });
 exports.getUsersController = getUsersController;
@@ -35,12 +35,12 @@ const deleteUserController = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const userIsDeleted = yield users_service_1.usersService.deleteUserById(req.params.id);
     if (!userIsDeleted) {
         res
-            .status(result_types_1.ResultStatus.NOT_FOUND_404)
+            .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
     res
-        .status(result_types_1.ResultStatus.NO_CONTENT_204)
+        .status(settings_1.StatusCodes.NO_CONTENT_204)
         .send();
 });
 exports.deleteUserController = deleteUserController;

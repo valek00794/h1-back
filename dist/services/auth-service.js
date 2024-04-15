@@ -8,29 +8,166 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.emailSender = void 0;
-const nodemailer_1 = __importDefault(require("nodemailer"));
-const emailSender = (email, subject, message) => __awaiter(void 0, void 0, void 0, function* () {
-    const transporter = nodemailer_1.default.createTransport({
-        host: 'smtp.mail.ru',
-        port: 465,
-        secure: true,
-        auth: {
-            user: "valentin_00794@bk.ru",
-            pass: process.env.PASS,
-        },
-    });
-    const info = yield transporter.sendMail({
-        from: '"Registration"  valentin_00794@bk.ru',
-        to: email,
-        subject: subject,
-        html: message
-    });
-    console.log(info);
-    return info;
-});
-exports.emailSender = emailSender;
+exports.authService = void 0;
+const uuid_1 = require("uuid");
+const add_1 = require("date-fns/add");
+const users_query_repository_1 = require("../repositories/users-query-repository");
+const users_repository_1 = require("../repositories/users-repository");
+const email_manager_1 = require("../managers/email-manager");
+const settings_1 = require("../settings");
+const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
+const revokedTokens_repository_1 = require("../repositories/revokedTokens-repository");
+const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
+const mongodb_1 = require("mongodb");
+const revokedTokens_query_repository_1 = require("../repositories/revokedTokens-query-repository");
+exports.authService = {
+    checkCredential(loginOrEmail, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(loginOrEmail);
+            if (user === null)
+                return false;
+            const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(user._id.toString());
+            if (userConfirmationInfo !== null && !userConfirmationInfo.isConfirmed)
+                return false;
+            const isAuth = yield bcypt_adapter_1.bcryptArapter.checkPassword(password, user.passwordHash);
+            return isAuth ? user : false;
+        });
+    },
+    confirmEmail(code) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(code);
+            const errorsMessages = {
+                errorsMessages: []
+            };
+            if (userConfirmationInfo === null) {
+                errorsMessages.errorsMessages.push({
+                    message: "User with current confirmation code not found",
+                    field: "code"
+                });
+            }
+            if (userConfirmationInfo !== null) {
+                if (userConfirmationInfo.isConfirmed) {
+                    errorsMessages.errorsMessages.push({
+                        message: "User with current confirmation code already confirmed",
+                        field: "code"
+                    });
+                }
+                if (userConfirmationInfo.confirmationCode !== code) {
+                    errorsMessages.errorsMessages.push({
+                        message: "Verification code does not match",
+                        field: "code"
+                    });
+                }
+                if (userConfirmationInfo.expirationDate < new Date()) {
+                    errorsMessages.errorsMessages.push({
+                        message: "Verification code has expired, needs to be requested again",
+                        field: "code"
+                    });
+                }
+                if (errorsMessages.errorsMessages.length !== 0) {
+                    return {
+                        status: settings_1.ResultStatus.BadRequest,
+                        data: errorsMessages
+                    };
+                }
+            }
+            yield users_repository_1.usersRepository.updateConfirmation(userConfirmationInfo._id);
+            return {
+                status: settings_1.ResultStatus.NoContent,
+                data: null
+            };
+        });
+    },
+    resentConfirmEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(email);
+            const errorsMessages = {
+                errorsMessages: []
+            };
+            if (user === null) {
+                errorsMessages.errorsMessages.push({
+                    message: "User with current email not found",
+                    field: "email"
+                });
+            }
+            const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(user._id.toString());
+            if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {
+                errorsMessages.errorsMessages.push({
+                    message: "User with current email already confirmed",
+                    field: "email"
+                });
+            }
+            const newUserConfirmationInfo = {
+                confirmationCode: (0, uuid_1.v4)(),
+                expirationDate: (0, add_1.add)(new Date(), {
+                    hours: 1
+                }),
+                isConfirmed: false
+            };
+            try {
+                yield email_manager_1.emailManager.sendEmailConfirmationMessage(email, newUserConfirmationInfo.confirmationCode);
+            }
+            catch (error) {
+                console.error(error);
+                users_repository_1.usersRepository.deleteUserById(user._id.toString());
+                errorsMessages.errorsMessages.push({
+                    message: "Error sending confirmation email",
+                    field: "Email sender"
+                });
+                return {
+                    status: settings_1.ResultStatus.BadRequest,
+                    data: errorsMessages
+                };
+            }
+            yield users_repository_1.usersRepository.updateConfirmationInfo(user._id, newUserConfirmationInfo);
+            return {
+                status: settings_1.ResultStatus.NoContent,
+                data: null
+            };
+        });
+    },
+    ckeckUserByRefreshToken(oldRefreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = yield jwt_adapter_1.jwtAdapter.getUserIdByToken(oldRefreshToken, settings_1.SETTINGS.JWT.RT_SECRET);
+            const isUserExists = yield users_query_repository_1.usersQueryRepository.findUserById(userId);
+            const revokedToken = yield revokedTokens_query_repository_1.revokedTokensQueryRepository.findRevokedToken(oldRefreshToken);
+            if (!oldRefreshToken || userId === null || !isUserExists || revokedToken !== null) {
+                return null;
+            }
+            yield revokedTokens_repository_1.revokedTokensRepository.addRevokedToken({ userId: userId, token: oldRefreshToken });
+            return userId;
+        });
+    },
+    renewTokens(oldRefreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = yield this.ckeckUserByRefreshToken(oldRefreshToken);
+            if (userId === null) {
+                return {
+                    status: settings_1.ResultStatus.Unauthorized,
+                    data: null
+                };
+            }
+            const tokens = yield jwt_adapter_1.jwtAdapter.createJWT(new mongodb_1.ObjectId(userId));
+            return {
+                status: settings_1.ResultStatus.Success,
+                data: tokens
+            };
+        });
+    },
+    logoutUser(oldRefreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = yield this.ckeckUserByRefreshToken(oldRefreshToken);
+            if (userId === null) {
+                return {
+                    status: settings_1.ResultStatus.Unauthorized,
+                    data: null
+                };
+            }
+            return {
+                status: settings_1.ResultStatus.NoContent,
+                data: null
+            };
+        });
+    },
+};

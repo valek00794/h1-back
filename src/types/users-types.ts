@@ -28,6 +28,12 @@ export type PaginatorUsersViewType = {
 
 export type UserInfo = {
     userId: string,
+    login: string,
+    email?: string
+}
+
+export type CommentatorInfo = {
+    userId: string,
     userLogin: string,
     email?: string
 }
@@ -42,4 +48,9 @@ export type UserEmailConfirmationInfo = {
 export type UserSignUpType = {
     user: UserDBType,
     emailConfirmation: UserEmailConfirmationInfo | false
+}
+
+export type UsersRevokedTokens = {
+    userId: string,
+    token: string,
 }

@@ -9,13 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.clearDbController = void 0;
+exports.revokedTokensQueryRepository = void 0;
 const db_1 = require("../db/db");
-const settings_1 = require("../settings");
-const clearDbController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.setMongoDB)();
-    res
-        .status(settings_1.StatusCodes.NO_CONTENT_204)
-        .send();
-});
-exports.clearDbController = clearDbController;
+exports.revokedTokensQueryRepository = {
+    findRevokedToken(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.usersRevokedTokensCollection.findOne({ token });
+        });
+    },
+};

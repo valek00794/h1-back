@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb';
-import { UserInfo } from './users-types';
+import { CommentatorInfo } from './users-types';
 
 export type CommentType = {
   content: string;
-  commentatorInfo: UserInfo;
+  commentatorInfo: CommentatorInfo;
   createdAt: string;
   postId?: ObjectId
 };

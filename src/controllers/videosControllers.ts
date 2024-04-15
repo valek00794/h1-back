@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import { dbLocal } from '../db/db'
 import { CreateVideoType, OutputVideoType, Resolutions, UpdateVideoType } from '../types/videos-types'
-import { APIErrorResult, FieldError, ResultStatus } from '../types/result-types';
+import { APIErrorResult, FieldError } from '../types/result-types';
+import { StatusCodes } from '../settings';
 
 const VALIDATE_PHARAMS = {
     titleMaxLength: 40,
@@ -24,7 +25,7 @@ let apiErrors: FieldError[] = []
 
 export const getVideosController = (req: Request, res: Response<OutputVideoType[]>) => {
     res
-        .status(ResultStatus.OK_200)
+        .status(StatusCodes.OK_200)
         .json(dbLocal.videos)
 }
 
@@ -34,13 +35,13 @@ export const findVideoController = (req: Request, res: Response<APIErrorResult |
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id })
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .json({
                 errorsMessages: apiErrors
             })
     } else {
         res
-            .status(ResultStatus.OK_200)
+            .status(StatusCodes.OK_200)
             .json(dbLocal.videos[idVideo])
     }
 }
@@ -51,7 +52,7 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
     if (idVideo === -1) {
         apiErrors.push({ field: "id", message: validationErrorsMassages.id })
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .json({
                 errorsMessages: apiErrors
             })
@@ -124,11 +125,11 @@ export const updateVideoController = (req: Request, res: Response<OutputVideoTyp
             }
             dbLocal.videos[idVideo] = { id: dbLocal.videos[idVideo].id, ...updatedVideo, createdAt: dbLocal.videos[idVideo].createdAt }
             res
-                .status(ResultStatus.NO_CONTENT_204)
+                .status(StatusCodes.NO_CONTENT_204)
                 .send()
         } else {
             res
-                .status(ResultStatus.BAD_REQUEST_400)
+                .status(StatusCodes.BAD_REQUEST_400)
                 .json({
                     errorsMessages: apiErrors
                 })
@@ -196,11 +197,11 @@ export const createVideoController = (req: Request<CreateVideoType>, res: Respon
         }
         dbLocal.videos.push(newVideo)
         res
-            .status(ResultStatus.CREATED_201)
+            .status(StatusCodes.CREATED_201)
             .json(newVideo)
     } else {
         res
-            .status(ResultStatus.BAD_REQUEST_400)
+            .status(StatusCodes.BAD_REQUEST_400)
             .json({
                 errorsMessages: apiErrors
             })

@@ -5,7 +5,8 @@ import { commentsQueryRepository } from '../repositories/comments-query-reposito
 import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
 import { commentsService } from '../services/comments-service';
-import { ResultStatus } from '../types/result-types';
+import { StatusCodes } from '../settings';
+
 
 
 export const findCommentsOfPostController = async (req: Request, res: Response<PaginatorCommentsViewType>) => {
@@ -13,13 +14,13 @@ export const findCommentsOfPostController = async (req: Request, res: Response<P
     const post = await postsQueryRepository.findPost(req.params.id)
     if (!post) {
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .send()
         return
     }
     const comments = await commentsQueryRepository.getComments(query, req.params.blogId)
     res
-        .status(ResultStatus.OK_200)
+        .status(StatusCodes.OK_200)
         .json(comments)
 }
 
@@ -27,93 +28,93 @@ export const findCommentController = async (req: Request, res: Response<false | 
     const comment = await commentsQueryRepository.findComment(req.params.id)
     if (!comment) {
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .send()
         return
     }
     res
-        .status(ResultStatus.OK_200)
+        .status(StatusCodes.OK_200)
         .json(comment)
 }
 
 export const deleteCommentController = async (req: Request, res: Response<boolean>) => {
     const commentatorInfo = {
         userId: req.user?.userId!,
-        userLogin: req.user?.userLogin!
+        userLogin: req.user?.login!
     }
     const comment = await commentsQueryRepository.findComment(req.params.commentId)
     if (!comment) {
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .send()
         return
     }
     if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
         comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
         res
-            .status(ResultStatus.FORBIDDEN_403)
+            .status(StatusCodes.FORBIDDEN_403)
             .send()
         return
     }
 
     await commentsService.deleteComment(req.params.commentId)
     res
-        .status(ResultStatus.NO_CONTENT_204)
+        .status(StatusCodes.NO_CONTENT_204)
         .send()
 }
 
 export const createCommentForPostController = async (req: Request, res: Response<CommentType>) => {
     if (!req.user || !req.user.userId) {
         res
-            .status(ResultStatus.UNAUTHORIZED_401)
+            .status(StatusCodes.UNAUTHORIZED_401)
             .send()
         return
     }
     const post = await postsQueryRepository.findPost(req.params.postId)
     if (!post) {
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .send()
         return
     }
     const commentatorInfo = {
         userId: req.user?.userId!,
-        userLogin: req.user?.userLogin!
+        userLogin: req.user?.login!
     }
     const comment = await commentsService.createComment(req.body, commentatorInfo, req.params.postId)
     res
-        .status(ResultStatus.CREATED_201)
+        .status(StatusCodes.CREATED_201)
         .send(comment)
 }
 
 export const updateCommentForPostController = async (req: Request, res: Response<CommentType>) => {
     if (!req.user || !req.user.userId) {
         res
-            .status(ResultStatus.UNAUTHORIZED_401)
+            .status(StatusCodes.UNAUTHORIZED_401)
             .send()
         return
     }
     const comment = await commentsQueryRepository.findComment(req.params.commentId)
     if (!comment) {
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .send()
         return
     }
     const commentatorInfo = {
         userId: req.user?.userId!,
-        userLogin: req.user?.userLogin!
+        userLogin: req.user?.login!
     }
     if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
         comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
         res
-            .status(ResultStatus.FORBIDDEN_403)
+            .status(StatusCodes.FORBIDDEN_403)
             .send()
         return
     }
     await commentsService.updateComment(req.body, comment)
     res
-        .status(ResultStatus.NO_CONTENT_204)
+        .status(StatusCodes.NO_CONTENT_204)
         .send()
 }
 
@@ -122,12 +123,12 @@ export const getCommentsForPostController = async (req: Request, res: Response<P
     const post = await postsQueryRepository.findPost(req.params.postId)
     if (!post) {
         res
-            .status(ResultStatus.NOT_FOUND_404)
+            .status(StatusCodes.NOT_FOUND_404)
             .send()
         return
     }
     const comments = await commentsQueryRepository.getComments(query, req.params.postId)
     res
-        .status(ResultStatus.OK_200)
+        .status(StatusCodes.OK_200)
         .send(comments)
 }

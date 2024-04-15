@@ -22,7 +22,7 @@ export const usersQueryRepository = {
         if (user === null) return false
         return {
             email: user.email,
-            userLogin: user.login,
+            login: user.login,
             userId: id
         }
     },
