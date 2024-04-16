@@ -22,7 +22,7 @@ export const apiRequestsCounterMiddleware = async (req: Request, res: Response, 
     const currentDate = new Date();
     const tenSecondsAgo = new Date(currentDate.getTime() - REQUESTS_LOG_SETTING.timeRange * 1000);
     const requestsCount = await apiRequestsCollection.countDocuments({ IP: ipAddress, URL: baseUrl, date: { $gte: tenSecondsAgo } })
-    if (requestsCount <= REQUESTS_LOG_SETTING.timeRange) {
+    if (requestsCount <= REQUESTS_LOG_SETTING.maxCount) {
         return next()
     }
     return res

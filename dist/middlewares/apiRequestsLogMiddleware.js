@@ -30,7 +30,7 @@ const apiRequestsCounterMiddleware = (req, res, next) => __awaiter(void 0, void 
     const currentDate = new Date();
     const tenSecondsAgo = new Date(currentDate.getTime() - REQUESTS_LOG_SETTING.timeRange * 1000);
     const requestsCount = yield db_1.apiRequestsCollection.countDocuments({ IP: ipAddress, URL: baseUrl, date: { $gte: tenSecondsAgo } });
-    if (requestsCount <= REQUESTS_LOG_SETTING.timeRange) {
+    if (requestsCount <= REQUESTS_LOG_SETTING.maxCount) {
         return next();
     }
     return res
