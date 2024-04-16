@@ -14,6 +14,7 @@ import { commentsRouter } from './routers/comments-router'
 export const app = express()
 app.use(express.json())
 app.use(cookieParser())
+app.set('trust proxy', true)
 
 app.use(SETTINGS.PATH.videos, videosRouter)
 app.use(SETTINGS.PATH.posts, postsRouter)

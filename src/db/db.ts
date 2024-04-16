@@ -1,4 +1,4 @@
-import { DBType } from "../types/db-types"
+import { APIRequestsType, DBType } from "../types/db-types"
 import { MongoClient } from "mongodb"
 import dotenv from 'dotenv'
 
@@ -73,7 +73,9 @@ export const usersRevokedTokensCollection = db.collection<UsersRevokedTokens>(SE
 
 export const usersEmailConfirmationCollection = db.collection<UserEmailConfirmationInfo>(SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS)
 
-export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENT_COLLECTION_NAME)
+export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENTS)
+
+export const apiRequestsCollection = db.collection<APIRequestsType>(SETTINGS.DB.collection.API_REQUESTS)
 
 export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {
@@ -91,4 +93,5 @@ export const setMongoDB = () => {
   commentsCollection.drop()
   usersRevokedTokensCollection.drop()
   usersEmailConfirmationCollection.drop()
+  apiRequestsCollection.drop()
 }

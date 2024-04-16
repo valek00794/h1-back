@@ -18,6 +18,7 @@ const comments_router_1 = require("./routers/comments-router");
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
 exports.app.use((0, cookie_parser_1.default)());
+exports.app.set('trust proxy', true);
 exports.app.use(settings_1.SETTINGS.PATH.videos, videos_router_1.videosRouter);
 exports.app.use(settings_1.SETTINGS.PATH.posts, posts_router_1.postsRouter);
 exports.app.use(settings_1.SETTINGS.PATH.blogs, blogs_router_1.blogsRouter);

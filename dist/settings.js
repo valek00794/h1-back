@@ -23,7 +23,8 @@ exports.SETTINGS = {
             USERS: process.env.USER_COLLECTION_NAME || '',
             USERS_EMAIL_CONFIRMATIONS: process.env.USER_EMAIL_CONFIRMATIONS_COLLECTION_NAME || '',
             USERS_REVOKED_TOKENS: process.env.USERS_REVOKED_TOKENS_COLLECTION_NAME || '',
-            COMMENT_COLLECTION_NAME: process.env.COMMENT_COLLECTION_NAME || ''
+            COMMENTS: process.env.COMMENTS_COLLECTION_NAME || '',
+            API_REQUESTS: process.env.API_REQUESTS_COLLECTION_NAME || '',
         },
         mongoURI: process.env.MONGO_URL || 'mongodb://localhost:27017/sprint1localdb'
     },
@@ -53,4 +54,5 @@ var StatusCodes;
     StatusCodes[StatusCodes["UNAUTHORIZED_401"] = 401] = "UNAUTHORIZED_401";
     StatusCodes[StatusCodes["NOT_FOUND_404"] = 404] = "NOT_FOUND_404";
     StatusCodes[StatusCodes["FORBIDDEN_403"] = 403] = "FORBIDDEN_403";
+    StatusCodes[StatusCodes["TOO_MANY_REQUESTS_429"] = 429] = "TOO_MANY_REQUESTS_429";
 })(StatusCodes || (exports.StatusCodes = StatusCodes = {}));
