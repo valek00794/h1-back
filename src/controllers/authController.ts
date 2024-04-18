@@ -4,10 +4,11 @@ import { usersService } from '../services/users-service';
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter';
 import { usersQueryRepository } from '../repositories/users-query-repository';
 import { TokenOutType } from '../adapters/jwt/jwt-types';
-import { UserInfo, UserViewType } from '../types/users-types';
+import { UserInfoType, UserViewType } from '../types/users-types';
 import { APIErrorResult } from '../types/result-types';
 import { ResultStatus, StatusCodes } from '../settings';
 import { authService } from '../services/auth-service';
+import { usersDevicesService } from '../services/usersDevices-service';
 
 export const signInController = async (req: Request, res: Response<TokenOutType>) => {
     const user = await authService.checkCredential(req.body.loginOrEmail, req.body.password)
@@ -18,6 +19,9 @@ export const signInController = async (req: Request, res: Response<TokenOutType>
         return
     }
     const tokens = await jwtAdapter.createJWT(user._id!)
+    const deviceTitle = req.headers['user-agent'] || 'unknown device'
+    const ipAddress = req.ip || '0.0.0.0'
+    await usersDevicesService.addUserDevice(tokens.refreshToken, deviceTitle, ipAddress)
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true, })
     res
         .status(StatusCodes.OK_200)
@@ -26,7 +30,7 @@ export const signInController = async (req: Request, res: Response<TokenOutType>
         })
 }
 
-export const getAuthInfoController = async (req: Request, res: Response<UserInfo | false>) => {
+export const getAuthInfoController = async (req: Request, res: Response<UserInfoType | false>) => {
     const user = await usersQueryRepository.findUserById(req.user!.userId)
     if (!req.user || !req.user.userId || !user) {
         res
@@ -87,9 +91,9 @@ export const signUpEmailResendingController = async (req: Request, res: Response
     }
 }
 
-export const refreshTokenController = async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.refreshToken
-    const renewResult = await authService.renewTokens(refreshToken)
+export const refreshTokenController = async (req: Request, res: Response<TokenOutType>) => {
+    const oldRefreshToken = req.cookies.refreshToken
+    const renewResult = await authService.renewTokens(oldRefreshToken)
     if (renewResult.status === ResultStatus.Unauthorized) {
         res
             .status(StatusCodes.UNAUTHORIZED_401)
@@ -98,6 +102,7 @@ export const refreshTokenController = async (req: Request, res: Response) => {
     }
 
     if (renewResult.status === ResultStatus.Success) {
+        await usersDevicesService.updateUserDevice(oldRefreshToken, renewResult.data!.refreshToken)
         res.cookie('refreshToken', renewResult.data!.refreshToken, { httpOnly: true, secure: true, })
         res
             .status(StatusCodes.OK_200)

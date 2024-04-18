@@ -5,13 +5,14 @@ import { signInController, getAuthInfoController, signUpConfimationController, s
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { authJWTMiddleware } from "../middlewares/authJWTMiddleware";
 import { confirmationCodeInputValidation, emailInputValidation, userDataInputValidation } from "../validation/usersInputValidation";
+import { apiRequestsCounterMiddleware, apiRequestsLogMiddleware } from "../middlewares/apiRequestsLogMiddleware";
 
 export const authRouter = Router();
 
-authRouter.post('/login', authInputValidation, inputValidationMiddleware, signInController)
+authRouter.post('/login', apiRequestsLogMiddleware, apiRequestsCounterMiddleware, authInputValidation, inputValidationMiddleware, signInController)
 authRouter.get('/me', authJWTMiddleware, getAuthInfoController)
-authRouter.post('/registration', userDataInputValidation, inputValidationMiddleware, signUpController)
-authRouter.post('/registration-confirmation', confirmationCodeInputValidation, inputValidationMiddleware, signUpConfimationController)
-authRouter.post('/registration-email-resending', emailInputValidation, inputValidationMiddleware, signUpEmailResendingController)
+authRouter.post('/registration', apiRequestsLogMiddleware, apiRequestsCounterMiddleware, userDataInputValidation, inputValidationMiddleware, signUpController)
+authRouter.post('/registration-confirmation', apiRequestsLogMiddleware, apiRequestsCounterMiddleware, confirmationCodeInputValidation, inputValidationMiddleware, signUpConfimationController)
+authRouter.post('/registration-email-resending', apiRequestsLogMiddleware, apiRequestsCounterMiddleware, emailInputValidation, inputValidationMiddleware, signUpEmailResendingController)
 authRouter.post('/refresh-token', refreshTokenController)
 authRouter.post('/logout', logoutController)

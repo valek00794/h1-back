@@ -81,5 +81,5 @@ exports.usersService = {
                 return false;
             return true;
         });
-    },
+    }
 };

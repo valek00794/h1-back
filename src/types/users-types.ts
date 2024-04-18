@@ -26,19 +26,19 @@ export type PaginatorUsersViewType = {
     items: UserViewType[]
 }
 
-export type UserInfo = {
+export type UserInfoType = {
     userId: string,
     login: string,
     email?: string
 }
 
-export type CommentatorInfo = {
+export type CommentatorInfoType = {
     userId: string,
     userLogin: string,
     email?: string
 }
 
-export type UserEmailConfirmationInfo = {
+export type UserEmailConfirmationInfoType = {
     userId?: string,
     confirmationCode: string,
     expirationDate: Date,
@@ -47,10 +47,22 @@ export type UserEmailConfirmationInfo = {
 
 export type UserSignUpType = {
     user: UserDBType,
-    emailConfirmation: UserEmailConfirmationInfo | false
+    emailConfirmation: UserEmailConfirmationInfoType | false
 }
 
-export type UsersRevokedTokens = {
-    userId: string,
-    token: string,
+export type UsersDevicesType = {
+    deviceId: string,
+    title: string,
+    userId?: string,
+    ip: string,
+    lastActiveDate?: string,
+    expiryDate?: string
+}
+
+
+export type UserDeviceInfoType = {
+    userId: string
+    deviceId: string
+    iat?: number
+    exp?: number
 }

@@ -14,7 +14,6 @@ const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const settings_1 = require("../settings");
 const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const cookie_refresh_token = req.cookies.refreshToken;
     if (!req.headers.authorization) {
         res
             .status(settings_1.StatusCodes.UNAUTHORIZED_401)
@@ -22,13 +21,13 @@ const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         return;
     }
     const token = req.headers.authorization.split(' ')[1];
-    const userId = yield jwt_adapter_1.jwtAdapter.getUserIdByToken(token, settings_1.SETTINGS.JWT.AT_SECRET);
-    if (userId) {
+    const userVerifyInfo = yield jwt_adapter_1.jwtAdapter.getUserInfoByToken(token, settings_1.SETTINGS.JWT.AT_SECRET);
+    if (userVerifyInfo) {
         if (!req.user) {
             req.user = {};
         }
-        req.user.userId = userId;
-        const user = yield users_query_repository_1.usersQueryRepository.findUserById(userId);
+        req.user.userId = userVerifyInfo.userId;
+        const user = yield users_query_repository_1.usersQueryRepository.findUserById(userVerifyInfo.userId);
         if (user) {
             req.user.login = user.login;
         }
