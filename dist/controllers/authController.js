@@ -15,6 +15,7 @@ const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const settings_1 = require("../settings");
 const auth_service_1 = require("../services/auth-service");
+const usersDevices_service_1 = require("../services/usersDevices-service");
 const signInController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield auth_service_1.authService.checkCredential(req.body.loginOrEmail, req.body.password);
     if (!user) {
@@ -24,6 +25,9 @@ const signInController = (req, res) => __awaiter(void 0, void 0, void 0, functio
         return;
     }
     const tokens = yield jwt_adapter_1.jwtAdapter.createJWT(user._id);
+    const deviceTitle = req.headers['user-agent'] || 'unknown device';
+    const ipAddress = req.ip || '0.0.0.0';
+    yield usersDevices_service_1.usersDevicesService.addUserDevice(tokens.refreshToken, deviceTitle, ipAddress);
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true, });
     res
         .status(settings_1.StatusCodes.OK_200)
@@ -94,8 +98,8 @@ const signUpEmailResendingController = (req, res) => __awaiter(void 0, void 0, v
 });
 exports.signUpEmailResendingController = signUpEmailResendingController;
 const refreshTokenController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const refreshToken = req.cookies.refreshToken;
-    const renewResult = yield auth_service_1.authService.renewTokens(refreshToken);
+    const oldRefreshToken = req.cookies.refreshToken;
+    const renewResult = yield auth_service_1.authService.renewTokens(oldRefreshToken);
     if (renewResult.status === settings_1.ResultStatus.Unauthorized) {
         res
             .status(settings_1.StatusCodes.UNAUTHORIZED_401)
@@ -103,6 +107,7 @@ const refreshTokenController = (req, res) => __awaiter(void 0, void 0, void 0, f
         return;
     }
     if (renewResult.status === settings_1.ResultStatus.Success) {
+        yield usersDevices_service_1.usersDevicesService.updateUserDevice(oldRefreshToken, renewResult.data.refreshToken);
         res.cookie('refreshToken', renewResult.data.refreshToken, { httpOnly: true, secure: true, });
         res
             .status(settings_1.StatusCodes.OK_200)

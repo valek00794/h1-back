@@ -14,24 +14,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.jwtAdapter = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const uuid_1 = require("uuid");
 const settings_1 = require("../../settings");
 exports.jwtAdapter = {
-    createJWT(userId) {
+    createJWT(userId, deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
             const accessToken = jsonwebtoken_1.default.sign({ userId }, settings_1.SETTINGS.JWT.AT_SECRET, { expiresIn: settings_1.SETTINGS.JWT.AT_EXPIRES_TIME });
-            const refreshToken = jsonwebtoken_1.default.sign({ userId }, settings_1.SETTINGS.JWT.RT_SECRET, { expiresIn: settings_1.SETTINGS.JWT.RT_EXPIRES_TIME });
+            const getDeviceId = deviceId ? deviceId : (0, uuid_1.v4)();
+            const refreshToken = jsonwebtoken_1.default.sign({ userId, deviceId: getDeviceId }, settings_1.SETTINGS.JWT.RT_SECRET, { expiresIn: settings_1.SETTINGS.JWT.RT_EXPIRES_TIME });
             return {
                 accessToken: accessToken,
                 refreshToken: refreshToken
             };
         });
     },
-    getUserIdByToken(token, secret) {
+    getUserInfoByToken(token, secret) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const res = jsonwebtoken_1.default.verify(token, secret);
                 if (typeof res !== 'string') {
-                    return res.userId;
+                    return { userId: res.userId, deviceId: res.deviceId, iat: res.iat, exp: res.exp };
                 }
             }
             catch (error) {

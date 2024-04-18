@@ -1,18 +1,18 @@
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns/add'
 
-import { UserDbViewType } from '../types/users-types'
+import { UserDbViewType, UserDeviceInfoType } from '../types/users-types'
 import { usersQueryRepository } from '../repositories/users-query-repository'
 import { usersRepository } from '../repositories/users-repository'
 import { emailManager } from '../managers/email-manager'
 import { APIErrorResult, Result } from '../types/result-types'
 import { ResultStatus, SETTINGS } from '../settings'
 import { bcryptArapter } from '../adapters/bcypt-adapter'
-import { revokedTokensRepository } from '../repositories/revokedTokens-repository'
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
 import { ObjectId } from 'mongodb'
 import { JWTTokensOutType } from '../adapters/jwt/jwt-types'
-import { revokedTokensQueryRepository } from '../repositories/revokedTokens-query-repository'
+import { usersDevicesQueryRepository } from '../repositories/usersDevices-query-repository'
+import { usersDevicesRepository } from '../repositories/usersDevices-repository'
 
 export const authService = {
     async checkCredential(loginOrEmail: string, password: string): Promise<false | UserDbViewType> {
@@ -26,14 +26,17 @@ export const authService = {
 
     async confirmEmail(code: string): Promise<Result<APIErrorResult | null>> {
         const userConfirmationInfo = await usersQueryRepository.findUserConfirmationInfo(code)
+        if (userConfirmationInfo === null) return {
+            status: ResultStatus.BadRequest,
+            data: {
+                errorsMessages: [{
+                    message: "User with current confirmation code not found",
+                    field: "code"
+                }]
+            }
+        }
         const errorsMessages: APIErrorResult = {
             errorsMessages: []
-        }
-        if (userConfirmationInfo === null) {
-            errorsMessages.errorsMessages.push({
-                message: "User with current confirmation code not found",
-                field: "code"
-            })
         }
         if (userConfirmationInfo !== null) {
             if (userConfirmationInfo.isConfirmed) {
@@ -113,39 +116,46 @@ export const authService = {
             data: null
         }
     },
-    async ckeckUserByRefreshToken(oldRefreshToken: string): Promise<string | null> {
-        const userId = await jwtAdapter.getUserIdByToken(oldRefreshToken, SETTINGS.JWT.RT_SECRET)
-        const isUserExists = await usersQueryRepository.findUserById(userId!)
-        const revokedToken = await revokedTokensQueryRepository.findRevokedToken(oldRefreshToken)
-        if (!oldRefreshToken || userId === null || !isUserExists || revokedToken !== null) {
+    async ckeckUserByRefreshToken(oldRefreshToken: string): Promise<UserDeviceInfoType | null> {
+        const userVerifyInfo = await jwtAdapter.getUserInfoByToken(oldRefreshToken, SETTINGS.JWT.RT_SECRET)
+        if (!oldRefreshToken || userVerifyInfo === null) {
             return null
         }
-        await revokedTokensRepository.addRevokedToken({ userId: userId, token: oldRefreshToken })
-        return userId
+        const isUserExists = await usersQueryRepository.findUserById(userVerifyInfo!.userId)
+        const deviceSeccion = await usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId)
+        if (
+            !isUserExists ||
+            deviceSeccion === null ||
+            new Date(userVerifyInfo!.iat! * 1000).toISOString() !== deviceSeccion?.lastActiveDate
+        ) {
+            return null
+        }
+        return { userId: userVerifyInfo.userId, deviceId: userVerifyInfo.deviceId, iat: userVerifyInfo.iat, exp: userVerifyInfo.exp }
     },
 
     async renewTokens(oldRefreshToken: string): Promise<Result<JWTTokensOutType | null>> {
-        const userId = await this.ckeckUserByRefreshToken(oldRefreshToken)
-        if (userId === null) {
+        const userVerifyInfo = await this.ckeckUserByRefreshToken(oldRefreshToken)
+        if (userVerifyInfo === null) {
             return {
                 status: ResultStatus.Unauthorized,
                 data: null
             }
         }
-        const tokens = await jwtAdapter.createJWT(new ObjectId(userId))
+        const tokens = await jwtAdapter.createJWT(new ObjectId(userVerifyInfo.userId), userVerifyInfo.deviceId)
         return {
             status: ResultStatus.Success,
             data: tokens
         }
     },
     async logoutUser(oldRefreshToken: string): Promise<Result<null>> {
-        const userId = await this.ckeckUserByRefreshToken(oldRefreshToken)
-        if (userId === null) {
+        const userVerifyInfo = await this.ckeckUserByRefreshToken(oldRefreshToken)
+        if (userVerifyInfo === null) {
             return {
                 status: ResultStatus.Unauthorized,
                 data: null
             }
         }
+        await usersDevicesRepository.deleteUserDevicebyId(userVerifyInfo.deviceId)
         return {
             status: ResultStatus.NoContent,
             data: null

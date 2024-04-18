@@ -9,6 +9,7 @@ export const SETTINGS = {
         blogs: '/blogs',
         users: '/users',
         auth: '/auth',
+        devices: '/security/devices',
         comments: '/comments',
         clearDb: '/testing/all-data',
         clearLocalDb: '/testing/videos/all-data',
@@ -20,10 +21,11 @@ export const SETTINGS = {
             BLOGS: process.env.BLOG_COLLECTION_NAME || '',
             USERS: process.env.USER_COLLECTION_NAME || '',
             USERS_EMAIL_CONFIRMATIONS: process.env.USER_EMAIL_CONFIRMATIONS_COLLECTION_NAME || '',
-            USERS_REVOKED_TOKENS: process.env.USERS_REVOKED_TOKENS_COLLECTION_NAME || '',
+            USERS_DEVICES: process.env.USERS_DEVICES_COLLECTION_NAME || '',
             COMMENTS: process.env.COMMENTS_COLLECTION_NAME || '',
             API_REQUESTS: process.env.API_REQUESTS_COLLECTION_NAME || '',
         },
+
         mongoURI: process.env.MONGO_URL || 'mongodb://localhost:27017/sprint1localdb'
     },
     JWT: {

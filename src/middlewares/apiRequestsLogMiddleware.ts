@@ -8,7 +8,7 @@ const REQUESTS_LOG_SETTING = {
 }
 
 export const apiRequestsLogMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const ipAddress = req.ip || 'unknown';
+    const ipAddress = req.ip || '0.0.0.0';
     const baseUrl = req.originalUrl;
     const currentDate = new Date();
 
@@ -17,7 +17,7 @@ export const apiRequestsLogMiddleware = async (req: Request, res: Response, next
 }
 
 export const apiRequestsCounterMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const ipAddress = req.ip || 'unknown';
+    const ipAddress = req.ip || '0.0.0.0';
     const baseUrl = req.originalUrl;
     const currentDate = new Date();
     const tenSecondsAgo = new Date(currentDate.getTime() - REQUESTS_LOG_SETTING.timeRange * 1000);

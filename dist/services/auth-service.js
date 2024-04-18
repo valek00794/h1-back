@@ -17,10 +17,10 @@ const users_repository_1 = require("../repositories/users-repository");
 const email_manager_1 = require("../managers/email-manager");
 const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
-const revokedTokens_repository_1 = require("../repositories/revokedTokens-repository");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const mongodb_1 = require("mongodb");
-const revokedTokens_query_repository_1 = require("../repositories/revokedTokens-query-repository");
+const usersDevices_query_repository_1 = require("../repositories/usersDevices-query-repository");
+const usersDevices_repository_1 = require("../repositories/usersDevices-repository");
 exports.authService = {
     checkCredential(loginOrEmail, password) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -37,15 +37,19 @@ exports.authService = {
     confirmEmail(code) {
         return __awaiter(this, void 0, void 0, function* () {
             const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(code);
+            if (userConfirmationInfo === null)
+                return {
+                    status: settings_1.ResultStatus.BadRequest,
+                    data: {
+                        errorsMessages: [{
+                                message: "User with current confirmation code not found",
+                                field: "code"
+                            }]
+                    }
+                };
             const errorsMessages = {
                 errorsMessages: []
             };
-            if (userConfirmationInfo === null) {
-                errorsMessages.errorsMessages.push({
-                    message: "User with current confirmation code not found",
-                    field: "code"
-                });
-            }
             if (userConfirmationInfo !== null) {
                 if (userConfirmationInfo.isConfirmed) {
                     errorsMessages.errorsMessages.push({
@@ -129,26 +133,30 @@ exports.authService = {
     },
     ckeckUserByRefreshToken(oldRefreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userId = yield jwt_adapter_1.jwtAdapter.getUserIdByToken(oldRefreshToken, settings_1.SETTINGS.JWT.RT_SECRET);
-            const isUserExists = yield users_query_repository_1.usersQueryRepository.findUserById(userId);
-            const revokedToken = yield revokedTokens_query_repository_1.revokedTokensQueryRepository.findRevokedToken(oldRefreshToken);
-            if (!oldRefreshToken || userId === null || !isUserExists || revokedToken !== null) {
+            const userVerifyInfo = yield jwt_adapter_1.jwtAdapter.getUserInfoByToken(oldRefreshToken, settings_1.SETTINGS.JWT.RT_SECRET);
+            if (!oldRefreshToken || userVerifyInfo === null) {
                 return null;
             }
-            yield revokedTokens_repository_1.revokedTokensRepository.addRevokedToken({ userId: userId, token: oldRefreshToken });
-            return userId;
+            const isUserExists = yield users_query_repository_1.usersQueryRepository.findUserById(userVerifyInfo.userId);
+            const deviceSeccion = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId);
+            if (!isUserExists ||
+                deviceSeccion === null ||
+                new Date(userVerifyInfo.iat * 1000).toISOString() !== (deviceSeccion === null || deviceSeccion === void 0 ? void 0 : deviceSeccion.lastActiveDate)) {
+                return null;
+            }
+            return { userId: userVerifyInfo.userId, deviceId: userVerifyInfo.deviceId, iat: userVerifyInfo.iat, exp: userVerifyInfo.exp };
         });
     },
     renewTokens(oldRefreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userId = yield this.ckeckUserByRefreshToken(oldRefreshToken);
-            if (userId === null) {
+            const userVerifyInfo = yield this.ckeckUserByRefreshToken(oldRefreshToken);
+            if (userVerifyInfo === null) {
                 return {
                     status: settings_1.ResultStatus.Unauthorized,
                     data: null
                 };
             }
-            const tokens = yield jwt_adapter_1.jwtAdapter.createJWT(new mongodb_1.ObjectId(userId));
+            const tokens = yield jwt_adapter_1.jwtAdapter.createJWT(new mongodb_1.ObjectId(userVerifyInfo.userId), userVerifyInfo.deviceId);
             return {
                 status: settings_1.ResultStatus.Success,
                 data: tokens
@@ -157,13 +165,14 @@ exports.authService = {
     },
     logoutUser(oldRefreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userId = yield this.ckeckUserByRefreshToken(oldRefreshToken);
-            if (userId === null) {
+            const userVerifyInfo = yield this.ckeckUserByRefreshToken(oldRefreshToken);
+            if (userVerifyInfo === null) {
                 return {
                     status: settings_1.ResultStatus.Unauthorized,
                     data: null
                 };
             }
+            yield usersDevices_repository_1.usersDevicesRepository.deleteUserDevicebyId(userVerifyInfo.deviceId);
             return {
                 status: settings_1.ResultStatus.NoContent,
                 data: null

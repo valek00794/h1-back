@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import { PostType } from "../types/posts-types"
 import { BlogType } from "../types/blogs-types"
 import { SETTINGS } from "../settings"
-import { UserDBType, UserEmailConfirmationInfo, UsersRevokedTokens } from "../types/users-types"
+import { UserDBType, UserEmailConfirmationInfoType, UsersDevicesType } from "../types/users-types"
 import { CommentType } from "../types/comments-types"
 dotenv.config()
 
@@ -69,9 +69,9 @@ export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BL
 
 export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.USERS)
 
-export const usersRevokedTokensCollection = db.collection<UsersRevokedTokens>(SETTINGS.DB.collection.USERS_REVOKED_TOKENS)
+export const usersDevicesCollection = db.collection<UsersDevicesType>(SETTINGS.DB.collection.USERS_DEVICES)
 
-export const usersEmailConfirmationCollection = db.collection<UserEmailConfirmationInfo>(SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS)
+export const usersEmailConfirmationCollection = db.collection<UserEmailConfirmationInfoType>(SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS)
 
 export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENTS)
 
@@ -91,7 +91,6 @@ export const setMongoDB = () => {
   blogsCollection.drop()
   usersCollection.drop()
   commentsCollection.drop()
-  usersRevokedTokensCollection.drop()
   usersEmailConfirmationCollection.drop()
   apiRequestsCollection.drop()
 }

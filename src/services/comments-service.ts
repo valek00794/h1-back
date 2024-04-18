@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb"
 
 import { CommentDbType, CommentInputType, CommentViewType } from "../types/comments-types"
-import { CommentatorInfo } from "../types/users-types"
+import { CommentatorInfoType } from "../types/users-types"
 import { commentsRepository } from "../repositories/comments-repository"
 import { commentsQueryRepository } from "../repositories/comments-query-repository"
 
 export const commentsService = {
-    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfo, postId?: string): Promise<CommentViewType> {
+    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentViewType> {
         const newComment: CommentDbType = {
             content: body.content,
             postId: new ObjectId(postId),

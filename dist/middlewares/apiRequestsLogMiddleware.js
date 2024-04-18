@@ -17,7 +17,7 @@ const REQUESTS_LOG_SETTING = {
     timeRange: 10
 };
 const apiRequestsLogMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const ipAddress = req.ip || 'unknown';
+    const ipAddress = req.ip || '0.0.0.0';
     const baseUrl = req.originalUrl;
     const currentDate = new Date();
     yield db_1.apiRequestsCollection.insertOne({ IP: ipAddress, URL: baseUrl, date: currentDate });
@@ -25,7 +25,7 @@ const apiRequestsLogMiddleware = (req, res, next) => __awaiter(void 0, void 0, v
 });
 exports.apiRequestsLogMiddleware = apiRequestsLogMiddleware;
 const apiRequestsCounterMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const ipAddress = req.ip || 'unknown';
+    const ipAddress = req.ip || '0.0.0.0';
     const baseUrl = req.originalUrl;
     const currentDate = new Date();
     const tenSecondsAgo = new Date(currentDate.getTime() - REQUESTS_LOG_SETTING.timeRange * 1000);
