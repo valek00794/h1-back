@@ -4,11 +4,10 @@ import { usersService } from '../services/users-service';
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter';
 import { usersQueryRepository } from '../repositories/users-query-repository';
 import { TokenOutType } from '../adapters/jwt/jwt-types';
-import { UserInfoType, UserViewType, UsersDevicesType } from '../types/users-types';
+import { UserInfoType, UserViewType } from '../types/users-types';
 import { APIErrorResult } from '../types/result-types';
 import { ResultStatus, StatusCodes } from '../settings';
 import { authService } from '../services/auth-service';
-import { usersDevicesQueryRepository } from '../repositories/usersDevices-query-repository';
 import { usersDevicesService } from '../services/usersDevices-service';
 
 export const signInController = async (req: Request, res: Response<TokenOutType>) => {
