@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { app } from '../src/app'
-import { CodeResponses, SETTINGS } from '../src/settings'
+import { StatusCodes, SETTINGS } from '../src/settings'
 
 dotenv.config()
 
@@ -29,17 +29,17 @@ describe('/login', () => {
     })
 
     afterAll(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(StatusCodes.NO_CONTENT_204)
     })
     beforeEach(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(StatusCodes.NO_CONTENT_204)
     })
 
     it('1. - POST /login does not auth the User with incorrect data', async function () {
         await request(app)
             .post(SETTINGS.PATH.auth + '/login')
             .send({ ...newIncorrectLoginData })
-            .expect(CodeResponses.BAD_REQUEST_400, {
+            .expect(StatusCodes.BAD_REQUEST_400, {
                 errorsMessages: [
                     { message: 'The field is required', field: 'loginOrEmail' },
                     { message: 'The field is required', field: 'password' },
@@ -53,12 +53,12 @@ describe('/login', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         await request(app)
             .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.email, password: 'wrongPswd' })
-            .expect(CodeResponses.UNAUTHORIZED_401)
+            .expect(StatusCodes.UNAUTHORIZED_401)
 
     })
 
@@ -67,12 +67,12 @@ describe('/login', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         await request(app)
             .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: 'wronglogin', password: 'wrongPswd' })
-            .expect(CodeResponses.UNAUTHORIZED_401)
+            .expect(StatusCodes.UNAUTHORIZED_401)
 
     })
 
@@ -81,11 +81,11 @@ describe('/login', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
         const res = await request(app)
             .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.email, password: newCorrectUser.password })
-            .expect(CodeResponses.OK_200)
+            .expect(StatusCodes.OK_200)
 
         expect(res.body).toEqual({
             accessToken: expect.any(String)
@@ -104,11 +104,11 @@ describe('/login', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
         const res = await request(app)
             .post(SETTINGS.PATH.auth + '/login')
             .send({ loginOrEmail: newCorrectUser.login, password: newCorrectUser.password })
-            .expect(CodeResponses.OK_200)
+            .expect(StatusCodes.OK_200)
         
         expect(res.body).toEqual({
             accessToken: expect.any(String)
