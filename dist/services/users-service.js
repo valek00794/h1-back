@@ -71,15 +71,21 @@ exports.usersService = {
             };
         });
     },
+    updateUserPassword(userId, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!mongodb_1.ObjectId.isValid(userId)) {
+                return false;
+            }
+            const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
+            return yield users_repository_1.usersRepository.updateUserPassword(userId, passwordHash);
+        });
+    },
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const res = yield users_repository_1.usersRepository.deleteUserById(id);
-            if (res.deletedCount === 0)
-                return false;
-            return true;
+            return yield users_repository_1.usersRepository.deleteUserById(id);
         });
     }
 };

@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { app } from '../src/app'
-import { CodeResponses, SETTINGS } from '../src/settings'
+import { StatusCodes, SETTINGS } from '../src/settings'
 
 dotenv.config()
 
@@ -38,15 +38,15 @@ describe('/blogs', () => {
     })
 
     afterAll(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(StatusCodes.NO_CONTENT_204)
 
     })
     beforeEach(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(StatusCodes.NO_CONTENT_204)
     })
 
     it('1. GET /blogs = []', async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(StatusCodes.NO_CONTENT_204)
         await request(app).get(SETTINGS.PATH.blogs).expect(emptyBlogs)
     })
 
@@ -60,7 +60,7 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newIncorrectBlog })
-            .expect(CodeResponses.BAD_REQUEST_400, {
+            .expect(StatusCodes.BAD_REQUEST_400, {
                 errorsMessages: [
                     { message: 'The field is required', field: 'name' },
                     { message: 'The field is required', field: 'description' },
@@ -76,7 +76,7 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newIncorrectBlog })
-            .expect(CodeResponses.BAD_REQUEST_400, {
+            .expect(StatusCodes.BAD_REQUEST_400, {
                 errorsMessages: [
                     { message: 'The field length must be less than 15', field: 'name' },
                     { message: 'The field length must be less than 500', field: 'description' },
@@ -93,7 +93,7 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectBlog })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const createdBlog = res.body
         expect(createdBlog).toEqual(
@@ -106,7 +106,7 @@ describe('/blogs', () => {
     })
 
     it('5. - GET /blogs/{id} Blog by ID with incorrect id', async () => {
-        await request(app).get(`${SETTINGS.PATH.blogs}/RandomId`).expect(CodeResponses.NOT_FOUND_404)
+        await request(app).get(`${SETTINGS.PATH.blogs}/RandomId`).expect(StatusCodes.NOT_FOUND_404)
     })
 
     it('6. + GET /blogs/{id} Blog by ID with correct id', async () => {
@@ -114,12 +114,12 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newAnotherCorrectBlog })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const createdBlog = res.body
         const resCreatedBlog = await request(app)
             .get(SETTINGS.PATH.blogs + '/' + createdBlog.id)
-            .expect(CodeResponses.OK_200, createdBlog)
+            .expect(StatusCodes.OK_200, createdBlog)
         expect(resCreatedBlog.body).toEqual(createdBlog)
 
     })
@@ -129,7 +129,7 @@ describe('/blogs', () => {
             .put(SETTINGS.PATH.blogs + '/RandomId')
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send(newAnotherCorrectBlog)
-            .expect(CodeResponses.NOT_FOUND_404)
+            .expect(StatusCodes.NOT_FOUND_404)
 
         const res = await request(app).get(SETTINGS.PATH.blogs)
         expect(res.body).toEqual(emptyBlogs)
@@ -141,7 +141,7 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectBlog })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const createdBlog = res.body
         await request(app).get(SETTINGS.PATH.blogs).expect({
@@ -160,7 +160,7 @@ describe('/blogs', () => {
                 description: newIncorrectBlog.description,
                 websiteUrl: newIncorrectBlog.websiteUrl
             })
-            .expect(CodeResponses.BAD_REQUEST_400)
+            .expect(StatusCodes.BAD_REQUEST_400)
         await request(app).get(SETTINGS.PATH.blogs).expect({
             pagesCount: 1,
             page: 1,
@@ -176,7 +176,7 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectBlog })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const createdBlog = res.body
         await request(app).get(SETTINGS.PATH.blogs).expect({
@@ -195,7 +195,7 @@ describe('/blogs', () => {
                 description: newAnotherCorrectBlog.description,
                 websiteUrl: newAnotherCorrectBlog.websiteUrl
             })
-            .expect(CodeResponses.NO_CONTENT_204)
+            .expect(StatusCodes.NO_CONTENT_204)
 
         await request(app).get(SETTINGS.PATH.blogs).expect({
             pagesCount: 1,
@@ -215,7 +215,7 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectBlog })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const createdBlog = res.body
         expect(createdBlog).toEqual(
@@ -229,7 +229,7 @@ describe('/blogs', () => {
         await request(app)
             .delete(SETTINGS.PATH.blogs + '/RandomId')
             .set({ 'authorization': 'Basic ' + codedAuth })
-            .expect(CodeResponses.NOT_FOUND_404)
+            .expect(StatusCodes.NOT_FOUND_404)
 
         await request(app).get(SETTINGS.PATH.blogs).expect({
             pagesCount: 1,
@@ -249,7 +249,7 @@ describe('/blogs', () => {
             .post(SETTINGS.PATH.blogs)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectBlog })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const createdBlog = res.body
         expect(createdBlog).toEqual(
@@ -263,7 +263,7 @@ describe('/blogs', () => {
         await request(app)
             .delete(SETTINGS.PATH.blogs + '/' + createdBlog.id)
             .set({ 'authorization': 'Basic ' + codedAuth })
-            .expect(CodeResponses.NO_CONTENT_204)
+            .expect(StatusCodes.NO_CONTENT_204)
 
         await request(app).get(SETTINGS.PATH.blogs).expect(emptyBlogs)
     })

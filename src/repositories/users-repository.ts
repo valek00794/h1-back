@@ -1,24 +1,39 @@
-import { DeleteResult, ObjectId, UpdateResult } from "mongodb";
+import { ObjectId } from "mongodb";
 
-import { usersCollection, usersEmailConfirmationCollection } from "../db/db";
-import { UserDBType, UserEmailConfirmationInfoType, UserSignUpType } from "../types/users-types";
+import { UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UserSignUpType, UserDbType } from "../types/users-types";
+import { UsersModel } from "../db/mongo/users.model";
+import { UsersEmailConfirmationsModel } from "../db/mongo/usersEmailConfirmation.model";
+import { UsersRecoveryPassswordModel } from "../db/mongo/usersRecoveryPasssword.model";
 
 export const usersRepository = {
-    async createUser(signUpData: UserSignUpType): Promise<UserDBType> {
-        const newUser = await usersCollection.insertOne(signUpData.user)
+    async createUser(signUpData: UserSignUpType): Promise<UserDbType> {
+        const user = new UsersModel(signUpData.user)
+        await user.save()
         if (signUpData.emailConfirmation) {
-            await usersEmailConfirmationCollection.insertOne({ userId: newUser.insertedId.toString(), ...signUpData.emailConfirmation })
+            const emailConfirmation = new UsersEmailConfirmationsModel({ userId: user._id.toString(), ...signUpData.emailConfirmation })
+            await emailConfirmation.save()
         }
-        return signUpData.user
+        return user
     },
-    async deleteUserById(id: string): Promise<DeleteResult> {
-        await usersEmailConfirmationCollection.deleteOne({ userId: id })
-        return await usersCollection.deleteOne({ _id: new ObjectId(id) })
+    async deleteUserById(id: string): Promise<boolean> {
+        await UsersEmailConfirmationsModel.deleteOne({ userId: id })
+        const deleteResult = await UsersModel.findByIdAndDelete(id)
+        return deleteResult ? true : false
+    },
+    async updateUserPassword(userId: string, passwordHash: string): Promise<boolean> {
+        await UsersRecoveryPassswordModel.deleteOne({ userId })
+        const updatedResult = await UsersModel.findByIdAndUpdate(userId, { passwordHash }, { new: true });
+        return updatedResult ? true : false
     },
     async updateConfirmationInfo(userId: ObjectId, emailConfirmationInfo: UserEmailConfirmationInfoType) {
-        return await usersEmailConfirmationCollection.updateOne({ userId: userId.toString() }, { $set: { ...emailConfirmationInfo } })
+        return await UsersEmailConfirmationsModel.updateOne({ userId: userId.toString() }, { $set: { ...emailConfirmationInfo } })
     },
-    async updateConfirmation(_id: ObjectId): Promise<UpdateResult<UserEmailConfirmationInfoType>> {
-        return await usersEmailConfirmationCollection.updateOne({ _id }, { $set: { isConfirmed: true } })
+    async updateConfirmation(id: ObjectId) {
+        return await UsersEmailConfirmationsModel.findByIdAndUpdate(id, { isConfirmed: true }, { new: true })
+    },
+    async updatePasswordRecoveryInfo(userId: ObjectId, updatedRecoveryInfo: UserRecoveryPasswordInfoType) {
+        const recoveryInfo = new UsersRecoveryPassswordModel({ userId: userId.toString(), ...updatedRecoveryInfo })
+        await recoveryInfo.save()
+        return recoveryInfo
     },
 }

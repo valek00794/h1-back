@@ -10,32 +10,50 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersRepository = void 0;
-const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
+const users_model_1 = require("../db/mongo/users.model");
+const usersEmailConfirmation_model_1 = require("../db/mongo/usersEmailConfirmation.model");
+const usersRecoveryPasssword_model_1 = require("../db/mongo/usersRecoveryPasssword.model");
 exports.usersRepository = {
     createUser(signUpData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newUser = yield db_1.usersCollection.insertOne(signUpData.user);
+            const user = new users_model_1.UsersModel(signUpData.user);
+            yield user.save();
             if (signUpData.emailConfirmation) {
-                yield db_1.usersEmailConfirmationCollection.insertOne(Object.assign({ userId: newUser.insertedId.toString() }, signUpData.emailConfirmation));
+                const emailConfirmation = new usersEmailConfirmation_model_1.UsersEmailConfirmationsModel(Object.assign({ userId: user._id.toString() }, signUpData.emailConfirmation));
+                yield emailConfirmation.save();
             }
-            return signUpData.user;
+            return user;
         });
     },
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.usersEmailConfirmationCollection.deleteOne({ userId: id });
-            return yield db_1.usersCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.deleteOne({ userId: id });
+            const deleteResult = yield users_model_1.UsersModel.findByIdAndDelete(id);
+            return deleteResult ? true : false;
+        });
+    },
+    updateUserPassword(userId, passwordHash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield usersRecoveryPasssword_model_1.UsersRecoveryPassswordModel.deleteOne({ userId });
+            const updatedResult = yield users_model_1.UsersModel.findByIdAndUpdate(userId, { passwordHash }, { new: true });
+            return updatedResult ? true : false;
         });
     },
     updateConfirmationInfo(userId, emailConfirmationInfo) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersEmailConfirmationCollection.updateOne({ userId: userId.toString() }, { $set: Object.assign({}, emailConfirmationInfo) });
+            return yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.updateOne({ userId: userId.toString() }, { $set: Object.assign({}, emailConfirmationInfo) });
         });
     },
-    updateConfirmation(_id) {
+    updateConfirmation(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersEmailConfirmationCollection.updateOne({ _id }, { $set: { isConfirmed: true } });
+            return yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.findByIdAndUpdate(id, { isConfirmed: true }, { new: true });
+        });
+    },
+    updatePasswordRecoveryInfo(userId, updatedRecoveryInfo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const recoveryInfo = new usersRecoveryPasssword_model_1.UsersRecoveryPassswordModel(Object.assign({ userId: userId.toString() }, updatedRecoveryInfo));
+            yield recoveryInfo.save();
+            return recoveryInfo;
         });
     },
 };

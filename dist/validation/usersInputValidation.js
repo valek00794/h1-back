@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmationCodeInputValidation = exports.emailInputValidation = exports.userDataInputValidation = void 0;
+exports.recoveryCodeInputValidation = exports.confirmationCodeInputValidation = exports.emailInputValidation = exports.userDataInputValidation = void 0;
 const express_validator_1 = require("express-validator");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const VALIDATE_PHARAMS = {
@@ -68,3 +68,13 @@ exports.emailInputValidation = (0, express_validator_1.body)('email').trim()
 exports.confirmationCodeInputValidation = (0, express_validator_1.body)('code').trim()
     .notEmpty()
     .withMessage('The field is required');
+exports.recoveryCodeInputValidation = [
+    (0, express_validator_1.body)('newPassword').trim()
+        .notEmpty()
+        .withMessage('The field is required')
+        .isLength({ min: VALIDATE_PHARAMS.password.minLength, max: VALIDATE_PHARAMS.password.maxLength })
+        .withMessage(`The field length should be from ${VALIDATE_PHARAMS.password.minLength} to ${VALIDATE_PHARAMS.password.maxLength}`),
+    (0, express_validator_1.body)('recoveryCode').trim()
+        .notEmpty()
+        .withMessage('The field is required')
+];

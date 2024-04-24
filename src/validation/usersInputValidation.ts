@@ -59,3 +59,17 @@ export const emailInputValidation = body('email').trim()
 export const confirmationCodeInputValidation = body('code').trim()
     .notEmpty()
     .withMessage('The field is required')
+
+export const recoveryCodeInputValidation = [
+    body('newPassword').trim()
+        .notEmpty()
+        .withMessage('The field is required')
+        .isLength({ min: VALIDATE_PHARAMS.password.minLength, max: VALIDATE_PHARAMS.password.maxLength })
+        .withMessage(`The field length should be from ${VALIDATE_PHARAMS.password.minLength} to ${VALIDATE_PHARAMS.password.maxLength}`),
+    body('recoveryCode').trim()
+        .notEmpty()
+        .withMessage('The field is required')
+]
+
+
+

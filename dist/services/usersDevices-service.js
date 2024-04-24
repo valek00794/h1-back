@@ -81,7 +81,7 @@ exports.usersDevicesService = {
                 };
             }
             const device = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getUserDeviceById(deviceId);
-            if (device === null) {
+            if (!device) {
                 return {
                     status: settings_1.ResultStatus.NotFound,
                     data: null

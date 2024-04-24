@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import { app } from '../src/app'
-import { CodeResponses, SETTINGS } from '../src/settings'
+import { StatusCodes, SETTINGS } from '../src/settings'
 
 dotenv.config()
 
@@ -50,11 +50,11 @@ describe('/users', () => {
     })
 
     afterAll(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(StatusCodes.NO_CONTENT_204)
     })
 
     beforeEach(async () => {
-        await request(app).delete(SETTINGS.PATH.clearDb).expect(CodeResponses.NO_CONTENT_204)
+        await request(app).delete(SETTINGS.PATH.clearDb).expect(StatusCodes.NO_CONTENT_204)
     })
 
     it('1. GET /users = []', async () => {
@@ -69,18 +69,18 @@ describe('/users', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const resUser2 = await request(app)
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser2 })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
 
         const users = await request(app)
             .get(SETTINGS.PATH.users + '?searchEmailTerm=kuzyuberdina')
             .set({ 'authorization': 'Basic ' + codedAuth })
-            .expect(CodeResponses.OK_200)
+            .expect(StatusCodes.OK_200)
         expect(users.body).toEqual({
             pagesCount: 1,
             page: 1,
@@ -92,7 +92,7 @@ describe('/users', () => {
         const users2 = await request(app)
             .get(SETTINGS.PATH.users + '?searchLoginTerm=dim')
             .set({ 'authorization': 'Basic ' + codedAuth })
-            .expect(CodeResponses.OK_200)
+            .expect(StatusCodes.OK_200)
         expect(users2.body).toEqual({
             pagesCount: 1,
             page: 1,
@@ -107,7 +107,7 @@ describe('/users', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newIncorrectEmptyUser })
-            .expect(CodeResponses.BAD_REQUEST_400, {
+            .expect(StatusCodes.BAD_REQUEST_400, {
                 errorsMessages: [
                     { message: 'The field is required and The field length should be from 6 to 20', field: 'password' },
                     { message: 'The field is required and The field length should be from 3 to 10', field: 'login' },
@@ -126,7 +126,7 @@ describe('/users', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newIncorrectUser2 })
-            .expect(CodeResponses.BAD_REQUEST_400, {
+            .expect(StatusCodes.BAD_REQUEST_400, {
                 errorsMessages: [
                     { message: 'The field length should be from 6 to 20', field: 'password' },
                     { message: 'The field length should be from 3 to 10', field: 'login' },
@@ -144,7 +144,7 @@ describe('/users', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newIncorrectUser })
-            .expect(CodeResponses.BAD_REQUEST_400, {
+            .expect(StatusCodes.BAD_REQUEST_400, {
                 errorsMessages: [
                     { message: 'The field length should be from 6 to 20', field: 'password' },
                     { message: 'The field length should be from 3 to 10', field: 'login' },
@@ -167,7 +167,7 @@ describe('/users', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
         const user = resUser.body
 
         const resUsers2 = await request(app)
@@ -187,7 +187,7 @@ describe('/users', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
         const user = resUser.body
 
         const resUsers = await request(app)
@@ -203,7 +203,7 @@ describe('/users', () => {
         await request(app)
             .delete(SETTINGS.PATH.users + '/RandomId')
             .set({ 'authorization': 'Basic ' + codedAuth })
-            .expect(CodeResponses.NOT_FOUND_404)
+            .expect(StatusCodes.NOT_FOUND_404)
 
         const resUsers2 = await request(app)
             .get(SETTINGS.PATH.users)
@@ -221,7 +221,7 @@ describe('/users', () => {
             .post(SETTINGS.PATH.users)
             .set({ 'authorization': 'Basic ' + codedAuth })
             .send({ ...newCorrectUser })
-            .expect(CodeResponses.CREATED_201)
+            .expect(StatusCodes.CREATED_201)
         const user = resUser.body
 
         const resUsers = await request(app)
@@ -237,7 +237,7 @@ describe('/users', () => {
         await request(app)
             .delete(SETTINGS.PATH.users + '/' + user.id)
             .set({ 'authorization': 'Basic ' + codedAuth })
-            .expect(CodeResponses.NO_CONTENT_204)
+            .expect(StatusCodes.NO_CONTENT_204)
 
         const resUsers2 = await request(app)
             .get(SETTINGS.PATH.users)

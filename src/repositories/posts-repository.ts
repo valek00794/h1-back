@@ -1,17 +1,18 @@
-import { DeleteResult, ObjectId, UpdateResult } from 'mongodb'
-
-import { postsCollection } from '../db/db'
-import { PostType } from '../types/posts-types'
+import { PostDbType, PostType } from '../types/posts-types'
+import { PostsModel } from '../db/mongo/posts.model'
 
 export const postsRepository = {
-    async createPost(newPost: PostType): Promise<PostType> {
-        await postsCollection.insertOne(newPost)
-        return newPost
+    async createPost(newPost: PostType): Promise<PostDbType> {
+        const post = new PostsModel(newPost)
+        await post.save()
+        return post
     },
-    async updatePost(updatedPost: PostType, id: string): Promise<UpdateResult<PostType>> {
-        return await postsCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedPost })
+    async updatePost(updatedPost: PostType, id: string): Promise<boolean> {
+        const updatedResult = await PostsModel.findByIdAndUpdate(id, updatedPost, { new: true })
+        return updatedResult ? true : false
     },
-    async deletePost(id: string): Promise<DeleteResult> {
-        return await postsCollection.deleteOne({ _id: new ObjectId(id) })
+    async deletePost(id: string): Promise<boolean> {
+        const deleteResult = await PostsModel.findByIdAndDelete(id)
+        return deleteResult ? true : false
     },
 }

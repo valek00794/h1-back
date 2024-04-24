@@ -1,15 +1,17 @@
-import { DeleteResult, UpdateResult } from "mongodb"
-
-import { usersDevicesCollection } from "../db/db"
 import { UserDeviceInfoType, UsersDevicesType } from '../types/users-types'
+import { UsersDevicesModel } from "../db/mongo/usersDevices.model";
+import { DeleteResult } from 'mongodb';
+import { UpdateWriteOpResult } from 'mongoose';
+
 
 export const usersDevicesRepository = {
     async addUserDevice(device: UsersDevicesType) {
-        await usersDevicesCollection.insertOne(device)
-        return device
+        const newDevice = new UsersDevicesModel(device)
+        await newDevice.save()
+        return newDevice
     },
-    async updateUserDevice(userVerifyInfo: UserDeviceInfoType, newLastActiveDate: string, newExpiryDate: string): Promise<UpdateResult<UsersDevicesType>> {
-        return await usersDevicesCollection.updateOne({
+    async updateUserDevice(userVerifyInfo: UserDeviceInfoType, newLastActiveDate: string, newExpiryDate: string): Promise<UpdateWriteOpResult> {
+        return await UsersDevicesModel.updateOne({
             deviceId: userVerifyInfo.deviceId,
             userId: userVerifyInfo.userId,
             lastActiveDate: new Date(userVerifyInfo!.iat! * 1000).toISOString()
@@ -22,7 +24,7 @@ export const usersDevicesRepository = {
     },
 
     async deleteUserDevices(userVerifyInfo: UserDeviceInfoType): Promise<DeleteResult> {
-        return await usersDevicesCollection.deleteMany({
+        return await UsersDevicesModel.deleteMany({
             userId: userVerifyInfo.userId,
             deviceId: { $ne: userVerifyInfo.deviceId },
             lastActiveDate: { $ne: new Date(userVerifyInfo!.iat! * 1000).toISOString() }
@@ -30,6 +32,6 @@ export const usersDevicesRepository = {
     },
 
     async deleteUserDevicebyId(deviceId: string): Promise<DeleteResult> {
-        return await usersDevicesCollection.deleteOne({ deviceId })
+        return await UsersDevicesModel.deleteOne({ deviceId })
     },
 }

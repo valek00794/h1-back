@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb"
 
-import { CommentDbType, CommentInputType, CommentViewType } from "../types/comments-types"
+import { CommentInputType, CommentType, CommentViewType } from "../types/comments-types"
 import { CommentatorInfoType } from "../types/users-types"
 import { commentsRepository } from "../repositories/comments-repository"
 import { commentsQueryRepository } from "../repositories/comments-query-repository"
 
 export const commentsService = {
     async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentViewType> {
-        const newComment: CommentDbType = {
+        const newComment: CommentType = {
             content: body.content,
             postId: new ObjectId(postId),
             createdAt: new Date().toISOString(),
@@ -21,7 +21,7 @@ export const commentsService = {
     },
 
     async updateComment(body: CommentInputType, comment: CommentViewType): Promise<boolean> {
-        const updatedComment: CommentDbType = {
+        const updatedComment: CommentType = {
             content: body.content,
             postId: comment.postId,
             createdAt: comment.createdAt,
@@ -30,21 +30,13 @@ export const commentsService = {
                 userLogin: comment.commentatorInfo.userLogin,
             }
         }
-        const res = await commentsRepository.updateComment(updatedComment, comment.id.toString())
-        if (res.modifiedCount === 0) {
-            return false
-        }
-        return true
+        return await commentsRepository.updateComment(updatedComment, comment.id.toString())
     },
 
     async deleteComment(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const res = await commentsRepository.deleteComment(id)
-        if (res.deletedCount === 0) {
-            return false
-        }
-        return true
+        return await commentsRepository.deleteComment(id)
     },
 }

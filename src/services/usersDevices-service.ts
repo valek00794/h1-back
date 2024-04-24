@@ -65,7 +65,7 @@ export const usersDevicesService = {
             }
         }
         const device = await usersDevicesQueryRepository.getUserDeviceById(deviceId)
-        if (device === null) {
+        if (!device) {
             return {
                 status: ResultStatus.NotFound,
                 data: null

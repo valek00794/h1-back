@@ -40,11 +40,7 @@ exports.blogsService = {
                 createdAt: blog.createdAt,
                 isMembership: false,
             };
-            const res = yield blogs_repository_1.blogsRepository.updateBlog(updatedblog, id);
-            if (res.modifiedCount === 0) {
-                return false;
-            }
-            return true;
+            return yield blogs_repository_1.blogsRepository.updateBlog(updatedblog, id);
         });
     },
     deleteBlog(id) {
@@ -52,11 +48,7 @@ exports.blogsService = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const res = yield blogs_repository_1.blogsRepository.deleteBlog(id);
-            if (res.deletedCount === 0) {
-                return false;
-            }
-            return true;
+            return yield blogs_repository_1.blogsRepository.deleteBlog(id);
         });
     },
 };

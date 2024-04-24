@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb"
+import { ObjectId, WithId } from "mongodb"
 
 export type CreatePostType = {
     title: string,
@@ -16,9 +16,7 @@ export type PostType = {
     blogId: ObjectId
 }
 
-export type PostDbType = PostType & {
-    _id?: ObjectId,
-}
+export type PostDbType = WithId<PostType>
 
 export type PostViewType = PostType & {
     id: ObjectId,

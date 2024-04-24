@@ -1,8 +1,6 @@
-import { ObjectId } from "mongodb"
+import { ObjectId, WithId } from "mongodb"
 
-export type UserDbViewType = UserDBType & {
-    _id?: ObjectId
-}
+ export type UserDbType = WithId<UserType>
 
 export type UserViewType = {
     id: ObjectId,
@@ -11,7 +9,7 @@ export type UserViewType = {
     createdAt: string
 }
 
-export type UserDBType = {
+export type UserType = {
     login: string,
     email: string,
     createdAt: string
@@ -45,8 +43,14 @@ export type UserEmailConfirmationInfoType = {
     isConfirmed: boolean
 }
 
+export type UserRecoveryPasswordInfoType = {
+    userId?: string,
+    recoveryCode: string,
+    expirationDate: Date,
+}
+
 export type UserSignUpType = {
-    user: UserDBType,
+    user: UserType,
     emailConfirmation: UserEmailConfirmationInfoType | false
 }
 
@@ -58,7 +62,6 @@ export type UsersDevicesType = {
     lastActiveDate?: string,
     expiryDate?: string
 }
-
 
 export type UserDeviceInfoType = {
     userId: string

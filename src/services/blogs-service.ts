@@ -29,21 +29,14 @@ export const blogsService = {
             createdAt: blog.createdAt,
             isMembership: false,
         }
-        const res = await blogsRepository.updateBlog(updatedblog, id)
-        if (res.modifiedCount === 0) {
-            return false
-        }
-        return true
+        return await blogsRepository.updateBlog(updatedblog, id)
+
     },
 
     async deleteBlog(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const res = await blogsRepository.deleteBlog(id)
-        if (res.deletedCount === 0) {
-            return false
-        }
-        return true
+        return await blogsRepository.deleteBlog(id)
     },
 }

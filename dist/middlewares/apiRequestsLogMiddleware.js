@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apiRequestsCounterMiddleware = exports.apiRequestsLogMiddleware = void 0;
-const db_1 = require("../db/db");
 const settings_1 = require("../settings");
+const apiRequests_model_1 = require("../db/mongo/apiRequests.model");
 const REQUESTS_LOG_SETTING = {
     maxCount: 5,
     timeRange: 10
@@ -20,7 +20,8 @@ const apiRequestsLogMiddleware = (req, res, next) => __awaiter(void 0, void 0, v
     const ipAddress = req.ip || '0.0.0.0';
     const baseUrl = req.originalUrl;
     const currentDate = new Date();
-    yield db_1.apiRequestsCollection.insertOne({ IP: ipAddress, URL: baseUrl, date: currentDate });
+    const request = new apiRequests_model_1.ApiRequestsModel({ IP: ipAddress, URL: baseUrl, date: currentDate });
+    request.save();
     next();
 });
 exports.apiRequestsLogMiddleware = apiRequestsLogMiddleware;
@@ -29,7 +30,7 @@ const apiRequestsCounterMiddleware = (req, res, next) => __awaiter(void 0, void 
     const baseUrl = req.originalUrl;
     const currentDate = new Date();
     const tenSecondsAgo = new Date(currentDate.getTime() - REQUESTS_LOG_SETTING.timeRange * 1000);
-    const requestsCount = yield db_1.apiRequestsCollection.countDocuments({ IP: ipAddress, URL: baseUrl, date: { $gte: tenSecondsAgo } });
+    const requestsCount = yield apiRequests_model_1.ApiRequestsModel.countDocuments({ IP: ipAddress, URL: baseUrl, date: { $gte: tenSecondsAgo } });
     if (requestsCount <= REQUESTS_LOG_SETTING.maxCount) {
         return next();
     }

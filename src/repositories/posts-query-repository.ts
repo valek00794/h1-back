@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb'
 
-import { postsCollection } from '../db/db'
-import { PaginatorPostViewType, PostDbType, PostViewType } from '../types/posts-types'
+import { PaginatorPostViewType, PostDbType, PostType, PostViewType } from '../types/posts-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
+import { PostsModel } from '../db/mongo/posts.model'
 
 export const postsQueryRepository = {
     async getPosts(query: SearchQueryParametersType, blogId?: string): Promise<PaginatorPostViewType> {
@@ -13,14 +13,13 @@ export const postsQueryRepository = {
             findOptions = { blogId: new ObjectId(blogId) }
         }
 
-        const posts = await postsCollection
+        const posts = await PostsModel
             .find(findOptions)
-            .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+            .sort({ [sanitizationQuery.sortBy]: sanitizationQuery.sortDirection })
             .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
             .limit(sanitizationQuery.pageSize)
-            .toArray()
 
-        const postsCount = await postsCollection.countDocuments(findOptions)
+        const postsCount = await PostsModel.countDocuments(findOptions)
 
         return {
             pagesCount: Math.ceil(postsCount / sanitizationQuery.pageSize),
@@ -35,11 +34,8 @@ export const postsQueryRepository = {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const post = await postsCollection.findOne({ _id: new ObjectId(id) })
-        if (!post) {
-            return false
-        }
-        return this.mapToOutput(post!)
+        const post = await PostsModel.findById(id)
+        return post ? this.mapToOutput(post) : false
     },
 
     mapToOutput(post: PostDbType): PostViewType {

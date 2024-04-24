@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns/add'
 
-import { UserDbViewType, UserSignUpType, UserViewType } from '../types/users-types'
+import { UserSignUpType, UserType, UserViewType } from '../types/users-types'
 import { usersQueryRepository } from '../repositories/users-query-repository'
 import { usersRepository } from '../repositories/users-repository'
 import { emailManager } from '../managers/email-manager'
@@ -32,7 +32,7 @@ export const usersService = {
                 isConfirmed: false
             }
         }
-        const createdUser: UserDbViewType = await usersRepository.createUser(signUpData)
+        const createdUser = await usersRepository.createUser(signUpData)
 
         if (signUpData.emailConfirmation) {
             try {
@@ -64,12 +64,18 @@ export const usersService = {
         }
     },
 
+    async updateUserPassword(userId: string, password: string): Promise<boolean> {
+        if (!ObjectId.isValid(userId)) {
+            return false
+        }
+        const passwordHash = await bcryptArapter.generateHash(password)
+        return await usersRepository.updateUserPassword(userId, passwordHash)
+    },
+
     async deleteUserById(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const res = await usersRepository.deleteUserById(id)
-        if (res.deletedCount === 0) return false
-        return true
+        return await usersRepository.deleteUserById(id)
     }
 }

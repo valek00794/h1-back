@@ -42,21 +42,13 @@ export const postsService = {
         if (blog) {
             updatedPost.blogName = blog.name
         }
-        const res = await postsRepository.updatePost(updatedPost, id)
-        if (res.modifiedCount === 0) {
-            return false
-        }
-        return true
+        return await postsRepository.updatePost(updatedPost, id)
     },
 
     async deletePost(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const res = await postsRepository.deletePost(id)
-        if (res.deletedCount === 0) {
-            return false
-        }
-        return true
+        return await postsRepository.deletePost(id)
     },
 }
