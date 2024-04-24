@@ -20,5 +20,15 @@ exports.emailManager = {
         <a href=\'https://somesite.com/auth/registration-confirmation?code=${code}\'> complete registration</a></p>`;
             email_adatper_1.emailAdapter.send(email, subject, message);
         });
+    },
+    sendEmailPasswordRecoveryMessage(email, recoveryCode) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const subject = 'Password recovery';
+            const message = ` <h1>Password recovery</h1>
+        <p>To finish password recovery please follow the link below:
+           <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>
+       </p>`;
+            email_adatper_1.emailAdapter.send(email, subject, message);
+        });
     }
 };

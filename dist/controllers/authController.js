@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutController = exports.refreshTokenController = exports.signUpEmailResendingController = exports.signUpConfimationController = exports.signUpController = exports.getAuthInfoController = exports.signInController = void 0;
+exports.confirmPasswordRecoveryController = exports.passwordRecoveryController = exports.logoutController = exports.refreshTokenController = exports.signUpEmailResendingController = exports.signUpConfimationController = exports.signUpController = exports.getAuthInfoController = exports.signInController = void 0;
 const users_service_1 = require("../services/users-service");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const users_query_repository_1 = require("../repositories/users-query-repository");
@@ -135,3 +135,29 @@ const logoutController = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.logoutController = logoutController;
+const passwordRecoveryController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.authService.passwordRecovery(req.body.email);
+    if (result.status === settings_1.ResultStatus.NoContent) {
+        res
+            .status(settings_1.StatusCodes.NO_CONTENT_204)
+            .send();
+        return;
+    }
+});
+exports.passwordRecoveryController = passwordRecoveryController;
+const confirmPasswordRecoveryController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword);
+    if (result.status === settings_1.ResultStatus.BadRequest) {
+        res
+            .status(settings_1.StatusCodes.BAD_REQUEST_400)
+            .send(result.data);
+        return;
+    }
+    if (result.status === settings_1.ResultStatus.NoContent) {
+        res
+            .status(settings_1.StatusCodes.NO_CONTENT_204)
+            .send();
+        return;
+    }
+});
+exports.confirmPasswordRecoveryController = confirmPasswordRecoveryController;

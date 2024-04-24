@@ -130,3 +130,29 @@ export const logoutController = async (req: Request, res: Response) => {
         return
     }
 }
+
+export const passwordRecoveryController = async (req: Request, res: Response) => {
+    const result = await authService.passwordRecovery(req.body.email)
+    if (result.status === ResultStatus.NoContent) {
+        res
+            .status(StatusCodes.NO_CONTENT_204)
+            .send()
+        return
+    }
+}
+
+export const confirmPasswordRecoveryController = async (req: Request, res: Response<APIErrorResult | null>) => {
+    const result = await authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
+    if (result.status === ResultStatus.BadRequest) {
+        res
+            .status(StatusCodes.BAD_REQUEST_400)
+            .send(result.data)
+        return
+    }
+    if (result.status === ResultStatus.NoContent) {
+        res
+            .status(StatusCodes.NO_CONTENT_204)
+            .send()
+        return
+    }
+}

@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import { PostType } from "../types/posts-types"
 import { BlogType } from "../types/blogs-types"
 import { SETTINGS } from "../settings"
-import { UserDBType, UserEmailConfirmationInfoType, UsersDevicesType } from "../types/users-types"
+import { UserDBType, UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UsersDevicesType } from "../types/users-types"
 import { CommentType } from "../types/comments-types"
 dotenv.config()
 
@@ -72,6 +72,8 @@ export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.
 export const usersDevicesCollection = db.collection<UsersDevicesType>(SETTINGS.DB.collection.USERS_DEVICES)
 
 export const usersEmailConfirmationCollection = db.collection<UserEmailConfirmationInfoType>(SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS)
+
+export const usersRecoveryPassswordCollection = db.collection<UserRecoveryPasswordInfoType>(SETTINGS.DB.collection.USERS_PASSWORD_RECOVERY)
 
 export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENTS)
 

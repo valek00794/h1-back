@@ -28,6 +28,12 @@ exports.usersRepository = {
             return yield db_1.usersCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
+    updateUserPassword(userId, passwordHash) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield db_1.usersRecoveryPassswordCollection.deleteOne({ userId });
+            return yield db_1.usersCollection.updateOne({ _id: new mongodb_1.ObjectId(userId) }, { $set: { passwordHash } });
+        });
+    },
     updateConfirmationInfo(userId, emailConfirmationInfo) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield db_1.usersEmailConfirmationCollection.updateOne({ userId: userId.toString() }, { $set: Object.assign({}, emailConfirmationInfo) });
@@ -36,6 +42,11 @@ exports.usersRepository = {
     updateConfirmation(_id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield db_1.usersEmailConfirmationCollection.updateOne({ _id }, { $set: { isConfirmed: true } });
+        });
+    },
+    updatePasswordRecoveryInfo(userId, recpveryInfo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield db_1.usersRecoveryPassswordCollection.insertOne(Object.assign({ userId: userId.toString() }, recpveryInfo));
         });
     },
 };

@@ -16,3 +16,5 @@ exports.authRouter.post('/registration-confirmation', apiRequestsLogMiddleware_1
 exports.authRouter.post('/registration-email-resending', apiRequestsLogMiddleware_1.apiRequestsLogMiddleware, apiRequestsLogMiddleware_1.apiRequestsCounterMiddleware, usersInputValidation_1.emailInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.signUpEmailResendingController);
 exports.authRouter.post('/refresh-token', authController_1.refreshTokenController);
 exports.authRouter.post('/logout', authController_1.logoutController);
+exports.authRouter.post('/password-recovery', apiRequestsLogMiddleware_1.apiRequestsLogMiddleware, apiRequestsLogMiddleware_1.apiRequestsCounterMiddleware, usersInputValidation_1.emailInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.passwordRecoveryController);
+exports.authRouter.post('/new-password', apiRequestsLogMiddleware_1.apiRequestsLogMiddleware, apiRequestsLogMiddleware_1.apiRequestsCounterMiddleware, usersInputValidation_1.recoveryCodeInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, authController_1.confirmPasswordRecoveryController);

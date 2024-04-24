@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { usersCollection, usersEmailConfirmationCollection } from "../db/db";
+import { usersCollection, usersEmailConfirmationCollection, usersRecoveryPassswordCollection } from "../db/db";
 import { PaginatorUsersViewType, UserDbViewType, UserInfoType, UserViewType } from "../types/users-types";
 import { getSanitizationQuery } from "../utils";
 import { SearchQueryParametersType } from "../types/query-types";
@@ -12,6 +12,10 @@ export const usersQueryRepository = {
 
     async findUserConfirmationInfo(confirmationCodeOrUserId: string) {
         return await usersEmailConfirmationCollection.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] })
+    },
+
+    async findPasswordRecoveryInfo(recoveryCodeOrUserId: string) {
+        return await usersRecoveryPassswordCollection.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] })
     },
 
     async findUserById(id: string): Promise<UserInfoType | false> {

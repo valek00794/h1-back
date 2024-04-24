@@ -45,6 +45,12 @@ export type UserEmailConfirmationInfoType = {
     isConfirmed: boolean
 }
 
+export type UserRecoveryPasswordInfoType = {
+    userId?: string,
+    recoveryCode: string,
+    expirationDate: Date,
+}
+
 export type UserSignUpType = {
     user: UserDBType,
     emailConfirmation: UserEmailConfirmationInfoType | false

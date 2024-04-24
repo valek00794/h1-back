@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMongoDB = exports.setDB = exports.apiRequestsCollection = exports.commentsCollection = exports.usersEmailConfirmationCollection = exports.usersDevicesCollection = exports.usersCollection = exports.blogsCollection = exports.postsCollection = exports.dbLocal = exports.runDb = void 0;
+exports.setMongoDB = exports.setDB = exports.apiRequestsCollection = exports.commentsCollection = exports.usersRecoveryPassswordCollection = exports.usersEmailConfirmationCollection = exports.usersDevicesCollection = exports.usersCollection = exports.blogsCollection = exports.postsCollection = exports.dbLocal = exports.runDb = void 0;
 const mongodb_1 = require("mongodb");
 const dotenv_1 = __importDefault(require("dotenv"));
 const settings_1 = require("../settings");
@@ -75,6 +75,7 @@ exports.blogsCollection = db.collection(settings_1.SETTINGS.DB.collection.BLOGS)
 exports.usersCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS);
 exports.usersDevicesCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_DEVICES);
 exports.usersEmailConfirmationCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS);
+exports.usersRecoveryPassswordCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_PASSWORD_RECOVERY);
 exports.commentsCollection = db.collection(settings_1.SETTINGS.DB.collection.COMMENTS);
 exports.apiRequestsCollection = db.collection(settings_1.SETTINGS.DB.collection.API_REQUESTS);
 const setDB = (dataset) => {

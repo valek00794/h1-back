@@ -64,6 +64,12 @@ export const usersService = {
         }
     },
 
+    async updateUserPassword(userId: string, password: string): Promise<boolean> {
+        const passwordHash = await bcryptArapter.generateHash(password)
+        await usersRepository.updateUserPassword(userId, passwordHash)
+        return true
+    },
+
     async deleteUserById(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false

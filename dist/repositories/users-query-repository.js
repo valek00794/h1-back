@@ -24,6 +24,11 @@ exports.usersQueryRepository = {
             return yield db_1.usersEmailConfirmationCollection.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] });
         });
     },
+    findPasswordRecoveryInfo(recoveryCodeOrUserId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.usersRecoveryPassswordCollection.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] });
+        });
+    },
     findUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
