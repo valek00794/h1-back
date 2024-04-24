@@ -1,24 +1,21 @@
-import { ObjectId } from 'mongodb';
-import { CommentatorInfoType } from './users-types';
+import { ObjectId } from 'mongodb'
+
+import { CommentatorInfoType } from './users-types'
 
 export type CommentType = {
   content: string;
   commentatorInfo: CommentatorInfoType;
   createdAt: string;
   postId?: ObjectId
-};
+}
 
 export type CommentInputType = {
   content: string;
-};
-
-export type CommentDbType = CommentType & {
-  _id?: ObjectId;
-};
+}
 
 export type CommentViewType = CommentType & {
   id: ObjectId;
-};
+}
 
 export type PaginatorCommentsViewType = {
   pagesCount: number;
@@ -26,5 +23,5 @@ export type PaginatorCommentsViewType = {
   pageSize: number;
   totalCount: number;
   items: CommentViewType[];
-};
+}
 

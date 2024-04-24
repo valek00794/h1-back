@@ -52,11 +52,7 @@ exports.postsService = {
             if (blog) {
                 updatedPost.blogName = blog.name;
             }
-            const res = yield posts_repository_1.postsRepository.updatePost(updatedPost, id);
-            if (!res) {
-                return false;
-            }
-            return true;
+            return yield posts_repository_1.postsRepository.updatePost(updatedPost, id);
         });
     },
     deletePost(id) {

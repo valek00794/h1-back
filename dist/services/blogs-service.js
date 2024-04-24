@@ -40,11 +40,7 @@ exports.blogsService = {
                 createdAt: blog.createdAt,
                 isMembership: false,
             };
-            const res = yield blogs_repository_1.blogsRepository.updateBlog(updatedblog, id);
-            if (res === null) {
-                return false;
-            }
-            return true;
+            return yield blogs_repository_1.blogsRepository.updateBlog(updatedblog, id);
         });
     },
     deleteBlog(id) {

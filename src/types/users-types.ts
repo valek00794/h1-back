@@ -65,7 +65,6 @@ export type UsersDevicesType = {
     expiryDate?: string
 }
 
-
 export type UserDeviceInfoType = {
     userId: string
     deviceId: string

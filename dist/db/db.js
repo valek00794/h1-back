@@ -12,11 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMongoDB = exports.setDB = exports.apiRequestsCollection = exports.commentsCollection = exports.usersRecoveryPassswordCollection = exports.usersEmailConfirmationCollection = exports.usersDevicesCollection = exports.usersCollection = exports.postsCollection = exports.dbLocal = exports.runDb = void 0;
+exports.setMongoDB = exports.setDB = exports.apiRequestsCollection = exports.usersRecoveryPassswordCollection = exports.usersEmailConfirmationCollection = exports.usersDevicesCollection = exports.usersCollection = exports.dbLocal = exports.runDb = void 0;
 const mongodb_1 = require("mongodb");
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
+//import { PostType } from "../types/posts-types"
+//import { BlogType } from "../types/blogs-types"
 const settings_1 = require("../settings");
+//import { CommentType } from "../types/comments-types"
 dotenv_1.default.config();
 const client = new mongodb_1.MongoClient(settings_1.SETTINGS.DB.mongoURI);
 const runDb = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,13 +74,13 @@ exports.dbLocal = {
     ],
 };
 const db = client.db();
-exports.postsCollection = db.collection(settings_1.SETTINGS.DB.collection.POSTS);
+//export const postsCollection = db.collection<PostType>(SETTINGS.DB.collection.POSTS)
 //export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOGS)
 exports.usersCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS);
 exports.usersDevicesCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_DEVICES);
 exports.usersEmailConfirmationCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS);
 exports.usersRecoveryPassswordCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_PASSWORD_RECOVERY);
-exports.commentsCollection = db.collection(settings_1.SETTINGS.DB.collection.COMMENTS);
+//export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENTS)
 exports.apiRequestsCollection = db.collection(settings_1.SETTINGS.DB.collection.API_REQUESTS);
 const setDB = (dataset) => {
     if (!dataset) {
@@ -88,10 +91,10 @@ const setDB = (dataset) => {
 };
 exports.setDB = setDB;
 const setMongoDB = () => {
-    exports.postsCollection.drop();
+    //postsCollection.drop()
     //blogsCollection.drop()
     exports.usersCollection.drop();
-    exports.commentsCollection.drop();
+    //commentsCollection.drop()
     exports.usersEmailConfirmationCollection.drop();
     exports.apiRequestsCollection.drop();
 };

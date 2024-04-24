@@ -3,7 +3,7 @@ import { ObjectId, WithId } from 'mongodb'
 import { PaginatorPostViewType, PostType, PostViewType } from '../types/posts-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
-import { PostsModel } from '../db/mongo/post.model'
+import { PostsModel } from '../db/mongo/posts.model'
 
 export const postsQueryRepository = {
     async getPosts(query: SearchQueryParametersType, blogId?: string): Promise<PaginatorPostViewType> {
@@ -34,11 +34,8 @@ export const postsQueryRepository = {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const post = await PostsModel.findOne({ _id: new ObjectId(id) })
-        if (!post) {
-            return false
-        }
-        return this.mapToOutput(post!)
+        const post = await PostsModel.findById(id)
+        return post ? this.mapToOutput(post) : false
     },
 
     mapToOutput(post: WithId<PostType>): PostViewType {

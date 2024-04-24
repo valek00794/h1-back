@@ -3,11 +3,11 @@ import { MongoClient } from "mongodb"
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 
-import { PostType } from "../types/posts-types"
-import { BlogType } from "../types/blogs-types"
+//import { PostType } from "../types/posts-types"
+//import { BlogType } from "../types/blogs-types"
 import { SETTINGS } from "../settings"
 import { UserDBType, UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UsersDevicesType } from "../types/users-types"
-import { CommentType } from "../types/comments-types"
+//import { CommentType } from "../types/comments-types"
 dotenv.config()
 
 const client = new MongoClient(SETTINGS.DB.mongoURI)
@@ -64,7 +64,7 @@ export const dbLocal: DBType = {
 
 const db = client.db();
 
-export const postsCollection = db.collection<PostType>(SETTINGS.DB.collection.POSTS)
+//export const postsCollection = db.collection<PostType>(SETTINGS.DB.collection.POSTS)
 
 //export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOGS)
 
@@ -76,7 +76,7 @@ export const usersEmailConfirmationCollection = db.collection<UserEmailConfirmat
 
 export const usersRecoveryPassswordCollection = db.collection<UserRecoveryPasswordInfoType>(SETTINGS.DB.collection.USERS_PASSWORD_RECOVERY)
 
-export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENTS)
+//export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENTS)
 
 export const apiRequestsCollection = db.collection<APIRequestsType>(SETTINGS.DB.collection.API_REQUESTS)
 
@@ -90,10 +90,10 @@ export const setDB = (dataset?: Partial<DBType>) => {
 }
 
 export const setMongoDB = () => {
-  postsCollection.drop()
+  //postsCollection.drop()
   //blogsCollection.drop()
   usersCollection.drop()
-  commentsCollection.drop()
+  //commentsCollection.drop()
   usersEmailConfirmationCollection.drop()
   apiRequestsCollection.drop()
 }

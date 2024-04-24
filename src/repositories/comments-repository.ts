@@ -1,17 +1,20 @@
-import { DeleteResult, ObjectId, UpdateResult } from 'mongodb'
+import { WithId } from 'mongodb'
 
-import { commentsCollection } from '../db/db'
-import { CommentDbType, CommentType } from '../types/comments-types'
+import { CommentType } from '../types/comments-types'
+import { CommentsModel } from '../db/mongo/comments.model'
 
 export const commentsRepository = {
-    async createComment(newComment: CommentDbType): Promise<CommentDbType> {
-        await commentsCollection.insertOne(newComment)
-        return newComment
+    async createComment(newComment: CommentType): Promise<WithId<CommentType>> {
+        const comment = new CommentsModel(newComment)
+        await comment.save()
+        return comment
     },
-    async updateComment(updatedComment: CommentDbType, commentId: string): Promise<UpdateResult<CommentType>> {
-        return await commentsCollection.updateOne({ _id: new ObjectId(commentId) }, { $set: updatedComment })
+    async updateComment(updatedComment: CommentType, commentId: string): Promise<boolean> {
+        const updatedResult = await CommentsModel.findByIdAndUpdate(commentId, updatedComment, { new: true })
+        return updatedResult ? true : false
     },
-    async deleteComment(id: string): Promise<DeleteResult> {
-        return await commentsCollection.deleteOne({ _id: new ObjectId(id) })
+    async deleteComment(id: string): Promise<boolean> {
+        const deleteResult = await CommentsModel.findByIdAndDelete(id)
+        return deleteResult ? true : false
     },
 }

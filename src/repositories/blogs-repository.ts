@@ -1,19 +1,20 @@
-import { BlogType } from '../types/blogs-types'
-import { BlogModel } from '../db/mongo/blog.model'
 import { WithId } from 'mongodb'
+
+import { BlogType } from '../types/blogs-types'
+import { BlogsModel } from '../db/mongo/blogs.model'
 
 export const blogsRepository = {
     async createBlog(newBlog: BlogType): Promise<WithId<BlogType>> {
-        const blog = new BlogModel(newBlog)
+        const blog = new BlogsModel(newBlog)
         await blog.save()
         return blog
     },
-    async updateBlog(updatedblog: BlogType, id: string): Promise<BlogType | null> {
-        const updatedBlog = await BlogModel.findByIdAndUpdate(id, updatedblog, { new: true })
-        return updatedBlog
+    async updateBlog(updatedBlog: BlogType, id: string): Promise<boolean> {
+        const updatedResult = await BlogsModel.findByIdAndUpdate(id, updatedBlog, { new: true })
+        return updatedResult ? true : false
     },
     async deleteBlog(id: string): Promise<boolean> {
-        const deleteResult = await BlogModel.findByIdAndDelete(id)
+        const deleteResult = await BlogsModel.findByIdAndDelete(id)
         return deleteResult ? true : false
     },
 }

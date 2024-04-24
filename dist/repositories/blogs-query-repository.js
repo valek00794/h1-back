@@ -12,18 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const utils_1 = require("../utils");
-const blog_model_1 = require("../db/mongo/blog.model");
+const blogs_model_1 = require("../db/mongo/blogs.model");
 exports.blogsQueryRepository = {
     getBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
             const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {};
-            const blogs = yield blog_model_1.BlogModel
+            const blogs = yield blogs_model_1.BlogsModel
                 .find(findOptions)
                 .sort({ [sanitizationQuery.sortBy]: sanitizationQuery.sortDirection })
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
                 .limit(sanitizationQuery.pageSize);
-            const blogsCount = yield blog_model_1.BlogModel.countDocuments(findOptions);
+            const blogsCount = yield blogs_model_1.BlogsModel.countDocuments(findOptions);
             return {
                 pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
                 page: sanitizationQuery.pageNumber,
@@ -38,11 +38,8 @@ exports.blogsQueryRepository = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const blog = yield blog_model_1.BlogModel.findOne({ _id: id });
-            if (!blog) {
-                return false;
-            }
-            return this.mapToOutput(blog);
+            const blog = yield blogs_model_1.BlogsModel.findById(id);
+            return blog ? this.mapToOutput(blog) : false;
         });
     },
     mapToOutput(blog) {

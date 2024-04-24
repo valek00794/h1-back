@@ -10,21 +10,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepository = void 0;
-const post_model_1 = require("../db/mongo/post.model");
+const posts_model_1 = require("../db/mongo/posts.model");
 exports.postsRepository = {
     createPost(newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield post_model_1.PostsModel.create(newPost);
+            const post = new posts_model_1.PostsModel(newPost);
+            yield post.save();
+            return post;
         });
     },
     updatePost(updatedPost, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield post_model_1.PostsModel.findByIdAndUpdate(id, updatedPost, { new: true });
+            const updatedResult = yield posts_model_1.PostsModel.findByIdAndUpdate(id, updatedPost, { new: true });
+            return updatedResult ? true : false;
         });
     },
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deleteResult = yield post_model_1.PostsModel.findByIdAndDelete(id);
+            const deleteResult = yield posts_model_1.PostsModel.findByIdAndDelete(id);
             return deleteResult ? true : false;
         });
     },

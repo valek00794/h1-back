@@ -29,11 +29,8 @@ export const blogsService = {
             createdAt: blog.createdAt,
             isMembership: false,
         }
-        const res = await blogsRepository.updateBlog(updatedblog, id)
-        if (res === null) {
-            return false
-        }
-        return true
+        return await blogsRepository.updateBlog(updatedblog, id)
+
     },
 
     async deleteBlog(id: string): Promise<boolean> {

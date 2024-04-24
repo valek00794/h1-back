@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
+const comments_model_1 = require("../db/mongo/comments.model");
 const utils_1 = require("../utils");
 exports.commentsQueryRepository = {
     getComments(query, postId) {
@@ -21,13 +21,12 @@ exports.commentsQueryRepository = {
             if (postId) {
                 findOptions = { postId: new mongodb_1.ObjectId(postId) };
             }
-            const comments = yield db_1.commentsCollection
+            const comments = yield comments_model_1.CommentsModel
                 .find(findOptions)
-                .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+                .sort({ [sanitizationQuery.sortBy]: sanitizationQuery.sortDirection })
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
-                .limit(sanitizationQuery.pageSize)
-                .toArray();
-            const commentsCount = yield db_1.commentsCollection.countDocuments(findOptions);
+                .limit(sanitizationQuery.pageSize);
+            const commentsCount = yield comments_model_1.CommentsModel.countDocuments(findOptions);
             return {
                 pagesCount: Math.ceil(commentsCount / sanitizationQuery.pageSize),
                 page: sanitizationQuery.pageNumber,
@@ -42,11 +41,8 @@ exports.commentsQueryRepository = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const comment = yield db_1.commentsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
-            if (!comment) {
-                return false;
-            }
-            return this.mapToOutput(comment);
+            const comment = yield comments_model_1.CommentsModel.findById(id);
+            return comment ? this.mapToOutput(comment) : false;
         });
     },
     mapToOutput(comment) {

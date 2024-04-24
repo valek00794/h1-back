@@ -40,11 +40,7 @@ exports.commentsService = {
                     userLogin: comment.commentatorInfo.userLogin,
                 }
             };
-            const res = yield comments_repository_1.commentsRepository.updateComment(updatedComment, comment.id.toString());
-            if (res.modifiedCount === 0) {
-                return false;
-            }
-            return true;
+            return yield comments_repository_1.commentsRepository.updateComment(updatedComment, comment.id.toString());
         });
     },
     deleteComment(id) {
@@ -52,11 +48,7 @@ exports.commentsService = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const res = yield comments_repository_1.commentsRepository.deleteComment(id);
-            if (res.deletedCount === 0) {
-                return false;
-            }
-            return true;
+            return yield comments_repository_1.commentsRepository.deleteComment(id);
         });
     },
 };

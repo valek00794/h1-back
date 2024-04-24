@@ -10,23 +10,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsRepository = void 0;
-const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
+const comments_model_1 = require("../db/mongo/comments.model");
 exports.commentsRepository = {
     createComment(newComment) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.commentsCollection.insertOne(newComment);
-            return newComment;
+            const comment = new comments_model_1.CommentsModel(newComment);
+            yield comment.save();
+            return comment;
         });
     },
     updateComment(updatedComment, commentId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.commentsCollection.updateOne({ _id: new mongodb_1.ObjectId(commentId) }, { $set: updatedComment });
+            const updatedResult = yield comments_model_1.CommentsModel.findByIdAndUpdate(commentId, updatedComment, { new: true });
+            return updatedResult ? true : false;
         });
     },
     deleteComment(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.commentsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            const deleteResult = yield comments_model_1.CommentsModel.findByIdAndDelete(id);
+            return deleteResult ? true : false;
         });
     },
 };
