@@ -1,5 +1,6 @@
 import { APIRequestsType, DBType } from "../types/db-types"
 import { MongoClient } from "mongodb"
+import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 
 import { PostType } from "../types/posts-types"
@@ -12,11 +13,11 @@ dotenv.config()
 const client = new MongoClient(SETTINGS.DB.mongoURI)
 export const runDb = async () => {
   try {
-    await client.connect()
+    await mongoose.connect(SETTINGS.DB.mongoURI)
     console.log('Connect success')
   } catch (e) {
     console.log('Connect ERROR', e)
-    await client.close()
+    await mongoose.disconnect()
   }
 }
 
@@ -65,7 +66,7 @@ const db = client.db();
 
 export const postsCollection = db.collection<PostType>(SETTINGS.DB.collection.POSTS)
 
-export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOGS)
+//export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOGS)
 
 export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.USERS)
 
@@ -90,7 +91,7 @@ export const setDB = (dataset?: Partial<DBType>) => {
 
 export const setMongoDB = () => {
   postsCollection.drop()
-  blogsCollection.drop()
+  //blogsCollection.drop()
   usersCollection.drop()
   commentsCollection.drop()
   usersEmailConfirmationCollection.drop()

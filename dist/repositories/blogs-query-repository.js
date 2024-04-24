@@ -11,20 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
 const utils_1 = require("../utils");
+const blog_model_1 = require("../db/mongo/blog.model");
 exports.blogsQueryRepository = {
     getBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
             const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {};
-            const blogs = yield db_1.blogsCollection
+            const blogs = yield blog_model_1.BlogModel
                 .find(findOptions)
-                .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+                .sort({ [sanitizationQuery.sortBy]: sanitizationQuery.sortDirection })
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
-                .limit(sanitizationQuery.pageSize)
-                .toArray();
-            const blogsCount = yield db_1.blogsCollection.countDocuments(findOptions);
+                .limit(sanitizationQuery.pageSize);
+            const blogsCount = yield blog_model_1.BlogModel.countDocuments(findOptions);
             return {
                 pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
                 page: sanitizationQuery.pageNumber,
@@ -39,8 +38,8 @@ exports.blogsQueryRepository = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const blog = yield db_1.blogsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
-            if (blog === null) {
+            const blog = yield blog_model_1.BlogModel.findOne({ _id: id });
+            if (!blog) {
                 return false;
             }
             return this.mapToOutput(blog);

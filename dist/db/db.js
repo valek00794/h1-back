@@ -12,20 +12,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMongoDB = exports.setDB = exports.apiRequestsCollection = exports.commentsCollection = exports.usersRecoveryPassswordCollection = exports.usersEmailConfirmationCollection = exports.usersDevicesCollection = exports.usersCollection = exports.blogsCollection = exports.postsCollection = exports.dbLocal = exports.runDb = void 0;
+exports.setMongoDB = exports.setDB = exports.apiRequestsCollection = exports.commentsCollection = exports.usersRecoveryPassswordCollection = exports.usersEmailConfirmationCollection = exports.usersDevicesCollection = exports.usersCollection = exports.postsCollection = exports.dbLocal = exports.runDb = void 0;
 const mongodb_1 = require("mongodb");
+const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const settings_1 = require("../settings");
 dotenv_1.default.config();
 const client = new mongodb_1.MongoClient(settings_1.SETTINGS.DB.mongoURI);
 const runDb = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield client.connect();
+        yield mongoose_1.default.connect(settings_1.SETTINGS.DB.mongoURI);
         console.log('Connect success');
     }
     catch (e) {
         console.log('Connect ERROR', e);
-        yield client.close();
+        yield mongoose_1.default.disconnect();
     }
 });
 exports.runDb = runDb;
@@ -71,7 +72,7 @@ exports.dbLocal = {
 };
 const db = client.db();
 exports.postsCollection = db.collection(settings_1.SETTINGS.DB.collection.POSTS);
-exports.blogsCollection = db.collection(settings_1.SETTINGS.DB.collection.BLOGS);
+//export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOGS)
 exports.usersCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS);
 exports.usersDevicesCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_DEVICES);
 exports.usersEmailConfirmationCollection = db.collection(settings_1.SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS);
@@ -88,7 +89,7 @@ const setDB = (dataset) => {
 exports.setDB = setDB;
 const setMongoDB = () => {
     exports.postsCollection.drop();
-    exports.blogsCollection.drop();
+    //blogsCollection.drop()
     exports.usersCollection.drop();
     exports.commentsCollection.drop();
     exports.usersEmailConfirmationCollection.drop();

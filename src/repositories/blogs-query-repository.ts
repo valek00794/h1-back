@@ -1,23 +1,22 @@
 import { ObjectId } from 'mongodb'
 
-import { blogsCollection } from '../db/db'
 import { BlogDBType, BlogViewType, PaginatorBlogViewType } from '../types/blogs-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
+import { BlogModel } from '../db/mongo/blog.model'
 
 export const blogsQueryRepository = {
     async getBlogs(query?: SearchQueryParametersType): Promise<PaginatorBlogViewType> {
         const sanitizationQuery = getSanitizationQuery(query)
         const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
 
-        const blogs = await blogsCollection
+        const blogs = await BlogModel
             .find(findOptions)
-            .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+            .sort({ [sanitizationQuery.sortBy]: sanitizationQuery.sortDirection })
             .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
             .limit(sanitizationQuery.pageSize)
-            .toArray()
 
-        const blogsCount = await blogsCollection.countDocuments(findOptions)
+        const blogsCount = await BlogModel.countDocuments(findOptions)
 
         return {
             pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
@@ -32,8 +31,8 @@ export const blogsQueryRepository = {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const blog = await blogsCollection.findOne({ _id: new ObjectId(id) })
-        if (blog === null) {
+        const blog = await BlogModel.findOne({ _id: id })
+        if (!blog) {
             return false
         }
         return this.mapToOutput(blog)

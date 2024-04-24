@@ -73,6 +73,9 @@ exports.usersService = {
     },
     updateUserPassword(userId, password) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mongodb_1.ObjectId.isValid(userId)) {
+                return false;
+            }
             const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
             yield users_repository_1.usersRepository.updateUserPassword(userId, passwordHash);
             return true;

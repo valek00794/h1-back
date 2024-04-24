@@ -30,7 +30,7 @@ export const blogsService = {
             isMembership: false,
         }
         const res = await blogsRepository.updateBlog(updatedblog, id)
-        if (res.modifiedCount === 0) {
+        if (res === null) {
             return false
         }
         return true
@@ -41,7 +41,7 @@ export const blogsService = {
             return false
         }
         const res = await blogsRepository.deleteBlog(id)
-        if (res.deletedCount === 0) {
+        if (res === null) {
             return false
         }
         return true

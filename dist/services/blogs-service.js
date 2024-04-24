@@ -41,7 +41,7 @@ exports.blogsService = {
                 isMembership: false,
             };
             const res = yield blogs_repository_1.blogsRepository.updateBlog(updatedblog, id);
-            if (res.modifiedCount === 0) {
+            if (res === null) {
                 return false;
             }
             return true;
@@ -53,7 +53,7 @@ exports.blogsService = {
                 return false;
             }
             const res = yield blogs_repository_1.blogsRepository.deleteBlog(id);
-            if (res.deletedCount === 0) {
+            if (res === null) {
                 return false;
             }
             return true;
