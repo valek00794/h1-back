@@ -1,16 +1,19 @@
-import { APIRequestsType, DBType } from "../types/db-types"
-import { MongoClient } from "mongodb"
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 
-//import { PostType } from "../types/posts-types"
-//import { BlogType } from "../types/blogs-types"
+import { DBType } from "../types/db-types"
 import { SETTINGS } from "../settings"
-import { UserDBType, UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UsersDevicesType } from "../types/users-types"
-//import { CommentType } from "../types/comments-types"
+import { ApiRequestsModel } from '../db/mongo/apiRequests.model';
+import { BlogsModel } from '../db/mongo/blogs.model';
+import { CommentsModel } from '../db/mongo/comments.model';
+import { PostsModel } from '../db/mongo/posts.model';
+import { UsersModel } from '../db/mongo/users.model';
+import { UsersDevicesModel } from '../db/mongo/usersDevices.model';
+import { UsersEmailConfirmationsModel } from '../db/mongo/usersEmailConfirmation.model';
+import { UsersRecoveryPassswordModel } from '../db/mongo/usersRecoveryPasssword.model';
+
 dotenv.config()
 
-const client = new MongoClient(SETTINGS.DB.mongoURI)
 export const runDb = async () => {
   try {
     await mongoose.connect(SETTINGS.DB.mongoURI)
@@ -62,38 +65,21 @@ export const dbLocal: DBType = {
   ],
 }
 
-const db = client.db();
-
-//export const postsCollection = db.collection<PostType>(SETTINGS.DB.collection.POSTS)
-
-//export const blogsCollection = db.collection<BlogType>(SETTINGS.DB.collection.BLOGS)
-
-export const usersCollection = db.collection<UserDBType>(SETTINGS.DB.collection.USERS)
-
-export const usersDevicesCollection = db.collection<UsersDevicesType>(SETTINGS.DB.collection.USERS_DEVICES)
-
-export const usersEmailConfirmationCollection = db.collection<UserEmailConfirmationInfoType>(SETTINGS.DB.collection.USERS_EMAIL_CONFIRMATIONS)
-
-export const usersRecoveryPassswordCollection = db.collection<UserRecoveryPasswordInfoType>(SETTINGS.DB.collection.USERS_PASSWORD_RECOVERY)
-
-//export const commentsCollection = db.collection<CommentType>(SETTINGS.DB.collection.COMMENTS)
-
-export const apiRequestsCollection = db.collection<APIRequestsType>(SETTINGS.DB.collection.API_REQUESTS)
-
 export const setDB = (dataset?: Partial<DBType>) => {
   if (!dataset) {
     dbLocal.videos = []
     return
   }
-
   dbLocal.videos = dataset.videos || dbLocal.videos
 }
 
-export const setMongoDB = () => {
-  //postsCollection.drop()
-  //blogsCollection.drop()
-  usersCollection.drop()
-  //commentsCollection.drop()
-  usersEmailConfirmationCollection.drop()
-  apiRequestsCollection.drop()
+export const setMongoDB = async () => {
+  await ApiRequestsModel.collection.drop()
+  await BlogsModel.collection.drop()
+  await CommentsModel.collection.drop()
+  await PostsModel.collection.drop()
+  await UsersModel.collection.drop()
+  await UsersDevicesModel.collection.drop()
+  await UsersEmailConfirmationsModel.collection.drop()
+  await UsersRecoveryPassswordModel.collection.drop()
 }

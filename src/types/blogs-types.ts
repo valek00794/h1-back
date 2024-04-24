@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb"
+import { ObjectId, WithId } from "mongodb"
 
 export type BlogType = {
     name: string,
@@ -7,6 +7,8 @@ export type BlogType = {
     createdAt: string,
     isMembership: boolean
 }
+
+export type BlogDbType = WithId<BlogType>
 
 export type BlogViewType = BlogType & {
     id?: ObjectId,

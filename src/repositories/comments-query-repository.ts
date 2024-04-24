@@ -1,7 +1,7 @@
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 import { CommentsModel } from '../db/mongo/comments.model'
-import { CommentType, CommentViewType, PaginatorCommentsViewType } from '../types/comments-types'
+import { CommentDbType, CommentViewType, PaginatorCommentsViewType } from '../types/comments-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 
@@ -38,7 +38,7 @@ export const commentsQueryRepository = {
         return comment ? this.mapToOutput(comment) : false
     },
 
-    mapToOutput(comment: WithId<CommentType>): CommentViewType {
+    mapToOutput(comment: CommentDbType): CommentViewType {
         return {
             id: comment._id!,
             content: comment.content,

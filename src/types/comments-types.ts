@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 import { CommentatorInfoType } from './users-types'
 
@@ -8,6 +8,8 @@ export type CommentType = {
   createdAt: string;
   postId?: ObjectId
 }
+
+export type CommentDbType = WithId<CommentType>
 
 export type CommentInputType = {
   content: string;

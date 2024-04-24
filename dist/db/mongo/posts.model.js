@@ -27,11 +27,11 @@ exports.PostsModel = exports.PostsSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const settings_1 = require("../../settings");
 exports.PostsSchema = new mongoose_1.default.Schema({
-    blogName: { type: String, require: true },
-    createdAt: { type: String, require: true },
-    title: { type: String, require: true },
-    shortDescription: { type: String, require: true },
-    content: { type: String, require: true },
-    blogId: { type: mongoose_1.Schema.Types.ObjectId, require: true },
+    blogName: { type: String, required: true },
+    createdAt: { type: String, required: true },
+    title: { type: String, required: true },
+    shortDescription: { type: String, required: true },
+    content: { type: String, required: true },
+    blogId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
 });
 exports.PostsModel = mongoose_1.default.model(settings_1.SETTINGS.DB.collection.POSTS, exports.PostsSchema);

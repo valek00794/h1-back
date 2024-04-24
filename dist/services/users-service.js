@@ -77,8 +77,7 @@ exports.usersService = {
                 return false;
             }
             const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
-            yield users_repository_1.usersRepository.updateUserPassword(userId, passwordHash);
-            return true;
+            return yield users_repository_1.usersRepository.updateUserPassword(userId, passwordHash);
         });
     },
     deleteUserById(id) {
@@ -86,10 +85,7 @@ exports.usersService = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const res = yield users_repository_1.usersRepository.deleteUserById(id);
-            if (res.deletedCount === 0)
-                return false;
-            return true;
+            return yield users_repository_1.usersRepository.deleteUserById(id);
         });
     }
 };

@@ -13,4 +13,5 @@ export const CommentsSchema = new mongoose.Schema<CommentType>({
     createdAt: { type: String, required: true },
     postId: { type: Schema.Types.ObjectId, required: false },
 })
+
 export const CommentsModel = mongoose.model<CommentType>(SETTINGS.DB.collection.COMMENTS, CommentsSchema)

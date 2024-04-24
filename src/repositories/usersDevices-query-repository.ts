@@ -1,17 +1,15 @@
-import { WithId } from "mongodb"
-
-import { usersDevicesCollection } from "../db/db"
 import { UsersDevicesType } from "../types/users-types"
+import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
 export const usersDevicesQueryRepository = {
     async getAllActiveDevicesByUser(userId: string): Promise<UsersDevicesType[]> {
-        const userDevices = await usersDevicesCollection.find({ userId }).toArray()
+        const userDevices = await UsersDevicesModel.find({ userId })
         return userDevices.map(device => this.mapToOutput(device))
     },
 
-    async getUserDeviceById(deviceId: string): Promise<WithId<UsersDevicesType> | null> {
-        const deviceSession = await usersDevicesCollection.findOne({ deviceId })
-        return deviceSession
+    async getUserDeviceById(deviceId: string): Promise<UsersDevicesType | false> {
+        const deviceSession = await UsersDevicesModel.findOne({deviceId})
+        return deviceSession ? this.mapToOutput(deviceSession) : false
     },
 
     mapToOutput(userDevice: UsersDevicesType) {

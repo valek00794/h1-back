@@ -10,17 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersDevicesRepository = void 0;
-const db_1 = require("../db/db");
+const usersDevices_model_1 = require("../db/mongo/usersDevices.model");
 exports.usersDevicesRepository = {
     addUserDevice(device) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.usersDevicesCollection.insertOne(device);
-            return device;
+            const newDevice = new usersDevices_model_1.UsersDevicesModel(device);
+            yield newDevice.save();
+            return newDevice;
         });
     },
     updateUserDevice(userVerifyInfo, newLastActiveDate, newExpiryDate) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersDevicesCollection.updateOne({
+            return yield usersDevices_model_1.UsersDevicesModel.updateOne({
                 deviceId: userVerifyInfo.deviceId,
                 userId: userVerifyInfo.userId,
                 lastActiveDate: new Date(userVerifyInfo.iat * 1000).toISOString()
@@ -34,7 +35,7 @@ exports.usersDevicesRepository = {
     },
     deleteUserDevices(userVerifyInfo) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersDevicesCollection.deleteMany({
+            return yield usersDevices_model_1.UsersDevicesModel.deleteMany({
                 userId: userVerifyInfo.userId,
                 deviceId: { $ne: userVerifyInfo.deviceId },
                 lastActiveDate: { $ne: new Date(userVerifyInfo.iat * 1000).toISOString() }
@@ -43,7 +44,7 @@ exports.usersDevicesRepository = {
     },
     deleteUserDevicebyId(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersDevicesCollection.deleteOne({ deviceId });
+            return yield usersDevices_model_1.UsersDevicesModel.deleteOne({ deviceId });
         });
     },
 };

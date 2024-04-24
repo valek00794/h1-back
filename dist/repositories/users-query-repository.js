@@ -11,22 +11,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
 const utils_1 = require("../utils");
+const users_model_1 = require("../db/mongo/users.model");
+const usersEmailConfirmation_model_1 = require("../db/mongo/usersEmailConfirmation.model");
+const usersRecoveryPasssword_model_1 = require("../db/mongo/usersRecoveryPasssword.model");
 exports.usersQueryRepository = {
     findUserByLoginOrEmail(loginOrEmail) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersCollection.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
+            return yield users_model_1.UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
         });
     },
     findUserConfirmationInfo(confirmationCodeOrUserId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersEmailConfirmationCollection.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] });
+            return yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] });
         });
     },
     findPasswordRecoveryInfo(recoveryCodeOrUserId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.usersRecoveryPassswordCollection.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] });
+            return yield usersRecoveryPasssword_model_1.UsersRecoveryPassswordModel.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] });
         });
     },
     findUserById(id) {
@@ -34,14 +36,13 @@ exports.usersQueryRepository = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const user = yield db_1.usersCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
-            if (user === null)
-                return false;
-            return {
+            const user = yield users_model_1.UsersModel.findById(id);
+            return user ? {
                 email: user.email,
                 login: user.login,
                 userId: id
-            };
+            }
+                : false;
         });
     },
     getAllUsers(query) {
@@ -53,13 +54,12 @@ exports.usersQueryRepository = {
                     sanitizationQuery.searchEmailTerm !== null ? { email: { $regex: sanitizationQuery.searchEmailTerm, $options: 'i' } } : {}
                 ]
             };
-            const users = yield db_1.usersCollection
+            const users = yield users_model_1.UsersModel
                 .find(findOptions)
-                .sort(sanitizationQuery.sortBy, sanitizationQuery.sortDirection)
+                .sort({ [sanitizationQuery.sortBy]: sanitizationQuery.sortDirection })
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
-                .limit(sanitizationQuery.pageSize)
-                .toArray();
-            const usersCount = yield db_1.usersCollection.countDocuments(findOptions);
+                .limit(sanitizationQuery.pageSize);
+            const usersCount = yield users_model_1.UsersModel.countDocuments(findOptions);
             return {
                 pagesCount: Math.ceil(usersCount / sanitizationQuery.pageSize),
                 page: sanitizationQuery.pageNumber,

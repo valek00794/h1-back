@@ -1,10 +1,8 @@
-import { WithId } from 'mongodb'
-
-import { BlogType } from '../types/blogs-types'
+import { BlogDbType, BlogType } from '../types/blogs-types'
 import { BlogsModel } from '../db/mongo/blogs.model'
 
 export const blogsRepository = {
-    async createBlog(newBlog: BlogType): Promise<WithId<BlogType>> {
+    async createBlog(newBlog: BlogType): Promise<BlogDbType> {
         const blog = new BlogsModel(newBlog)
         await blog.save()
         return blog

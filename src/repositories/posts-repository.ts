@@ -1,10 +1,8 @@
-import { WithId } from 'mongodb'
-
-import { PostType } from '../types/posts-types'
+import { PostDbType, PostType } from '../types/posts-types'
 import { PostsModel } from '../db/mongo/posts.model'
 
 export const postsRepository = {
-    async createPost(newPost: PostType): Promise<WithId<PostType>> {
+    async createPost(newPost: PostType): Promise<PostDbType> {
         const post = new PostsModel(newPost)
         await post.save()
         return post

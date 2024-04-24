@@ -12,13 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authService = void 0;
 const uuid_1 = require("uuid");
 const add_1 = require("date-fns/add");
+const mongodb_1 = require("mongodb");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const users_repository_1 = require("../repositories/users-repository");
 const email_manager_1 = require("../managers/email-manager");
 const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
-const mongodb_1 = require("mongodb");
 const usersDevices_query_repository_1 = require("../repositories/usersDevices-query-repository");
 const usersDevices_repository_1 = require("../repositories/usersDevices-repository");
 const users_service_1 = require("./users-service");
@@ -139,10 +139,10 @@ exports.authService = {
                 return null;
             }
             const isUserExists = yield users_query_repository_1.usersQueryRepository.findUserById(userVerifyInfo.userId);
-            const deviceSeccion = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId);
+            const deviceSession = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId);
             if (!isUserExists ||
-                deviceSeccion === null ||
-                new Date(userVerifyInfo.iat * 1000).toISOString() !== (deviceSeccion === null || deviceSeccion === void 0 ? void 0 : deviceSeccion.lastActiveDate)) {
+                !deviceSession ||
+                new Date(userVerifyInfo.iat * 1000).toISOString() !== (deviceSession === null || deviceSession === void 0 ? void 0 : deviceSession.lastActiveDate)) {
                 return null;
             }
             return { userId: userVerifyInfo.userId, deviceId: userVerifyInfo.deviceId, iat: userVerifyInfo.iat, exp: userVerifyInfo.exp };
@@ -183,7 +183,7 @@ exports.authService = {
     passwordRecovery(email) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(email);
-            if (user === null) {
+            if (!user) {
                 return {
                     status: settings_1.ResultStatus.NoContent,
                     data: null

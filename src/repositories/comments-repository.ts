@@ -1,10 +1,8 @@
-import { WithId } from 'mongodb'
-
-import { CommentType } from '../types/comments-types'
+import { CommentDbType, CommentType } from '../types/comments-types'
 import { CommentsModel } from '../db/mongo/comments.model'
 
 export const commentsRepository = {
-    async createComment(newComment: CommentType): Promise<WithId<CommentType>> {
+    async createComment(newComment: CommentType): Promise<CommentDbType> {
         const comment = new CommentsModel(newComment)
         await comment.save()
         return comment

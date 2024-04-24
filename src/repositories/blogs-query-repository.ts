@@ -1,6 +1,6 @@
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
-import { BlogType, BlogViewType, PaginatorBlogViewType } from '../types/blogs-types'
+import { BlogDbType, BlogViewType, PaginatorBlogViewType } from '../types/blogs-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 import { BlogsModel } from '../db/mongo/blogs.model'
@@ -35,7 +35,7 @@ export const blogsQueryRepository = {
         return blog ? this.mapToOutput(blog) : false
     },
 
-    mapToOutput(blog: WithId<BlogType>): BlogViewType {
+    mapToOutput(blog: BlogDbType): BlogViewType {
         return {
             id: blog._id,
             name: blog.name,

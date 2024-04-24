@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns/add'
+import { ObjectId } from 'mongodb'
 
-import { UserDbViewType, UserDeviceInfoType } from '../types/users-types'
+import { UserDbType, UserDeviceInfoType } from '../types/users-types'
 import { usersQueryRepository } from '../repositories/users-query-repository'
 import { usersRepository } from '../repositories/users-repository'
 import { emailManager } from '../managers/email-manager'
@@ -9,14 +10,13 @@ import { APIErrorResult, Result } from '../types/result-types'
 import { ResultStatus, SETTINGS } from '../settings'
 import { bcryptArapter } from '../adapters/bcypt-adapter'
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
-import { ObjectId } from 'mongodb'
 import { JWTTokensOutType } from '../adapters/jwt/jwt-types'
 import { usersDevicesQueryRepository } from '../repositories/usersDevices-query-repository'
 import { usersDevicesRepository } from '../repositories/usersDevices-repository'
 import { usersService } from './users-service'
 
 export const authService = {
-    async checkCredential(loginOrEmail: string, password: string): Promise<false | UserDbViewType> {
+    async checkCredential(loginOrEmail: string, password: string): Promise<false | UserDbType> {
         const user = await usersQueryRepository.findUserByLoginOrEmail(loginOrEmail)
         if (user === null) return false
         const userConfirmationInfo = await usersQueryRepository.findUserConfirmationInfo(user._id!.toString())
@@ -123,11 +123,11 @@ export const authService = {
             return null
         }
         const isUserExists = await usersQueryRepository.findUserById(userVerifyInfo!.userId)
-        const deviceSeccion = await usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId)
+        const deviceSession = await usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId)
         if (
             !isUserExists ||
-            deviceSeccion === null ||
-            new Date(userVerifyInfo!.iat! * 1000).toISOString() !== deviceSeccion?.lastActiveDate
+            !deviceSession ||
+            new Date(userVerifyInfo!.iat! * 1000).toISOString() !== deviceSession?.lastActiveDate
         ) {
             return null
         }
@@ -165,7 +165,7 @@ export const authService = {
 
     async passwordRecovery(email: string): Promise<Result<APIErrorResult | null>> {
         const user = await usersQueryRepository.findUserByLoginOrEmail(email)
-        if (user === null) {
+        if (!user) {
             return {
                 status: ResultStatus.NoContent,
                 data: null
