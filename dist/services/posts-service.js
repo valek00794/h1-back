@@ -53,7 +53,7 @@ exports.postsService = {
                 updatedPost.blogName = blog.name;
             }
             const res = yield posts_repository_1.postsRepository.updatePost(updatedPost, id);
-            if (res.modifiedCount === 0) {
+            if (!res) {
                 return false;
             }
             return true;
@@ -64,11 +64,7 @@ exports.postsService = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const res = yield posts_repository_1.postsRepository.deletePost(id);
-            if (res.deletedCount === 0) {
-                return false;
-            }
-            return true;
+            return yield posts_repository_1.postsRepository.deletePost(id);
         });
     },
 };

@@ -10,23 +10,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepository = void 0;
-const mongodb_1 = require("mongodb");
-const db_1 = require("../db/db");
+const post_model_1 = require("../db/mongo/post.model");
 exports.postsRepository = {
     createPost(newPost) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield db_1.postsCollection.insertOne(newPost);
-            return newPost;
+            return yield post_model_1.PostsModel.create(newPost);
         });
     },
     updatePost(updatedPost, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: updatedPost });
+            return yield post_model_1.PostsModel.findByIdAndUpdate(id, updatedPost, { new: true });
         });
     },
     deletePost(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.postsCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            const deleteResult = yield post_model_1.PostsModel.findByIdAndDelete(id);
+            return deleteResult ? true : false;
         });
     },
 };

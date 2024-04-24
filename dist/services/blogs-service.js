@@ -52,11 +52,7 @@ exports.blogsService = {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const res = yield blogs_repository_1.blogsRepository.deleteBlog(id);
-            if (res === null) {
-                return false;
-            }
-            return true;
+            return yield blogs_repository_1.blogsRepository.deleteBlog(id);
         });
     },
 };

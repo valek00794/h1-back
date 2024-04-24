@@ -40,10 +40,6 @@ export const blogsService = {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const res = await blogsRepository.deleteBlog(id)
-        if (res === null) {
-            return false
-        }
-        return true
+        return await blogsRepository.deleteBlog(id)
     },
 }

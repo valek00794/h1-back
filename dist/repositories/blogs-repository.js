@@ -27,7 +27,8 @@ exports.blogsRepository = {
     },
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield blog_model_1.BlogModel.findByIdAndDelete(id);
+            const deleteResult = yield blog_model_1.BlogModel.findByIdAndDelete(id);
+            return deleteResult ? true : false;
         });
     },
 };

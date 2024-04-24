@@ -43,7 +43,7 @@ export const postsService = {
             updatedPost.blogName = blog.name
         }
         const res = await postsRepository.updatePost(updatedPost, id)
-        if (res.modifiedCount === 0) {
+        if (!res) {
             return false
         }
         return true
@@ -53,10 +53,6 @@ export const postsService = {
         if (!ObjectId.isValid(id)) {
             return false
         }
-        const res = await postsRepository.deletePost(id)
-        if (res.deletedCount === 0) {
-            return false
-        }
-        return true
+        return await postsRepository.deletePost(id)
     },
 }
