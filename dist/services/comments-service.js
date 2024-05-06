@@ -13,6 +13,8 @@ exports.commentsService = void 0;
 const mongodb_1 = require("mongodb");
 const comments_repository_1 = require("../repositories/comments-repository");
 const comments_query_repository_1 = require("../repositories/comments-query-repository");
+const likes_types_1 = require("../types/likes-types");
+const settings_1 = require("../settings");
 exports.commentsService = {
     createComment(body, commentatorInfo, postId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -49,6 +51,29 @@ exports.commentsService = {
                 return false;
             }
             return yield comments_repository_1.commentsRepository.deleteComment(id);
+        });
+    },
+    changeCommentLikeStatus(commentId, likeStatus, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(commentId);
+            if (!comment)
+                return {
+                    status: settings_1.ResultStatus.BadRequest,
+                    data: null
+                };
+            if (likeStatus === likes_types_1.LikeStatus.Like) {
+                yield comments_repository_1.commentsRepository.likeComment(commentId, userId);
+            }
+            if (likeStatus === likes_types_1.LikeStatus.Dislike) {
+                yield comments_repository_1.commentsRepository.dislikeComment(commentId, userId);
+            }
+            if (likeStatus === likes_types_1.LikeStatus.None) {
+                yield comments_repository_1.commentsRepository.removeLikeStatusComment(commentId, userId);
+            }
+            return {
+                status: settings_1.ResultStatus.NoContent,
+                data: null
+            };
         });
     },
 };

@@ -4,6 +4,9 @@ import { CommentInputType, CommentType, CommentViewType } from "../types/comment
 import { CommentatorInfoType } from "../types/users-types"
 import { commentsRepository } from "../repositories/comments-repository"
 import { commentsQueryRepository } from "../repositories/comments-query-repository"
+import { LikeStatus } from "../types/likes-types"
+import { ResultStatus } from "../settings"
+import { Result } from "../types/result-types"
 
 export const commentsService = {
     async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentViewType> {
@@ -38,5 +41,28 @@ export const commentsService = {
             return false
         }
         return await commentsRepository.deleteComment(id)
+    },
+
+    async changeCommentLikeStatus(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
+        const comment = await commentsQueryRepository.findComment(commentId)
+        if (!comment)
+            return {
+                status: ResultStatus.BadRequest,
+                data: null
+            }
+        if (likeStatus === LikeStatus.Like) {
+            await commentsRepository.likeComment(commentId, userId)
+        }
+        if (likeStatus === LikeStatus.Dislike) {
+            await commentsRepository.dislikeComment(commentId, userId)
+        }
+        if (likeStatus === LikeStatus.None) {
+            await commentsRepository.removeLikeStatusComment(commentId, userId)
+        }
+
+        return {
+            status: ResultStatus.NoContent,
+            data: null
+        }
     },
 }

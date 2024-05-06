@@ -13,8 +13,10 @@ exports.commentsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const comments_model_1 = require("../db/mongo/comments.model");
 const utils_1 = require("../utils");
+const commentLikesStatus_model_1 = require("../db/mongo/commentLikesStatus-model");
+const likes_types_1 = require("../types/likes-types");
 exports.commentsQueryRepository = {
-    getComments(query, postId) {
+    getComments(postId, query, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
             let findOptions = {};
@@ -27,25 +29,41 @@ exports.commentsQueryRepository = {
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
                 .limit(sanitizationQuery.pageSize);
             const commentsCount = yield comments_model_1.CommentsModel.countDocuments(findOptions);
+            const commentsItems = yield Promise.all(comments.map((comment) => __awaiter(this, void 0, void 0, function* () {
+                const likesInfo = yield this.getLikesInfo(comment.id);
+                const mapedlikesInfo = this.mapLikesInfo(userId, likesInfo);
+                return this.mapToOutput(comment, mapedlikesInfo);
+            })));
             return {
                 pagesCount: Math.ceil(commentsCount / sanitizationQuery.pageSize),
                 page: sanitizationQuery.pageNumber,
                 pageSize: sanitizationQuery.pageSize,
                 totalCount: commentsCount,
-                items: comments.map(comment => this.mapToOutput(comment))
+                items: commentsItems
             };
         });
     },
-    findComment(id) {
+    findComment(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
             const comment = yield comments_model_1.CommentsModel.findById(id);
-            return comment ? this.mapToOutput(comment) : false;
+            let outputComment;
+            if (comment) {
+                const likesInfo = yield this.getLikesInfo(id);
+                const mapedlikesInfo = this.mapLikesInfo(userId, likesInfo);
+                outputComment = this.mapToOutput(comment, mapedlikesInfo);
+            }
+            return comment && outputComment ? outputComment : false;
         });
     },
-    mapToOutput(comment) {
+    getLikesInfo(commentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOne({ commentId });
+        });
+    },
+    mapToOutput(comment, likesInfo) {
         return {
             id: comment._id,
             content: comment.content,
@@ -53,7 +71,26 @@ exports.commentsQueryRepository = {
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin
             },
-            createdAt: comment.createdAt
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesCount) || 0,
+                dislikesCount: (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesCount) || 0,
+                myStatus: (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.myStatus) || likes_types_1.LikeStatus.None
+            }
         };
     },
+    mapLikesInfo(userId, likesInfo) {
+        let myLikeStatus = likes_types_1.LikeStatus.None;
+        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.includes(userId))) {
+            myLikeStatus = likes_types_1.LikeStatus.Like;
+        }
+        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.includes(userId))) {
+            myLikeStatus = likes_types_1.LikeStatus.Dislike;
+        }
+        return {
+            likesCount: (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.length) || 0,
+            dislikesCount: (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.length) || 0,
+            myStatus: myLikeStatus
+        };
+    }
 };

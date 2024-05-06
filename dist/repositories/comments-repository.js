@@ -11,11 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsRepository = void 0;
 const comments_model_1 = require("../db/mongo/comments.model");
+const commentLikesStatus_model_1 = require("../db/mongo/commentLikesStatus-model");
 exports.commentsRepository = {
     createComment(newComment) {
         return __awaiter(this, void 0, void 0, function* () {
             const comment = new comments_model_1.CommentsModel(newComment);
+            const commentLikesInfo = new commentLikesStatus_model_1.CommentLikesStatusModel({
+                commentId: comment._id,
+                postId: comment.postId,
+                likesCount: [],
+                dislikesCount: []
+            });
             yield comment.save();
+            yield commentLikesInfo.save();
             return comment;
         });
     },
@@ -29,6 +37,25 @@ exports.commentsRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             const deleteResult = yield comments_model_1.CommentsModel.findByIdAndDelete(id);
             return deleteResult ? true : false;
+        });
+    },
+    likeComment(commentId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.removeLikeStatusComment(commentId, userId);
+            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, { $addToSet: { likesUsersIds: userId } }, { new: true });
+        });
+    },
+    dislikeComment(commentId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.removeLikeStatusComment(commentId, userId);
+            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, { $addToSet: { dislikesUsersIds: userId } }, { new: true });
+        });
+    },
+    removeLikeStatusComment(commentId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, {
+                $pull: { likesUsersIds: userId, dislikesUsersIds: userId }
+            }, { new: true });
         });
     },
 };

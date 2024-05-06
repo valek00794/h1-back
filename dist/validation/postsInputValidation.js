@@ -37,8 +37,6 @@ exports.postsBlogIdInputValidation = [
         if (blogIdIncludes === -1) {
             throw new Error('Blog not found');
         }
-        else {
-            return value;
-        }
+        return value;
     }))
 ];

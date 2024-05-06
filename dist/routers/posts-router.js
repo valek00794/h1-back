@@ -9,6 +9,7 @@ const commentInputValidation_1 = require("../validation/commentInputValidation")
 const commentsControllers_1 = require("../controllers/commentsControllers");
 const authMiddleware_1 = require("../middlewares/authMiddleware");
 const authJWTMiddleware_1 = require("../middlewares/authJWTMiddleware");
+const userIdFromJWTMiddleware_1 = require("../middlewares/userIdFromJWTMiddleware");
 exports.postsRouter = (0, express_1.Router)();
 exports.postsRouter.get('/', postsControllers_1.getPostsController);
 exports.postsRouter.get('/:id', postsControllers_1.findPostController);
@@ -16,4 +17,4 @@ exports.postsRouter.post('/', authMiddleware_1.authMiddleware, postsInputValidat
 exports.postsRouter.put('/:id', authMiddleware_1.authMiddleware, postsInputValidation_1.postsInputValidation, postsInputValidation_1.postsBlogIdInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, postsControllers_1.updatePostController);
 exports.postsRouter.delete('/:id', authMiddleware_1.authMiddleware, postsControllers_1.deletePostController);
 exports.postsRouter.post('/:postId/comments', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.commentInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsControllers_1.createCommentForPostController);
-exports.postsRouter.get('/:postId/comments', commentsControllers_1.getCommentsForPostController);
+exports.postsRouter.get('/:postId/comments', userIdFromJWTMiddleware_1.userIdFromJWTMiddleware, commentsControllers_1.getCommentsForPostController);

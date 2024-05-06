@@ -7,25 +7,8 @@ import { SearchQueryParametersType } from '../types/query-types';
 import { commentsService } from '../services/comments-service';
 import { StatusCodes } from '../settings';
 
-
-
-export const findCommentsOfPostController = async (req: Request, res: Response<PaginatorCommentsViewType>) => {
-    const query = req.query as unknown as SearchQueryParametersType;
-    const post = await postsQueryRepository.findPost(req.params.id)
-    if (!post) {
-        res
-            .status(StatusCodes.NOT_FOUND_404)
-            .send()
-        return
-    }
-    const comments = await commentsQueryRepository.getComments(query, req.params.blogId)
-    res
-        .status(StatusCodes.OK_200)
-        .json(comments)
-}
-
 export const findCommentController = async (req: Request, res: Response<false | CommentType>) => {
-    const comment = await commentsQueryRepository.findComment(req.params.id)
+    const comment = await commentsQueryRepository.findComment(req.params.id, req.user?.userId!)
     if (!comment) {
         res
             .status(StatusCodes.NOT_FOUND_404)
@@ -127,8 +110,29 @@ export const getCommentsForPostController = async (req: Request, res: Response<P
             .send()
         return
     }
-    const comments = await commentsQueryRepository.getComments(query, req.params.postId)
+    const comments = await commentsQueryRepository.getComments(req.params.postId, query, req.user?.userId!)
     res
         .status(StatusCodes.OK_200)
         .send(comments)
 }
+
+export const changeCommentLikeStatusController = async (req: Request, res: Response<PaginatorCommentsViewType>) => {
+    if (!req.user || !req.user.userId) {
+        res
+            .status(StatusCodes.UNAUTHORIZED_401)
+            .send()
+        return
+    }
+    const comment = await commentsQueryRepository.findComment(req.params.commentId)
+    if (!comment) {
+        res
+            .status(StatusCodes.NOT_FOUND_404)
+            .send()
+        return
+    }
+    await commentsService.changeCommentLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId)
+    res
+        .status(StatusCodes.NO_CONTENT_204)
+        .send()
+}
+

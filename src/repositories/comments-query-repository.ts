@@ -4,9 +4,11 @@ import { CommentsModel } from '../db/mongo/comments.model'
 import { CommentDbType, CommentViewType, PaginatorCommentsViewType } from '../types/comments-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
+import { CommentLikesStatusModel } from '../db/mongo/commentLikesStatus-model'
+import { LikeStatus, LikesInfoType, LikesInfoViewType } from '../types/likes-types'
 
 export const commentsQueryRepository = {
-    async getComments(query?: SearchQueryParametersType, postId?: string): Promise<PaginatorCommentsViewType> {
+    async getComments(postId: string, query?: SearchQueryParametersType, userId?: string): Promise<PaginatorCommentsViewType> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
         if (postId) {
@@ -21,24 +23,40 @@ export const commentsQueryRepository = {
 
         const commentsCount = await CommentsModel.countDocuments(findOptions)
 
+        const commentsItems = await Promise.all(comments.map(async comment => {
+            const likesInfo = await this.getLikesInfo(comment.id)
+            const mapedlikesInfo = this.mapLikesInfo(userId!, likesInfo!)
+            return this.mapToOutput(comment, mapedlikesInfo)
+        }));
+
         return {
             pagesCount: Math.ceil(commentsCount / sanitizationQuery.pageSize),
             page: sanitizationQuery.pageNumber,
             pageSize: sanitizationQuery.pageSize,
             totalCount: commentsCount,
-            items: comments.map(comment => this.mapToOutput(comment))
+            items: commentsItems
         }
     },
 
-    async findComment(id: string): Promise<CommentViewType | false> {
+    async findComment(id: string, userId?: string): Promise<CommentViewType | false> {
         if (!ObjectId.isValid(id)) {
             return false
         }
         const comment = await CommentsModel.findById(id)
-        return comment ? this.mapToOutput(comment) : false
+        let outputComment;
+        if (comment) {
+            const likesInfo = await this.getLikesInfo(id)
+            const mapedlikesInfo = this.mapLikesInfo(userId!, likesInfo!)
+            outputComment = this.mapToOutput(comment, mapedlikesInfo)
+        }
+        return comment && outputComment ? outputComment : false
     },
 
-    mapToOutput(comment: CommentDbType): CommentViewType {
+    async getLikesInfo(commentId: string) {
+        return await CommentLikesStatusModel.findOne({ commentId })
+    },
+
+    mapToOutput(comment: CommentDbType, likesInfo?: LikesInfoViewType): CommentViewType {
         return {
             id: comment._id!,
             content: comment.content,
@@ -46,8 +64,26 @@ export const commentsQueryRepository = {
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin
             },
-            createdAt: comment.createdAt
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: likesInfo?.likesCount || 0,
+                dislikesCount: likesInfo?.dislikesCount || 0,
+                myStatus: likesInfo?.myStatus || LikeStatus.None
+            }
         }
     },
-
+    mapLikesInfo(userId: string, likesInfo?: LikesInfoType) {
+        let myLikeStatus = LikeStatus.None
+        if (userId && likesInfo?.likesUsersIds.includes(userId)) {
+            myLikeStatus = LikeStatus.Like
+        }
+        if (userId && likesInfo?.dislikesUsersIds.includes(userId)) {
+            myLikeStatus = LikeStatus.Dislike
+        }
+        return {
+            likesCount: likesInfo?.likesUsersIds.length || 0,
+            dislikesCount: likesInfo?.dislikesUsersIds.length || 0,
+            myStatus: myLikeStatus
+        }
+    }
 }

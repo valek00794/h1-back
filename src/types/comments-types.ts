@@ -1,12 +1,14 @@
 import { ObjectId, WithId } from 'mongodb'
 
 import { CommentatorInfoType } from './users-types'
+import { LikesInfoViewType } from './likes-types'
 
 export type CommentType = {
-  content: string;
-  commentatorInfo: CommentatorInfoType;
-  createdAt: string;
+  content: string
+  commentatorInfo: CommentatorInfoType
+  createdAt: string
   postId?: ObjectId
+  likesInfo?: LikesInfoViewType
 }
 
 export type CommentDbType = WithId<CommentType>

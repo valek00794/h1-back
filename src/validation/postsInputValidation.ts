@@ -27,9 +27,8 @@ export const postsBlogIdInputValidation = [
         const blogs = await blogsQueryRepository.getBlogs()
         const blogIdIncludes = blogs.items.findIndex(el => el.id?.toString() === value)
         if (blogIdIncludes === -1) {
-            throw new Error('Blog not found');
-        } else {
-            return value;
+            throw new Error('Blog not found')
         }
+        return value
     })
 ]
