@@ -1,8 +1,8 @@
-import { UserDeviceInfoType, UsersDevicesType } from '../types/users-types'
-import { UsersDevicesModel } from "../db/mongo/usersDevices.model";
 import { DeleteResult } from 'mongodb';
 import { UpdateWriteOpResult } from 'mongoose';
 
+import { UserDeviceInfoType, UsersDevicesType } from '../types/users-types'
+import { UsersDevicesModel } from "../db/mongo/usersDevices.model";
 
 export const usersDevicesRepository = {
     async addUserDevice(device: UsersDevicesType) {

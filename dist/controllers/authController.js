@@ -24,7 +24,13 @@ const signInController = (req, res) => __awaiter(void 0, void 0, void 0, functio
             .send();
         return;
     }
-    const user2 = yield auth_service_1.authService.checkCredential(user._id, req.body.password, user.passwordHash);
+    const checkCredential = yield auth_service_1.authService.checkCredential(user._id, req.body.password, user.passwordHash);
+    if (!checkCredential) {
+        res
+            .status(settings_1.StatusCodes.UNAUTHORIZED_401)
+            .send();
+        return;
+    }
     const tokens = yield jwt_adapter_1.jwtAdapter.createJWT(user._id);
     const deviceTitle = req.headers['user-agent'] || 'unknown device';
     const ipAddress = req.ip || '0.0.0.0';

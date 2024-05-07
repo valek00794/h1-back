@@ -11,7 +11,6 @@ import { authService } from '../services/auth-service';
 import { usersDevicesService } from '../services/usersDevices-service';
 
 export const signInController = async (req: Request, res: Response<TokenOutType>) => {
-
     const user = await usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail)
     if (user === null) {
         res
@@ -19,7 +18,13 @@ export const signInController = async (req: Request, res: Response<TokenOutType>
             .send()
         return
     }
-    const user2 = await authService.checkCredential(user._id, req.body.password, user.passwordHash)
+    const checkCredential = await authService.checkCredential(user._id, req.body.password, user.passwordHash)
+    if (!checkCredential) {
+        res
+            .status(StatusCodes.UNAUTHORIZED_401)
+            .send()
+        return
+    }
     const tokens = await jwtAdapter.createJWT(user._id!)
     const deviceTitle = req.headers['user-agent'] || 'unknown device'
     const ipAddress = req.ip || '0.0.0.0'
