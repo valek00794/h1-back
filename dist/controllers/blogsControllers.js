@@ -55,13 +55,14 @@ const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.createBlogController = createBlogController;
 const updateBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedBlog = yield blogs_service_1.blogsService.updateBlog(req.body, req.params.id);
-    if (!updatedBlog) {
+    const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(req.params.id);
+    if (blog === null) {
         res
             .status(settings_1.StatusCodes.NOT_FOUND_404)
             .send();
         return;
     }
+    const updatedBlog = yield blogs_service_1.blogsService.updateBlog(req.body, req.params.id);
     res
         .status(settings_1.StatusCodes.NO_CONTENT_204)
         .send();

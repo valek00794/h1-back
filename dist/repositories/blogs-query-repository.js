@@ -36,10 +36,10 @@ exports.blogsQueryRepository = {
     findBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
-                return false;
+                return null;
             }
             const blog = yield blogs_model_1.BlogsModel.findById(id);
-            return blog ? this.mapToOutput(blog) : false;
+            return blog ? this.mapToOutput(blog) : null;
         });
     },
     mapToOutput(blog) {

@@ -5,7 +5,6 @@ import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
 import { usersDevicesRepository } from '../repositories/usersDevices-repository'
 import { UsersDevicesType } from '../types/users-types'
 import { authService } from './auth-service'
-import { usersDevicesQueryRepository } from '../repositories/usersDevices-query-repository'
 import { Result } from '../types/result-types'
 
 export const usersDevicesService = {
@@ -28,20 +27,7 @@ export const usersDevicesService = {
         const newExpiryDate = new Date(userVerifyInfo!.exp! * 1000).toISOString()
         return await usersDevicesRepository.updateUserDevice(userVerifyInfoByOldToken!, newLastActiveDate, newExpiryDate)
     },
-    async getActiveDevicesByUser(refreshToken: string): Promise<Result<null | UsersDevicesType[]>> {
-        const userVerifyInfo = await authService.ckeckUserByRefreshToken(refreshToken)
-        if (userVerifyInfo === null) {
-            return {
-                status: ResultStatus.Unauthorized,
-                data: null
-            }
-        }
-        const devices = await usersDevicesQueryRepository.getAllActiveDevicesByUser(userVerifyInfo.userId)
-        return {
-            status: ResultStatus.Success,
-            data: devices
-        }
-    },
+
     async deleteAllDevicesByUser(refreshToken: string): Promise<Result<null | DeleteResult>> {
         const userVerifyInfo = await authService.ckeckUserByRefreshToken(refreshToken)
         if (userVerifyInfo === null) {
@@ -56,27 +42,7 @@ export const usersDevicesService = {
             data: deleteResult
         }
     },
-    async deleteUserDeviceById(refreshToken: string, deviceId: string): Promise<Result<null | DeleteResult>> {
-        const userVerifyInfo = await authService.ckeckUserByRefreshToken(refreshToken)
-        if (userVerifyInfo === null) {
-            return {
-                status: ResultStatus.Unauthorized,
-                data: null
-            }
-        }
-        const device = await usersDevicesQueryRepository.getUserDeviceById(deviceId)
-        if (!device) {
-            return {
-                status: ResultStatus.NotFound,
-                data: null
-            }
-        }
-        if (userVerifyInfo.userId !== device.userId) {
-            return {
-                status: ResultStatus.Forbidden,
-                data: null
-            }
-        }
+    async deleteUserDeviceById(deviceId: string): Promise<Result<DeleteResult>> {
         const deleteResult = await usersDevicesRepository.deleteUserDevicebyId(deviceId)
         return {
             status: ResultStatus.NoContent,

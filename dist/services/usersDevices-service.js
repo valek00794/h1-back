@@ -14,7 +14,6 @@ const settings_1 = require("../settings");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const usersDevices_repository_1 = require("../repositories/usersDevices-repository");
 const auth_service_1 = require("./auth-service");
-const usersDevices_query_repository_1 = require("../repositories/usersDevices-query-repository");
 exports.usersDevicesService = {
     addUserDevice(refreshToken, deviceTitle, ipAddress) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -39,22 +38,6 @@ exports.usersDevicesService = {
             return yield usersDevices_repository_1.usersDevicesRepository.updateUserDevice(userVerifyInfoByOldToken, newLastActiveDate, newExpiryDate);
         });
     },
-    getActiveDevicesByUser(refreshToken) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userVerifyInfo = yield auth_service_1.authService.ckeckUserByRefreshToken(refreshToken);
-            if (userVerifyInfo === null) {
-                return {
-                    status: settings_1.ResultStatus.Unauthorized,
-                    data: null
-                };
-            }
-            const devices = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getAllActiveDevicesByUser(userVerifyInfo.userId);
-            return {
-                status: settings_1.ResultStatus.Success,
-                data: devices
-            };
-        });
-    },
     deleteAllDevicesByUser(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             const userVerifyInfo = yield auth_service_1.authService.ckeckUserByRefreshToken(refreshToken);
@@ -71,28 +54,8 @@ exports.usersDevicesService = {
             };
         });
     },
-    deleteUserDeviceById(refreshToken, deviceId) {
+    deleteUserDeviceById(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userVerifyInfo = yield auth_service_1.authService.ckeckUserByRefreshToken(refreshToken);
-            if (userVerifyInfo === null) {
-                return {
-                    status: settings_1.ResultStatus.Unauthorized,
-                    data: null
-                };
-            }
-            const device = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getUserDeviceById(deviceId);
-            if (!device) {
-                return {
-                    status: settings_1.ResultStatus.NotFound,
-                    data: null
-                };
-            }
-            if (userVerifyInfo.userId !== device.userId) {
-                return {
-                    status: settings_1.ResultStatus.Forbidden,
-                    data: null
-                };
-            }
             const deleteResult = yield usersDevices_repository_1.usersDevicesRepository.deleteUserDevicebyId(deviceId);
             return {
                 status: settings_1.ResultStatus.NoContent,

@@ -27,12 +27,12 @@ export const blogsQueryRepository = {
         }
     },
 
-    async findBlog(id: string): Promise<false | BlogViewType> {
+    async findBlog(id: string): Promise<null | BlogViewType> {
         if (!ObjectId.isValid(id)) {
-            return false
+            return null
         }
         const blog = await BlogsModel.findById(id)
-        return blog ? this.mapToOutput(blog) : false
+        return blog ? this.mapToOutput(blog) : null
     },
 
     mapToOutput(blog: BlogDbType): BlogViewType {

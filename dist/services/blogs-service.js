@@ -29,10 +29,7 @@ exports.blogsService = {
     },
     updateBlog(body, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(id);
-            if (!blog) {
-                return false;
-            }
+            const blog = yield blogs_repository_1.blogsRepository.findBlog(id);
             const updatedblog = {
                 name: body.name,
                 description: body.description,

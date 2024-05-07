@@ -49,13 +49,14 @@ export const createBlogController = async (req: Request, res: Response<BlogViewT
 }
 
 export const updateBlogController = async (req: Request, res: Response<boolean>) => {
-    const updatedBlog = await blogsService.updateBlog(req.body, req.params.id)
-    if (!updatedBlog) {
+    const blog = await blogsQueryRepository.findBlog(req.params.id)
+    if (blog === null) {
         res
             .status(StatusCodes.NOT_FOUND_404)
             .send()
         return
     }
+    const updatedBlog = await blogsService.updateBlog(req.body, req.params.id)
     res
         .status(StatusCodes.NO_CONTENT_204)
         .send()

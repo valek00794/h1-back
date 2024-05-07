@@ -18,19 +18,15 @@ export const blogsService = {
     },
 
     async updateBlog(body: BlogType, id: string): Promise<boolean> {
-        const blog = await blogsQueryRepository.findBlog(id)
-        if (!blog) {
-            return false
-        }
+        const blog = await blogsRepository.findBlog(id)
         const updatedblog: BlogType = {
             name: body.name,
             description: body.description,
             websiteUrl: body.websiteUrl,
-            createdAt: blog.createdAt,
+            createdAt: blog!.createdAt,
             isMembership: false,
         }
         return await blogsRepository.updateBlog(updatedblog, id)
-
     },
 
     async deleteBlog(id: string): Promise<boolean> {

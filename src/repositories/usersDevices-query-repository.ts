@@ -7,9 +7,9 @@ export const usersDevicesQueryRepository = {
         return userDevices.map(device => this.mapToOutput(device))
     },
 
-    async getUserDeviceById(deviceId: string): Promise<UsersDevicesType | false> {
+    async getUserDeviceById(deviceId: string): Promise<UsersDevicesType | null> {
         const deviceSession = await UsersDevicesModel.findOne({deviceId})
-        return deviceSession ? this.mapToOutput(deviceSession) : false
+        return deviceSession ? this.mapToOutput(deviceSession) : null
     },
 
     mapToOutput(userDevice: UsersDevicesType) {

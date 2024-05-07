@@ -31,4 +31,9 @@ exports.blogsRepository = {
             return deleteResult ? true : false;
         });
     },
+    findBlog(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield blogs_model_1.BlogsModel.findById(id);
+        });
+    },
 };

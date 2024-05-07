@@ -15,4 +15,7 @@ export const blogsRepository = {
         const deleteResult = await BlogsModel.findByIdAndDelete(id)
         return deleteResult ? true : false
     },
+    async findBlog(id: string): Promise<BlogType | null> {
+        return await BlogsModel.findById(id)
+    },
 }

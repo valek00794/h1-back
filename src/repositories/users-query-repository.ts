@@ -21,9 +21,6 @@ export const usersQueryRepository = {
     },
 
     async findUserById(id: string): Promise<UserInfoType | false> {
-        if (!ObjectId.isValid(id)) {
-            return false
-        }
         const user = await UsersModel.findById(id)
         return user ? {
             email: user.email,

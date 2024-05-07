@@ -21,7 +21,7 @@ exports.usersDevicesQueryRepository = {
     getUserDeviceById(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
             const deviceSession = yield usersDevices_model_1.UsersDevicesModel.findOne({ deviceId });
-            return deviceSession ? this.mapToOutput(deviceSession) : false;
+            return deviceSession ? this.mapToOutput(deviceSession) : null;
         });
     },
     mapToOutput(userDevice) {
