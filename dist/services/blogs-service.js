@@ -11,36 +11,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsService = void 0;
 const mongodb_1 = require("mongodb");
+const blogs_types_1 = require("../types/blogs-types");
 const blogs_repository_1 = require("../repositories/blogs-repository");
-exports.blogsService = {
+class BlogsService {
     createBlog(body) {
         return __awaiter(this, void 0, void 0, function* () {
-            const newBlog = {
-                name: body.name,
-                description: body.description,
-                websiteUrl: body.websiteUrl,
-                createdAt: new Date().toISOString(),
-                isMembership: false
-            };
+            const newBlog = new blogs_types_1.Blog(body.name, body.description, body.websiteUrl, new Date().toISOString(), false);
             return yield blogs_repository_1.blogsRepository.createBlog(newBlog);
         });
-    },
+    }
     updateBlog(body, id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
             const blog = yield blogs_repository_1.blogsRepository.findBlog(id);
-            const updatedblog = {
-                name: body.name,
-                description: body.description,
-                websiteUrl: body.websiteUrl,
-                createdAt: blog.createdAt,
-                isMembership: false,
-            };
+            const updatedblog = new blogs_types_1.Blog(body.name, body.description, body.websiteUrl, blog.createdAt, false);
             return yield blogs_repository_1.blogsRepository.updateBlog(updatedblog, id);
         });
-    },
+    }
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
@@ -48,5 +37,6 @@ exports.blogsService = {
             }
             return yield blogs_repository_1.blogsRepository.deleteBlog(id);
         });
-    },
-};
+    }
+}
+exports.blogsService = new BlogsService();

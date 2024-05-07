@@ -11,14 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersDevicesRepository = void 0;
 const usersDevices_model_1 = require("../db/mongo/usersDevices.model");
-exports.usersDevicesRepository = {
+class UsersDevicesRepository {
     addUserDevice(device) {
         return __awaiter(this, void 0, void 0, function* () {
             const newDevice = new usersDevices_model_1.UsersDevicesModel(device);
             yield newDevice.save();
             return newDevice;
         });
-    },
+    }
     updateUserDevice(userVerifyInfo, newLastActiveDate, newExpiryDate) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield usersDevices_model_1.UsersDevicesModel.updateOne({
@@ -32,7 +32,7 @@ exports.usersDevicesRepository = {
                 }
             });
         });
-    },
+    }
     deleteUserDevices(userVerifyInfo) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield usersDevices_model_1.UsersDevicesModel.deleteMany({
@@ -41,15 +41,16 @@ exports.usersDevicesRepository = {
                 lastActiveDate: { $ne: new Date(userVerifyInfo.iat * 1000).toISOString() }
             });
         });
-    },
+    }
     deleteUserDevicebyId(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield usersDevices_model_1.UsersDevicesModel.deleteOne({ deviceId });
         });
-    },
+    }
     getUserDeviceById(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield usersDevices_model_1.UsersDevicesModel.findOne({ deviceId });
         });
-    },
-};
+    }
+}
+exports.usersDevicesRepository = new UsersDevicesRepository();

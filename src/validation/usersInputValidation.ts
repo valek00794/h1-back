@@ -1,7 +1,7 @@
-import { body } from 'express-validator';
+import { body } from 'express-validator'
 
-import { usersQueryRepository } from '../repositories/users-query-repository';
-import { usersRepository } from '../repositories/users-repository';
+import { usersQueryRepository } from '../repositories/users-query-repository'
+import { usersRepository } from '../repositories/users-repository'
 
 const VALIDATE_PHARAMS = {
     password: {
@@ -33,9 +33,9 @@ export const userDataInputValidation = [
         .custom(async (value) => {
             const user = await usersRepository.findUserByLoginOrEmail(value)
             if (user !== null) {
-                throw new Error('User with current login already exists');
+                throw new Error('User with current login already exists')
             } else {
-                return value;
+                return value
             }
         }),
     body('email').trim()
@@ -45,9 +45,9 @@ export const userDataInputValidation = [
         .custom(async (value) => {
             const user = await usersRepository.findUserByLoginOrEmail(value)
             if (user !== null) {
-                throw new Error('User with current email already exists');
+                throw new Error('User with current email already exists')
             } else {
-                return value;
+                return value
             }
         })
 ]

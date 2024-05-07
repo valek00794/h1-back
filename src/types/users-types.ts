@@ -16,14 +16,6 @@ export type UserType = {
     passwordHash: string,
 }
 
-export type PaginatorUsersViewType = {
-    pagesCount: number,
-    page: number,
-    pageSize: number,
-    totalCount: number,
-    items: UserViewType[]
-}
-
 export type UserInfoType = {
     userId: string,
     login: string,

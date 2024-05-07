@@ -1,12 +1,13 @@
 import { ObjectId } from 'mongodb'
 
-import { BlogDbType, BlogViewType, PaginatorBlogViewType } from '../types/blogs-types'
+import { BlogDbType, BlogView } from '../types/blogs-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 import { BlogsModel } from '../db/mongo/blogs.model'
+import { Paginator } from '../types/result-types'
 
-export const blogsQueryRepository = {
-    async getBlogs(query?: SearchQueryParametersType): Promise<PaginatorBlogViewType> {
+class BlogsQueryRepository {
+    async getBlogs(query?: SearchQueryParametersType): Promise<Paginator<BlogView[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
 
@@ -25,24 +26,25 @@ export const blogsQueryRepository = {
             totalCount: blogsCount,
             items: blogs.map(blog => this.mapToOutput(blog))
         }
-    },
+    }
 
-    async findBlog(id: string): Promise<null | BlogViewType> {
+    async findBlog(id: string): Promise<null | BlogView> {
         if (!ObjectId.isValid(id)) {
             return null
         }
         const blog = await BlogsModel.findById(id)
         return blog ? this.mapToOutput(blog) : null
-    },
+    }
 
-    mapToOutput(blog: BlogDbType): BlogViewType {
-        return {
-            id: blog._id,
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt: blog.createdAt,
-            isMembership: blog.isMembership,
-        }
-    },
+    mapToOutput(blog: BlogDbType) {
+        return new BlogView(blog._id,
+            blog.name,
+            blog.description,
+            blog.websiteUrl,
+            blog.createdAt,
+            blog.isMembership,
+        )
+    }
 }
+
+export const blogsQueryRepository = new BlogsQueryRepository()

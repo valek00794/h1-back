@@ -6,16 +6,19 @@ export enum LikeStatus {
     Dislike = 'Dislike'
 }
 
-export type LikesInfoType = {
-    commentId?: ObjectId
-    likesUsersIds: String[],
-    dislikesUsersIds: String[],
+export class LikesInfo {
+    constructor(
+        public likesUsersIds: string[],
+        public dislikesUsersIds: string[],
+        public commentId?: ObjectId,
+    ) { }
 }
 
-export type LikesInfoDBType = WithId<LikesInfoType>
-
-export type LikesInfoViewType = {
-    likesCount: Number,
-    dislikesCount: Number,
-    myStatus: LikeStatus
+export type LikesInfoDBType = WithId<LikesInfo>
+export class LikesInfoView {
+    constructor(
+        public likesCount: number,
+        public dislikesCount: number,
+        public myStatus: LikeStatus
+    ) { }
 }

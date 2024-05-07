@@ -1,9 +1,9 @@
 import mongoose, { Schema } from 'mongoose'
 
 import { SETTINGS } from '../../settings'
-import { PostType } from '../../types/posts-types'
+import { Post } from '../../types/posts-types'
 
-export const PostsSchema = new mongoose.Schema<PostType>({
+export const PostsSchema = new mongoose.Schema<Post>({
     blogName: { type: String, required: true },
     createdAt: { type: String, required: true },
     title: { type: String, required: true },
@@ -12,4 +12,4 @@ export const PostsSchema = new mongoose.Schema<PostType>({
     blogId: { type: Schema.Types.ObjectId, required: true },
 })
 
-export const PostsModel = mongoose.model<PostType>(SETTINGS.DB.collection.POSTS, PostsSchema)
+export const PostsModel = mongoose.model<Post>(SETTINGS.DB.collection.POSTS, PostsSchema)

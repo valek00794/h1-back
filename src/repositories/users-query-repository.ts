@@ -1,12 +1,11 @@
 import { ObjectId } from "mongodb"
 
-import { PaginatorUsersViewType, UserDbType, UserInfoType, UserViewType } from "../types/users-types"
+import { UserDbType, UserInfoType, UserViewType } from "../types/users-types"
 import { getSanitizationQuery } from "../utils"
 import { SearchQueryParametersType } from "../types/query-types"
 import { UsersModel } from "../db/mongo/users.model"
-
-
-export const usersQueryRepository = {
+import { Paginator } from "../types/result-types"
+class UsersQueryRepository {
     async findUserById(id: string): Promise<UserInfoType | false> {
         if (!ObjectId.isValid(id)) {
             return false
@@ -18,13 +17,13 @@ export const usersQueryRepository = {
             userId: id
         }
             : false
-    },
+    }
 
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDbType | null> {
         return await UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
-    },
+    }
 
-    async getAllUsers(query?: SearchQueryParametersType): Promise<PaginatorUsersViewType> {
+    async getAllUsers(query?: SearchQueryParametersType): Promise<Paginator<UserViewType[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {
             $or: [
@@ -40,14 +39,14 @@ export const usersQueryRepository = {
 
         const usersCount = await UsersModel.countDocuments(findOptions)
 
-        return {
-            pagesCount: Math.ceil(usersCount / sanitizationQuery.pageSize),
-            page: sanitizationQuery.pageNumber,
-            pageSize: sanitizationQuery.pageSize,
-            totalCount: usersCount,
-            items: users.map(user => this.mapToOutput(user))
-        }
-    },
+        return new Paginator<UserViewType[]>(
+            Math.ceil(usersCount / sanitizationQuery.pageSize),
+            sanitizationQuery.pageNumber,
+            sanitizationQuery.pageSize,
+            usersCount,
+            users.map(user => this.mapToOutput(user))
+        )
+    }
 
     mapToOutput(user: UserDbType): UserViewType {
         return {
@@ -56,5 +55,7 @@ export const usersQueryRepository = {
             email: user.email,
             createdAt: user.createdAt
         }
-    },
+    }
 }
+
+export const usersQueryRepository = new UsersQueryRepository()

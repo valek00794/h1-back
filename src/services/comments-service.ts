@@ -1,45 +1,46 @@
 import { ObjectId } from "mongodb"
 
-import { CommentDbType, CommentInputType, CommentType, CommentViewType } from "../types/comments-types"
+import { CommentDbType, CommentInputType, Comment, CommentView } from "../types/comments-types"
 import { CommentatorInfoType } from "../types/users-types"
 import { commentsRepository } from "../repositories/comments-repository"
 import { LikeStatus } from "../types/likes-types"
 import { ResultStatus } from "../settings"
 import { Result } from "../types/result-types"
 
-export const commentsService = {
+class CommentsService {
     async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentDbType> {
-        const newComment: CommentType = {
-            content: body.content,
-            postId: new ObjectId(postId),
-            createdAt: new Date().toISOString(),
-            commentatorInfo: {
+        const newComment = new Comment(
+            body.content,
+            {
                 userId: commentatorInfo.userId,
                 userLogin: commentatorInfo.userLogin,
-            }
-        }
+            },
+            new Date().toISOString(),
+            new ObjectId(postId),
+        )
         return await commentsRepository.createComment(newComment)
-    },
+    }
 
-    async updateComment(body: CommentInputType, comment: CommentViewType): Promise<boolean> {
-        const updatedComment: CommentType = {
-            content: body.content,
-            postId: comment.postId,
-            createdAt: comment.createdAt,
-            commentatorInfo: {
+    async updateComment(body: CommentInputType, comment: CommentView): Promise<boolean> {
+        const updatedComment = new Comment(
+            body.content,
+            {
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin,
-            }
-        }
+            },
+            comment.createdAt,
+            comment.postId,
+
+        )
         return await commentsRepository.updateComment(updatedComment, comment.id.toString())
-    },
+    }
 
     async deleteComment(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
         return await commentsRepository.deleteComment(id)
-    },
+    }
 
     async changeCommentLikeStatus(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
         if (likeStatus === LikeStatus.Like) {
@@ -52,9 +53,12 @@ export const commentsService = {
             await commentsRepository.removeLikeStatusComment(commentId, userId)
         }
 
-        return {
-            status: ResultStatus.NoContent,
-            data: null
-        }
-    },
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
+    }
 }
+
+export const commentsService = new CommentsService()

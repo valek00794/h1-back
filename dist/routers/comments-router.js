@@ -8,8 +8,8 @@ const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddl
 const authJWTMiddleware_1 = require("../middlewares/authJWTMiddleware");
 const userIdFromJWTMiddleware_1 = require("../middlewares/userIdFromJWTMiddleware");
 exports.commentsRouter = (0, express_1.Router)();
-exports.commentsRouter.get('/:id', userIdFromJWTMiddleware_1.userIdFromJWTMiddleware, commentsControllers_1.findCommentController);
-exports.commentsRouter.post('/', authJWTMiddleware_1.authJWTMiddleware, commentsControllers_1.createCommentForPostController);
-exports.commentsRouter.delete('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentsControllers_1.deleteCommentController);
-exports.commentsRouter.put('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.commentInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsControllers_1.updateCommentForPostController);
-exports.commentsRouter.put('/:commentId/like-status', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.likeStatusInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsControllers_1.changeCommentLikeStatusController);
+exports.commentsRouter.get('/:id', userIdFromJWTMiddleware_1.userIdFromJWTMiddleware, commentsControllers_1.commentsController.findCommentController);
+exports.commentsRouter.post('/', authJWTMiddleware_1.authJWTMiddleware, commentsControllers_1.commentsController.createCommentForPostController);
+exports.commentsRouter.delete('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentsControllers_1.commentsController.deleteCommentController);
+exports.commentsRouter.put('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.commentInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsControllers_1.commentsController.updateCommentForPostController);
+exports.commentsRouter.put('/:commentId/like-status', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.likeStatusInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsControllers_1.commentsController.changeCommentLikeStatusController);

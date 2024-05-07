@@ -11,9 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
+const blogs_types_1 = require("../types/blogs-types");
 const utils_1 = require("../utils");
 const blogs_model_1 = require("../db/mongo/blogs.model");
-exports.blogsQueryRepository = {
+class BlogsQueryRepository {
     getBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
@@ -32,7 +33,7 @@ exports.blogsQueryRepository = {
                 items: blogs.map(blog => this.mapToOutput(blog))
             };
         });
-    },
+    }
     findBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
@@ -41,15 +42,9 @@ exports.blogsQueryRepository = {
             const blog = yield blogs_model_1.BlogsModel.findById(id);
             return blog ? this.mapToOutput(blog) : null;
         });
-    },
+    }
     mapToOutput(blog) {
-        return {
-            id: blog._id,
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt: blog.createdAt,
-            isMembership: blog.isMembership,
-        };
-    },
-};
+        return new blogs_types_1.BlogView(blog._id, blog.name, blog.description, blog.websiteUrl, blog.createdAt, blog.isMembership);
+    }
+}
+exports.blogsQueryRepository = new BlogsQueryRepository();

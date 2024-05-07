@@ -13,7 +13,8 @@ exports.usersQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const utils_1 = require("../utils");
 const users_model_1 = require("../db/mongo/users.model");
-exports.usersQueryRepository = {
+const result_types_1 = require("../types/result-types");
+class UsersQueryRepository {
     findUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
@@ -27,12 +28,12 @@ exports.usersQueryRepository = {
             }
                 : false;
         });
-    },
+    }
     findUserByLoginOrEmail(loginOrEmail) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield users_model_1.UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
         });
-    },
+    }
     getAllUsers(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
@@ -48,15 +49,9 @@ exports.usersQueryRepository = {
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
                 .limit(sanitizationQuery.pageSize);
             const usersCount = yield users_model_1.UsersModel.countDocuments(findOptions);
-            return {
-                pagesCount: Math.ceil(usersCount / sanitizationQuery.pageSize),
-                page: sanitizationQuery.pageNumber,
-                pageSize: sanitizationQuery.pageSize,
-                totalCount: usersCount,
-                items: users.map(user => this.mapToOutput(user))
-            };
+            return new result_types_1.Paginator(Math.ceil(usersCount / sanitizationQuery.pageSize), sanitizationQuery.pageNumber, sanitizationQuery.pageSize, usersCount, users.map(user => this.mapToOutput(user)));
         });
-    },
+    }
     mapToOutput(user) {
         return {
             id: user._id,
@@ -64,5 +59,6 @@ exports.usersQueryRepository = {
             email: user.email,
             createdAt: user.createdAt
         };
-    },
-};
+    }
+}
+exports.usersQueryRepository = new UsersQueryRepository();

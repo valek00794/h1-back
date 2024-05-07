@@ -13,74 +13,82 @@ import { JWTTokensOutType } from '../adapters/jwt/jwt-types'
 import { usersDevicesRepository } from '../repositories/usersDevices-repository'
 import { usersService } from './users-service'
 
-export const authService = {
+class AuthService {
     async checkCredential(userId: ObjectId, password: string, passwordHash: string): Promise<boolean> {
         const userConfirmationInfo = await usersRepository.findUserConfirmationInfo(userId!.toString())
         if (userConfirmationInfo !== null && !userConfirmationInfo.isConfirmed) return false
         const isAuth = await bcryptArapter.checkPassword(password, passwordHash)
         return isAuth ? true : false
-    },
+    }
 
     async confirmEmail(code: string): Promise<Result<APIErrorResult | null>> {
         const userConfirmationInfo = await usersRepository.findUserConfirmationInfo(code)
-        if (userConfirmationInfo === null) return {
-            status: ResultStatus.BadRequest,
-            data: {
-                errorsMessages: [{
-                    message: "User with current confirmation code not found",
-                    field: "code"
-                }]
-            }
-        }
-        const errorsMessages: APIErrorResult = {
+        const errors: APIErrorResult = {
             errorsMessages: []
         }
+        if (userConfirmationInfo === null) {
+            errors.errorsMessages.push({
+                message: "User with current confirmation code not found",
+                field: "code"
+            })
+            return new Result<null>(
+                ResultStatus.BadRequest,
+                null,
+                errors
+            )
+        }
+
+
         if (userConfirmationInfo !== null) {
             if (userConfirmationInfo.isConfirmed) {
-                errorsMessages.errorsMessages.push({
+                errors.errorsMessages.push({
                     message: "User with current confirmation code already confirmed",
                     field: "code"
                 })
             }
             if (userConfirmationInfo.confirmationCode !== code) {
-                errorsMessages.errorsMessages.push({
+                errors.errorsMessages.push({
                     message: "Verification code does not match",
                     field: "code"
                 })
             }
             if (userConfirmationInfo.expirationDate < new Date()) {
-                errorsMessages.errorsMessages.push({
+                errors.errorsMessages.push({
                     message: "Verification code has expired, needs to be requested again",
                     field: "code"
                 })
             }
-            if (errorsMessages.errorsMessages.length !== 0) {
-                return {
-                    status: ResultStatus.BadRequest,
-                    data: errorsMessages
-                }
+            if (errors.errorsMessages.length !== 0) {
+                return new Result<null>(
+                    ResultStatus.BadRequest,
+                    null,
+                    errors
+                )
             }
         }
+
         await usersRepository.updateConfirmation(userConfirmationInfo!._id)
-        return {
-            status: ResultStatus.NoContent,
-            data: null
-        }
-    },
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
+    }
+
     async resentConfirmEmail(email: string): Promise<Result<APIErrorResult | null>> {
         const user = await usersRepository.findUserByLoginOrEmail(email)
-        const errorsMessages: APIErrorResult = {
+        const errors: APIErrorResult = {
             errorsMessages: []
         }
         if (user === null) {
-            errorsMessages.errorsMessages.push({
+            errors.errorsMessages.push({
                 message: "User with current email not found",
                 field: "email"
             })
         }
         const userConfirmationInfo = await usersRepository.findUserConfirmationInfo(user!._id!.toString())
         if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {
-            errorsMessages.errorsMessages.push({
+            errors.errorsMessages.push({
                 message: "User with current email already confirmed",
                 field: "email"
             })
@@ -93,79 +101,95 @@ export const authService = {
             }),
             isConfirmed: false
         }
+
         try {
             await emailManager.sendEmailConfirmationMessage(email, newUserConfirmationInfo.confirmationCode)
         } catch (error) {
             console.error(error)
             usersRepository.deleteUserById(user!._id!.toString())
-            errorsMessages.errorsMessages.push({
+            errors.errorsMessages.push({
                 message: "Error sending confirmation email",
                 field: "Email sender"
             })
-            return {
-                status: ResultStatus.BadRequest,
-                data: errorsMessages
-            }
+            return new Result<null>(
+                ResultStatus.BadRequest,
+                null,
+                errors
+            )
         }
+
         await usersRepository.updateConfirmationInfo(user!._id!, newUserConfirmationInfo)
-        return {
-            status: ResultStatus.NoContent,
-            data: null
-        }
-    },
-    async ckeckUserByRefreshToken(oldRefreshToken: string): Promise<UserDeviceInfoType | null> {
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
+    }
+
+    async checkUserByRefreshToken(oldRefreshToken: string): Promise<Result<UserDeviceInfoType | null>> {
         const userVerifyInfo = await jwtAdapter.getUserInfoByToken(oldRefreshToken, SETTINGS.JWT.RT_SECRET)
         if (!oldRefreshToken || userVerifyInfo === null) {
-            return null
+            return new Result<null>(ResultStatus.NotFound, null, null)
         }
+
         const isUserExists = await usersRepository.findUserById(userVerifyInfo!.userId)
         const deviceSession = await usersDevicesRepository.getUserDeviceById(userVerifyInfo.deviceId)
-        if (
-            !isUserExists ||
-            !deviceSession ||
-            new Date(userVerifyInfo!.iat! * 1000).toISOString() !== deviceSession?.lastActiveDate
-        ) {
-            return null
+        if (!isUserExists || !deviceSession || new Date(userVerifyInfo!.iat! * 1000).toISOString() !== deviceSession?.lastActiveDate) {
+            return new Result<null>(ResultStatus.NotFound, null, null)
         }
-        return { userId: userVerifyInfo.userId, deviceId: userVerifyInfo.deviceId, iat: userVerifyInfo.iat, exp: userVerifyInfo.exp }
-    },
+
+        const userDeviceInfo: UserDeviceInfoType = {
+            userId: userVerifyInfo.userId,
+            deviceId: userVerifyInfo.deviceId,
+            iat: userVerifyInfo.iat,
+            exp: userVerifyInfo.exp
+        }
+
+        return new Result<UserDeviceInfoType>(ResultStatus.Success, userDeviceInfo, null)
+    }
 
     async renewTokens(oldRefreshToken: string): Promise<Result<JWTTokensOutType | null>> {
-        const userVerifyInfo = await this.ckeckUserByRefreshToken(oldRefreshToken)
-        if (userVerifyInfo === null) {
-            return {
-                status: ResultStatus.Unauthorized,
-                data: null
-            }
+        const userVerifyInfo = await this.checkUserByRefreshToken(oldRefreshToken)
+        if (userVerifyInfo.data === null) {
+            return new Result<null>(
+                ResultStatus.Unauthorized,
+                null,
+                null
+            )
         }
-        const tokens = await jwtAdapter.createJWT(new ObjectId(userVerifyInfo.userId), userVerifyInfo.deviceId)
-        return {
-            status: ResultStatus.Success,
-            data: tokens
-        }
-    },
-    async logoutUser(oldRefreshToken: string): Promise<Result<null>> {
-        const userVerifyInfo = await this.ckeckUserByRefreshToken(oldRefreshToken)
-        if (userVerifyInfo === null) {
-            return {
-                status: ResultStatus.Unauthorized,
-                data: null
-            }
-        }
-        await usersDevicesRepository.deleteUserDevicebyId(userVerifyInfo.deviceId)
-        return {
-            status: ResultStatus.NoContent,
-            data: null
-        }
-    },
+        const tokens = await jwtAdapter.createJWT(new ObjectId(userVerifyInfo.data.userId), userVerifyInfo.data.deviceId)
+        return new Result<JWTTokensOutType>(
+            ResultStatus.Success,
+            tokens,
+            null
+        )
+    }
 
-    async passwordRecovery(email: string): Promise<Result<APIErrorResult | null>> {
+    async logoutUser(oldRefreshToken: string): Promise<Result<null>> {
+        const userVerifyInfo = await this.checkUserByRefreshToken(oldRefreshToken)
+        if (userVerifyInfo.data === null) {
+            return new Result<null>(
+                ResultStatus.Unauthorized,
+                null,
+                null
+            )
+        }
+        await usersDevicesRepository.deleteUserDevicebyId(userVerifyInfo.data.deviceId)
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
+    }
+
+    async passwordRecovery(email: string): Promise<Result<null>> {
         const user = await usersRepository.findUserByLoginOrEmail(email)
-        if (!user) {
-            return {
-                status: ResultStatus.NoContent,
-                data: null
-            }
+        if (user === null) {
+            return new Result<null>(
+                ResultStatus.NoContent,
+                null,
+                null
+            )
         }
 
         const newUserRecoveryPasswordInfo = {
@@ -178,60 +202,76 @@ export const authService = {
             await emailManager.sendEmailPasswordRecoveryMessage(email, newUserRecoveryPasswordInfo.recoveryCode)
         } catch (error) {
             console.error(error)
-            return {
-                status: ResultStatus.BadRequest,
-                data: {
-                    errorsMessages: [{
-                        message: "Error sending confirmation email",
-                        field: "Email sender"
-                    }]
-                }
+            const errors: APIErrorResult = {
+                errorsMessages: []
             }
+            errors.errorsMessages.push({
+                message: "Error sending confirmation email",
+                field: "Email sender"
+            })
+            return new Result<null>(
+                ResultStatus.BadRequest,
+                null,
+                errors
+            )
         }
         await usersRepository.updatePasswordRecoveryInfo(user!._id!, newUserRecoveryPasswordInfo)
-        return {
-            status: ResultStatus.NoContent,
-            data: null
-        }
-    },
-    async confirmPasswordRecovery(recoveryCode: string, newPassword: string): Promise<Result<APIErrorResult | null>> {
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
+    }
+
+    async confirmPasswordRecovery(recoveryCode: string, newPassword: string): Promise<Result<null>> {
         const recoveryInfo = await usersRepository.findPasswordRecoveryInfo(recoveryCode)
-        if (recoveryInfo === null) return {
-            status: ResultStatus.BadRequest,
-            data: {
-                errorsMessages: [{
-                    message: "User with current recovery code not found",
-                    field: "recoveryCode"
-                }]
-            }
-        }
-        const errorsMessages: APIErrorResult = {
+        const errors: APIErrorResult = {
             errorsMessages: []
         }
+        if (recoveryInfo === null) {
+            errors.errorsMessages.push({
+                message: "User with current recovery code not found",
+                field: "recoveryCode"
+            })
+            return new Result<null>(
+                ResultStatus.BadRequest,
+                null,
+                errors
+
+            )
+        }
+
         if (recoveryInfo !== null) {
             if (recoveryInfo.recoveryCode !== recoveryCode) {
-                errorsMessages.errorsMessages.push({
+                errors.errorsMessages.push({
                     message: "Recovery code does not match",
                     field: "recoveryCode"
                 })
             }
             if (recoveryInfo.expirationDate < new Date()) {
-                errorsMessages.errorsMessages.push({
+                errors.errorsMessages.push({
                     message: "Recovery code has expired, needs to be requested again",
                     field: "recoveryCode"
                 })
             }
-            if (errorsMessages.errorsMessages.length !== 0) {
-                return {
-                    status: ResultStatus.BadRequest,
-                    data: errorsMessages
-                }
+
+            if (errors.errorsMessages.length !== 0) {
+                return new Result<null>(
+                    ResultStatus.BadRequest,
+                    null,
+                    errors
+                )
             }
         }
+
         await usersService.updateUserPassword(recoveryInfo!.userId!, newPassword)
-        return {
-            status: ResultStatus.NoContent,
-            data: null
-        }
-    },
+
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
+    }
 }
+
+export const authService = new AuthService()

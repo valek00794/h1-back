@@ -15,9 +15,10 @@ const uuid_1 = require("uuid");
 const add_1 = require("date-fns/add");
 const users_repository_1 = require("../repositories/users-repository");
 const email_manager_1 = require("../managers/email-manager");
+const result_types_1 = require("../types/result-types");
 const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
-exports.usersService = {
+class UsersService {
     signUpUser(login, email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
@@ -44,23 +45,18 @@ exports.usersService = {
                 catch (error) {
                     console.error(error);
                     users_repository_1.usersRepository.deleteUserById(createdUser._id.toString());
-                    return {
-                        status: settings_1.ResultStatus.BadRequest,
-                        data: {
-                            errorsMessages: [{
-                                    message: "Error sending confirmation email",
-                                    field: "Email sender"
-                                }]
-                        }
+                    const errors = {
+                        errorsMessages: [{
+                                message: "Error sending confirmation email",
+                                field: "Email sender"
+                            }]
                     };
+                    return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
                 }
             }
-            return {
-                status: settings_1.ResultStatus.NoContent,
-                data: null
-            };
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });
-    },
+    }
     createUser(login, email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
@@ -75,7 +71,7 @@ exports.usersService = {
             };
             return yield users_repository_1.usersRepository.createUser(signUpData);
         });
-    },
+    }
     updateUserPassword(userId, password) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(userId)) {
@@ -84,7 +80,7 @@ exports.usersService = {
             const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
             return yield users_repository_1.usersRepository.updateUserPassword(userId, passwordHash);
         });
-    },
+    }
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
@@ -93,4 +89,5 @@ exports.usersService = {
             return yield users_repository_1.usersRepository.deleteUserById(id);
         });
     }
-};
+}
+exports.usersService = new UsersService();

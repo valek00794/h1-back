@@ -1,6 +1,6 @@
-import { body } from 'express-validator';
+import { body } from 'express-validator'
 
-import { blogsQueryRepository } from '../repositories/blogs-query-repository';
+import { blogsQueryRepository } from '../repositories/blogs-query-repository'
 
 const VALIDATE_PHARAMS = {
     titleMaxLength: 30,

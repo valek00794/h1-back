@@ -1,9 +1,9 @@
 import { Router } from "express"
 
-import { deleteAllDevicesByUserController, deleteUserDeviceByIdController, getActiveDevicesByUserController } from "../controllers/usersDevicesController"
+import { usersDevicesController } from "../controllers/usersDevicesController"
 
 export const usersDevicesRouter = Router()
 
-usersDevicesRouter.get('/', getActiveDevicesByUserController)
-usersDevicesRouter.delete('/', deleteAllDevicesByUserController)
-usersDevicesRouter.delete('/:deviceId', deleteUserDeviceByIdController)
+usersDevicesRouter.get('/', usersDevicesController.getActiveDevicesByUserController)
+usersDevicesRouter.delete('/', usersDevicesController.deleteAllDevicesByUserController)
+usersDevicesRouter.delete('/:deviceId', usersDevicesController.deleteUserDeviceByIdController)

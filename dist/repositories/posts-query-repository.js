@@ -13,7 +13,8 @@ exports.postsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const utils_1 = require("../utils");
 const posts_model_1 = require("../db/mongo/posts.model");
-exports.postsQueryRepository = {
+const result_types_1 = require("../types/result-types");
+class PostsQueryRepository {
     getPosts(query, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
@@ -27,15 +28,9 @@ exports.postsQueryRepository = {
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
                 .limit(sanitizationQuery.pageSize);
             const postsCount = yield posts_model_1.PostsModel.countDocuments(findOptions);
-            return {
-                pagesCount: Math.ceil(postsCount / sanitizationQuery.pageSize),
-                page: sanitizationQuery.pageNumber,
-                pageSize: sanitizationQuery.pageSize,
-                totalCount: postsCount,
-                items: posts.map(post => this.mapToOutput(post))
-            };
+            return new result_types_1.Paginator(Math.ceil(postsCount / sanitizationQuery.pageSize), sanitizationQuery.pageNumber, sanitizationQuery.pageSize, postsCount, posts.map(post => this.mapToOutput(post)));
         });
-    },
+    }
     findPost(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
@@ -44,7 +39,7 @@ exports.postsQueryRepository = {
             const post = yield posts_model_1.PostsModel.findById(id);
             return post ? this.mapToOutput(post) : false;
         });
-    },
+    }
     mapToOutput(post) {
         return {
             id: post._id,
@@ -55,5 +50,6 @@ exports.postsQueryRepository = {
             blogName: post.blogName,
             createdAt: post.createdAt
         };
-    },
-};
+    }
+}
+exports.postsQueryRepository = new PostsQueryRepository();

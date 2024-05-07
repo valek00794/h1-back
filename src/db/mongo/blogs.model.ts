@@ -1,9 +1,9 @@
 import mongoose from 'mongoose'
 
 import { SETTINGS } from '../../settings'
-import { BlogType } from '../../types/blogs-types'
+import { Blog } from '../../types/blogs-types'
 
-export const BlogsSchema = new mongoose.Schema<BlogType>({
+export const BlogsSchema = new mongoose.Schema<Blog>({
     name: { type: String, required: true },
     description: { type: String, required: true },
     websiteUrl: { type: String, required: true },
@@ -11,4 +11,4 @@ export const BlogsSchema = new mongoose.Schema<BlogType>({
     isMembership: { type: Boolean, required: true }
 })
 
-export const BlogsModel = mongoose.model<BlogType>(SETTINGS.DB.collection.BLOGS, BlogsSchema)
+export const BlogsModel = mongoose.model<Blog>(SETTINGS.DB.collection.BLOGS, BlogsSchema)

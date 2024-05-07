@@ -1,6 +1,5 @@
-import { body, param } from 'express-validator';
-import { LikeStatus } from '../types/likes-types';
-import { commentsQueryRepository } from '../repositories/comments-query-repository';
+import { body } from 'express-validator'
+import { LikeStatus } from '../types/likes-types'
 
 const VALIDATE_PHARAMS = {
     content: {
