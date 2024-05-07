@@ -64,7 +64,8 @@ export const createCommentForPostController = async (req: Request, res: Response
         userId: req.user?.userId!,
         userLogin: req.user?.login!
     }
-    const comment = await commentsService.createComment(req.body, commentatorInfo, req.params.postId)
+    const createdComment = await commentsService.createComment(req.body, commentatorInfo, req.params.postId)
+    const comment = commentsQueryRepository.mapToOutput(createdComment)
     res
         .status(StatusCodes.CREATED_201)
         .send(comment)

@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsService = void 0;
 const mongodb_1 = require("mongodb");
 const comments_repository_1 = require("../repositories/comments-repository");
-const comments_query_repository_1 = require("../repositories/comments-query-repository");
 const likes_types_1 = require("../types/likes-types");
 const settings_1 = require("../settings");
 exports.commentsService = {
@@ -27,8 +26,7 @@ exports.commentsService = {
                     userLogin: commentatorInfo.userLogin,
                 }
             };
-            const createdComment = yield comments_repository_1.commentsRepository.createComment(newComment);
-            return comments_query_repository_1.commentsQueryRepository.mapToOutput(createdComment);
+            return yield comments_repository_1.commentsRepository.createComment(newComment);
         });
     },
     updateComment(body, comment) {
@@ -55,12 +53,6 @@ exports.commentsService = {
     },
     changeCommentLikeStatus(commentId, likeStatus, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(commentId);
-            if (!comment)
-                return {
-                    status: settings_1.ResultStatus.BadRequest,
-                    data: null
-                };
             if (likeStatus === likes_types_1.LikeStatus.Like) {
                 yield comments_repository_1.commentsRepository.likeComment(commentId, userId);
             }

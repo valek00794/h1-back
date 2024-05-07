@@ -1,15 +1,14 @@
 import { ObjectId } from "mongodb"
 
-import { CommentInputType, CommentType, CommentViewType } from "../types/comments-types"
+import { CommentDbType, CommentInputType, CommentType, CommentViewType } from "../types/comments-types"
 import { CommentatorInfoType } from "../types/users-types"
 import { commentsRepository } from "../repositories/comments-repository"
-import { commentsQueryRepository } from "../repositories/comments-query-repository"
 import { LikeStatus } from "../types/likes-types"
 import { ResultStatus } from "../settings"
 import { Result } from "../types/result-types"
 
 export const commentsService = {
-    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentViewType> {
+    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentDbType> {
         const newComment: CommentType = {
             content: body.content,
             postId: new ObjectId(postId),
@@ -19,8 +18,7 @@ export const commentsService = {
                 userLogin: commentatorInfo.userLogin,
             }
         }
-        const createdComment = await commentsRepository.createComment(newComment)
-        return commentsQueryRepository.mapToOutput(createdComment)
+        return await commentsRepository.createComment(newComment)
     },
 
     async updateComment(body: CommentInputType, comment: CommentViewType): Promise<boolean> {
@@ -44,12 +42,6 @@ export const commentsService = {
     },
 
     async changeCommentLikeStatus(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
-        const comment = await commentsQueryRepository.findComment(commentId)
-        if (!comment)
-            return {
-                status: ResultStatus.BadRequest,
-                data: null
-            }
         if (likeStatus === LikeStatus.Like) {
             await commentsRepository.likeComment(commentId, userId)
         }

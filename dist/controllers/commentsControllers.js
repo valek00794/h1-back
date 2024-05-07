@@ -73,7 +73,8 @@ const createCommentForPostController = (req, res) => __awaiter(void 0, void 0, v
         userId: (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId,
         userLogin: (_e = req.user) === null || _e === void 0 ? void 0 : _e.login
     };
-    const comment = yield comments_service_1.commentsService.createComment(req.body, commentatorInfo, req.params.postId);
+    const createdComment = yield comments_service_1.commentsService.createComment(req.body, commentatorInfo, req.params.postId);
+    const comment = comments_query_repository_1.commentsQueryRepository.mapToOutput(createdComment);
     res
         .status(settings_1.StatusCodes.CREATED_201)
         .send(comment);
