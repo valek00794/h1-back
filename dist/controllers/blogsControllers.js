@@ -48,7 +48,8 @@ const deleteBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.deleteBlogController = deleteBlogController;
 const createBlogController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newBlog = yield blogs_service_1.blogsService.createBlog(req.body);
+    const createdBlog = yield blogs_service_1.blogsService.createBlog(req.body);
+    const newBlog = blogs_query_repository_1.blogsQueryRepository.mapToOutput(createdBlog);
     res
         .status(settings_1.StatusCodes.CREATED_201)
         .json(newBlog);
@@ -62,7 +63,7 @@ const updateBlogController = (req, res) => __awaiter(void 0, void 0, void 0, fun
             .send();
         return;
     }
-    const updatedBlog = yield blogs_service_1.blogsService.updateBlog(req.body, req.params.id);
+    yield blogs_service_1.blogsService.updateBlog(req.body, req.params.id);
     res
         .status(settings_1.StatusCodes.NO_CONTENT_204)
         .send();

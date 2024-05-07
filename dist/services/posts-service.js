@@ -11,9 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsService = void 0;
 const mongodb_1 = require("mongodb");
-const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
-const posts_query_repository_1 = require("../repositories/posts-query-repository");
 const posts_repository_1 = require("../repositories/posts-repository");
+const blogs_repository_1 = require("../repositories/blogs-repository");
 exports.postsService = {
     createPost(body, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,17 +25,19 @@ exports.postsService = {
                 blogName: '',
                 createdAt: new Date().toISOString()
             };
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(getBlogId);
+            const blog = yield blogs_repository_1.blogsRepository.findBlog(getBlogId);
             if (blog) {
                 newPost.blogName = blog.name;
             }
-            const createdPost = yield posts_repository_1.postsRepository.createPost(newPost);
-            return posts_query_repository_1.postsQueryRepository.mapToOutput(createdPost);
+            return yield posts_repository_1.postsRepository.createPost(newPost);
         });
     },
     updatePost(body, id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield posts_query_repository_1.postsQueryRepository.findPost(id);
+            if (!mongodb_1.ObjectId.isValid(id)) {
+                return false;
+            }
+            const post = yield posts_repository_1.postsRepository.findPost(id);
             if (!post) {
                 return false;
             }
@@ -48,7 +49,7 @@ exports.postsService = {
                 blogName: '',
                 createdAt: post.createdAt
             };
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(body.blogId.toString());
+            const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId.toString());
             if (blog) {
                 updatedPost.blogName = blog.name;
             }

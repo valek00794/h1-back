@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePostController = exports.createPostForBlogController = exports.createPostController = exports.deletePostController = exports.findPostsOfBlogController = exports.findPostController = exports.getPostsController = void 0;
-const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 const posts_query_repository_1 = require("../repositories/posts-query-repository");
 const posts_service_1 = require("../services/posts-service");
 const settings_1 = require("../settings");
+const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 const getPostsController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = req.query;
     const posts = yield posts_query_repository_1.postsQueryRepository.getPosts(query);
@@ -64,7 +64,8 @@ const deletePostController = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.deletePostController = deletePostController;
 const createPostController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const newPost = yield posts_service_1.postsService.createPost(req.body);
+    const createdPost = yield posts_service_1.postsService.createPost(req.body);
+    const newPost = posts_query_repository_1.postsQueryRepository.mapToOutput(createdPost);
     res
         .status(settings_1.StatusCodes.CREATED_201)
         .json(newPost);
@@ -78,7 +79,8 @@ const createPostForBlogController = (req, res) => __awaiter(void 0, void 0, void
             .send();
         return;
     }
-    const newPost = yield posts_service_1.postsService.createPost(req.body, req.params.blogId);
+    const createdPost = yield posts_service_1.postsService.createPost(req.body, req.params.blogId);
+    const newPost = posts_query_repository_1.postsQueryRepository.mapToOutput(createdPost);
     res
         .status(settings_1.StatusCodes.CREATED_201)
         .json(newPost);

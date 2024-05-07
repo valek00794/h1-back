@@ -15,4 +15,7 @@ export const postsRepository = {
         const deleteResult = await PostsModel.findByIdAndDelete(id)
         return deleteResult ? true : false
     },
+    async findPost(id: string): Promise<PostDbType | null> {
+        return await PostsModel.findById(id)
+    },
 }

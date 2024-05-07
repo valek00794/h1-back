@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 
 import { PaginatorPostViewType, PostViewType } from '../types/posts-types'
-import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { postsService } from '../services/posts-service';
 import { StatusCodes } from '../settings';
+import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 
 
 export const getPostsController = async (req: Request, res: Response<PaginatorPostViewType>) => {
@@ -58,7 +58,8 @@ export const deletePostController = async (req: Request, res: Response<boolean>)
 }
 
 export const createPostController = async (req: Request, res: Response<PostViewType>) => {
-    const newPost = await postsService.createPost(req.body)
+    const createdPost = await postsService.createPost(req.body)
+    const newPost = postsQueryRepository.mapToOutput(createdPost)
     res
         .status(StatusCodes.CREATED_201)
         .json(newPost)
@@ -72,8 +73,8 @@ export const createPostForBlogController = async (req: Request, res: Response<Po
             .send()
         return
     }
-    const newPost = await postsService.createPost(req.body, req.params.blogId)
-
+    const createdPost = await postsService.createPost(req.body, req.params.blogId)
+    const newPost = postsQueryRepository.mapToOutput(createdPost)
     res
         .status(StatusCodes.CREATED_201)
         .json(newPost)

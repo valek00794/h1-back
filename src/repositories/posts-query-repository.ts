@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-import { PaginatorPostViewType, PostDbType, PostType, PostViewType } from '../types/posts-types'
+import { PaginatorPostViewType, PostDbType, PostViewType } from '../types/posts-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 import { PostsModel } from '../db/mongo/posts.model'

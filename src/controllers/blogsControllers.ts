@@ -42,7 +42,8 @@ export const deleteBlogController = async (req: Request, res: Response<boolean>)
 }
 
 export const createBlogController = async (req: Request, res: Response<BlogViewType>) => {
-    const newBlog = await blogsService.createBlog(req.body)
+    const createdBlog = await blogsService.createBlog(req.body)
+    const newBlog =blogsQueryRepository.mapToOutput(createdBlog)
     res
         .status(StatusCodes.CREATED_201)
         .json(newBlog)
@@ -56,7 +57,7 @@ export const updateBlogController = async (req: Request, res: Response<boolean>)
             .send()
         return
     }
-    const updatedBlog = await blogsService.updateBlog(req.body, req.params.id)
+    await blogsService.updateBlog(req.body, req.params.id)
     res
         .status(StatusCodes.NO_CONTENT_204)
         .send()

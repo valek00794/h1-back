@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsService = void 0;
 const mongodb_1 = require("mongodb");
 const blogs_repository_1 = require("../repositories/blogs-repository");
-const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 exports.blogsService = {
     createBlog(body) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,12 +22,14 @@ exports.blogsService = {
                 createdAt: new Date().toISOString(),
                 isMembership: false
             };
-            const createdBlog = yield blogs_repository_1.blogsRepository.createBlog(newBlog);
-            return blogs_query_repository_1.blogsQueryRepository.mapToOutput(createdBlog);
+            return yield blogs_repository_1.blogsRepository.createBlog(newBlog);
         });
     },
     updateBlog(body, id) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mongodb_1.ObjectId.isValid(id)) {
+                return false;
+            }
             const blog = yield blogs_repository_1.blogsRepository.findBlog(id);
             const updatedblog = {
                 name: body.name,

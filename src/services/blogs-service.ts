@@ -1,11 +1,10 @@
 import { ObjectId } from 'mongodb'
 
-import { BlogType, BlogViewType } from '../types/blogs-types'
+import { BlogDbType, BlogType } from '../types/blogs-types'
 import { blogsRepository } from '../repositories/blogs-repository'
-import { blogsQueryRepository } from '../repositories/blogs-query-repository'
 
 export const blogsService = {
-    async createBlog(body: BlogType): Promise<BlogViewType> {
+    async createBlog(body: BlogType): Promise<BlogDbType> {
         const newBlog: BlogType = {
             name: body.name,
             description: body.description,
@@ -13,11 +12,13 @@ export const blogsService = {
             createdAt: new Date().toISOString(),
             isMembership: false
         }
-        const createdBlog = await blogsRepository.createBlog(newBlog)
-        return blogsQueryRepository.mapToOutput(createdBlog)
+        return await blogsRepository.createBlog(newBlog)
     },
 
     async updateBlog(body: BlogType, id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) {
+            return false
+        }
         const blog = await blogsRepository.findBlog(id)
         const updatedblog: BlogType = {
             name: body.name,
