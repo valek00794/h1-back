@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-import { UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UserSignUpType, UserDbType } from "../types/users-types";
+import { UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UserSignUpType, UserDbType, UserInfoType } from "../types/users-types";
 import { UsersModel } from "../db/mongo/users.model";
 import { UsersEmailConfirmationsModel } from "../db/mongo/usersEmailConfirmation.model";
 import { UsersRecoveryPassswordModel } from "../db/mongo/usersRecoveryPasssword.model";
@@ -35,5 +35,17 @@ export const usersRepository = {
         const recoveryInfo = new UsersRecoveryPassswordModel({ userId: userId.toString(), ...updatedRecoveryInfo })
         await recoveryInfo.save()
         return recoveryInfo
+    },
+    async findUserConfirmationInfo(confirmationCodeOrUserId: string) {
+        return await UsersEmailConfirmationsModel.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] })
+    },
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDbType | null> {
+        return await UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
+    },
+    async findPasswordRecoveryInfo(recoveryCodeOrUserId: string) {
+        return await UsersRecoveryPassswordModel.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] })
+    },
+    async findUserById(id: string): Promise<false | UserInfoType | null> {
+        return await UsersModel.findById(id)
     },
 }

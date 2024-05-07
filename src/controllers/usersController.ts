@@ -4,17 +4,15 @@ import { usersService } from '../services/users-service';
 import { usersQueryRepository } from '../repositories/users-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
 import { PaginatorUsersViewType, UserViewType } from '../types/users-types';
-import { APIErrorResult } from '../types/result-types';
-import { ResultStatus, StatusCodes } from '../settings';
+import { StatusCodes } from '../settings';
 
-export const createUserController = async (req: Request, res: Response<UserViewType | APIErrorResult | null>) => {
-    const result = await usersService.createUser(req.body.login, req.body.email, req.body.password)
-    if (result.status === ResultStatus.Created) {
-        res
-            .status(StatusCodes.CREATED_201)
-            .json(result.data)
-        return
-    }
+export const createUserController = async (req: Request, res: Response<UserViewType>) => {
+    const createdUser = await usersService.createUser(req.body.login, req.body.email, req.body.password)
+    const user = usersQueryRepository.mapToOutput(createdUser)
+    res
+        .status(StatusCodes.CREATED_201)
+        .json(user)
+    return
 }
 
 export const getUsersController = async (req: Request, res: Response<PaginatorUsersViewType>) => {

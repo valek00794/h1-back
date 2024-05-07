@@ -10,28 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersQueryRepository = void 0;
+const mongodb_1 = require("mongodb");
 const utils_1 = require("../utils");
 const users_model_1 = require("../db/mongo/users.model");
-const usersEmailConfirmation_model_1 = require("../db/mongo/usersEmailConfirmation.model");
-const usersRecoveryPasssword_model_1 = require("../db/mongo/usersRecoveryPasssword.model");
 exports.usersQueryRepository = {
-    findUserByLoginOrEmail(loginOrEmail) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield users_model_1.UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
-        });
-    },
-    findUserConfirmationInfo(confirmationCodeOrUserId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] });
-        });
-    },
-    findPasswordRecoveryInfo(recoveryCodeOrUserId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield usersRecoveryPasssword_model_1.UsersRecoveryPassswordModel.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] });
-        });
-    },
     findUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!mongodb_1.ObjectId.isValid(id)) {
+                return false;
+            }
             const user = yield users_model_1.UsersModel.findById(id);
             return user ? {
                 email: user.email,
@@ -39,6 +26,11 @@ exports.usersQueryRepository = {
                 userId: id
             }
                 : false;
+        });
+    },
+    findUserByLoginOrEmail(loginOrEmail) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield users_model_1.UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
         });
     },
     getAllUsers(query) {

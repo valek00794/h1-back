@@ -34,4 +34,8 @@ export const usersDevicesRepository = {
     async deleteUserDevicebyId(deviceId: string): Promise<DeleteResult> {
         return await UsersDevicesModel.deleteOne({ deviceId })
     },
+
+    async getUserDeviceById(deviceId: string): Promise<UsersDevicesType | null> {
+        return await UsersDevicesModel.findOne({deviceId})
+    },
 }

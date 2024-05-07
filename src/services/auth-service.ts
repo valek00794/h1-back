@@ -2,8 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns/add'
 import { ObjectId } from 'mongodb'
 
-import { UserDbType, UserDeviceInfoType } from '../types/users-types'
-import { usersQueryRepository } from '../repositories/users-query-repository'
+import { UserDeviceInfoType } from '../types/users-types'
 import { usersRepository } from '../repositories/users-repository'
 import { emailManager } from '../managers/email-manager'
 import { APIErrorResult, Result } from '../types/result-types'
@@ -11,22 +10,19 @@ import { ResultStatus, SETTINGS } from '../settings'
 import { bcryptArapter } from '../adapters/bcypt-adapter'
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
 import { JWTTokensOutType } from '../adapters/jwt/jwt-types'
-import { usersDevicesQueryRepository } from '../repositories/usersDevices-query-repository'
 import { usersDevicesRepository } from '../repositories/usersDevices-repository'
 import { usersService } from './users-service'
 
 export const authService = {
-    async checkCredential(loginOrEmail: string, password: string): Promise<false | UserDbType> {
-        const user = await usersQueryRepository.findUserByLoginOrEmail(loginOrEmail)
-        if (user === null) return false
-        const userConfirmationInfo = await usersQueryRepository.findUserConfirmationInfo(user._id!.toString())
+    async checkCredential(userId: ObjectId, password: string, passwordHash: string): Promise<boolean> {
+        const userConfirmationInfo = await usersRepository.findUserConfirmationInfo(userId!.toString())
         if (userConfirmationInfo !== null && !userConfirmationInfo.isConfirmed) return false
-        const isAuth = await bcryptArapter.checkPassword(password, user.passwordHash)
-        return isAuth ? user : false
+        const isAuth = await bcryptArapter.checkPassword(password, passwordHash)
+        return isAuth ? true : false
     },
 
     async confirmEmail(code: string): Promise<Result<APIErrorResult | null>> {
-        const userConfirmationInfo = await usersQueryRepository.findUserConfirmationInfo(code)
+        const userConfirmationInfo = await usersRepository.findUserConfirmationInfo(code)
         if (userConfirmationInfo === null) return {
             status: ResultStatus.BadRequest,
             data: {
@@ -72,7 +68,7 @@ export const authService = {
         }
     },
     async resentConfirmEmail(email: string): Promise<Result<APIErrorResult | null>> {
-        const user = await usersQueryRepository.findUserByLoginOrEmail(email)
+        const user = await usersRepository.findUserByLoginOrEmail(email)
         const errorsMessages: APIErrorResult = {
             errorsMessages: []
         }
@@ -82,7 +78,7 @@ export const authService = {
                 field: "email"
             })
         }
-        const userConfirmationInfo = await usersQueryRepository.findUserConfirmationInfo(user!._id!.toString())
+        const userConfirmationInfo = await usersRepository.findUserConfirmationInfo(user!._id!.toString())
         if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {
             errorsMessages.errorsMessages.push({
                 message: "User with current email already confirmed",
@@ -122,8 +118,8 @@ export const authService = {
         if (!oldRefreshToken || userVerifyInfo === null) {
             return null
         }
-        const isUserExists = await usersQueryRepository.findUserById(userVerifyInfo!.userId)
-        const deviceSession = await usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId)
+        const isUserExists = await usersRepository.findUserById(userVerifyInfo!.userId)
+        const deviceSession = await usersDevicesRepository.getUserDeviceById(userVerifyInfo.deviceId)
         if (
             !isUserExists ||
             !deviceSession ||
@@ -164,7 +160,7 @@ export const authService = {
     },
 
     async passwordRecovery(email: string): Promise<Result<APIErrorResult | null>> {
-        const user = await usersQueryRepository.findUserByLoginOrEmail(email)
+        const user = await usersRepository.findUserByLoginOrEmail(email)
         if (!user) {
             return {
                 status: ResultStatus.NoContent,
@@ -199,7 +195,7 @@ export const authService = {
         }
     },
     async confirmPasswordRecovery(recoveryCode: string, newPassword: string): Promise<Result<APIErrorResult | null>> {
-        const recoveryInfo = await usersQueryRepository.findPasswordRecoveryInfo(recoveryCode)
+        const recoveryInfo = await usersRepository.findPasswordRecoveryInfo(recoveryCode)
         if (recoveryInfo === null) return {
             status: ResultStatus.BadRequest,
             data: {

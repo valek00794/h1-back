@@ -1,26 +1,16 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from "mongodb"
 
-import { PaginatorUsersViewType, UserDbType, UserInfoType, UserViewType } from "../types/users-types";
-import { getSanitizationQuery } from "../utils";
-import { SearchQueryParametersType } from "../types/query-types";
-import { UsersModel } from "../db/mongo/users.model";
-import { UsersEmailConfirmationsModel } from "../db/mongo/usersEmailConfirmation.model";
-import { UsersRecoveryPassswordModel } from "../db/mongo/usersRecoveryPasssword.model";
+import { PaginatorUsersViewType, UserDbType, UserInfoType, UserViewType } from "../types/users-types"
+import { getSanitizationQuery } from "../utils"
+import { SearchQueryParametersType } from "../types/query-types"
+import { UsersModel } from "../db/mongo/users.model"
+
 
 export const usersQueryRepository = {
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDbType | null> {
-        return await UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
-    },
-
-    async findUserConfirmationInfo(confirmationCodeOrUserId: string) {
-        return await UsersEmailConfirmationsModel.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] })
-    },
-
-    async findPasswordRecoveryInfo(recoveryCodeOrUserId: string) {
-        return await UsersRecoveryPassswordModel.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] })
-    },
-
     async findUserById(id: string): Promise<UserInfoType | false> {
+        if (!ObjectId.isValid(id)) {
+            return false
+        }
         const user = await UsersModel.findById(id)
         return user ? {
             email: user.email,
@@ -28,6 +18,10 @@ export const usersQueryRepository = {
             userId: id
         }
             : false
+    },
+
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserDbType | null> {
+        return await UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
     },
 
     async getAllUsers(query?: SearchQueryParametersType): Promise<PaginatorUsersViewType> {

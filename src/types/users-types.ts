@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from "mongodb"
 
- export type UserDbType = WithId<UserType>
+export type UserDbType = WithId<UserType>
 
 export type UserViewType = {
     id: ObjectId,

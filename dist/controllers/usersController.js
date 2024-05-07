@@ -14,13 +14,12 @@ const users_service_1 = require("../services/users-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const settings_1 = require("../settings");
 const createUserController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password);
-    if (result.status === settings_1.ResultStatus.Created) {
-        res
-            .status(settings_1.StatusCodes.CREATED_201)
-            .json(result.data);
-        return;
-    }
+    const createdUser = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password);
+    const user = users_query_repository_1.usersQueryRepository.mapToOutput(createdUser);
+    res
+        .status(settings_1.StatusCodes.CREATED_201)
+        .json(user);
+    return;
 });
 exports.createUserController = createUserController;
 const getUsersController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

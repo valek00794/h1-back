@@ -56,4 +56,24 @@ exports.usersRepository = {
             return recoveryInfo;
         });
     },
+    findUserConfirmationInfo(confirmationCodeOrUserId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.findOne({ $or: [{ confirmationCode: confirmationCodeOrUserId }, { userId: confirmationCodeOrUserId }] });
+        });
+    },
+    findUserByLoginOrEmail(loginOrEmail) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield users_model_1.UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
+        });
+    },
+    findPasswordRecoveryInfo(recoveryCodeOrUserId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield usersRecoveryPasssword_model_1.UsersRecoveryPassswordModel.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] });
+        });
+    },
+    findUserById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield users_model_1.UsersModel.findById(id);
+        });
+    },
 };

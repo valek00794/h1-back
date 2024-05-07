@@ -17,13 +17,14 @@ const settings_1 = require("../settings");
 const auth_service_1 = require("../services/auth-service");
 const usersDevices_service_1 = require("../services/usersDevices-service");
 const signInController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield auth_service_1.authService.checkCredential(req.body.loginOrEmail, req.body.password);
-    if (!user) {
+    const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail);
+    if (user === null) {
         res
             .status(settings_1.StatusCodes.UNAUTHORIZED_401)
             .send();
         return;
     }
+    const user2 = yield auth_service_1.authService.checkCredential(user._id, req.body.password, user.passwordHash);
     const tokens = yield jwt_adapter_1.jwtAdapter.createJWT(user._id);
     const deviceTitle = req.headers['user-agent'] || 'unknown device';
     const ipAddress = req.ip || '0.0.0.0';
@@ -50,7 +51,7 @@ const getAuthInfoController = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.getAuthInfoController = getAuthInfoController;
 const signUpController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password, true);
+    const result = yield users_service_1.usersService.signUpUser(req.body.login, req.body.email, req.body.password);
     if (result.status === settings_1.ResultStatus.BadRequest) {
         res
             .status(settings_1.StatusCodes.BAD_REQUEST_400)

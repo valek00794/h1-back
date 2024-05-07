@@ -4,20 +4,22 @@ import { usersService } from '../services/users-service';
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter';
 import { usersQueryRepository } from '../repositories/users-query-repository';
 import { TokenOutType } from '../adapters/jwt/jwt-types';
-import { UserInfoType, UserViewType } from '../types/users-types';
+import { UserDbType, UserInfoType } from '../types/users-types';
 import { APIErrorResult } from '../types/result-types';
 import { ResultStatus, StatusCodes } from '../settings';
 import { authService } from '../services/auth-service';
 import { usersDevicesService } from '../services/usersDevices-service';
 
 export const signInController = async (req: Request, res: Response<TokenOutType>) => {
-    const user = await authService.checkCredential(req.body.loginOrEmail, req.body.password)
-    if (!user) {
+
+    const user = await usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail)
+    if (user === null) {
         res
             .status(StatusCodes.UNAUTHORIZED_401)
             .send()
         return
     }
+    const user2 = await authService.checkCredential(user._id, req.body.password, user.passwordHash)
     const tokens = await jwtAdapter.createJWT(user._id!)
     const deviceTitle = req.headers['user-agent'] || 'unknown device'
     const ipAddress = req.ip || '0.0.0.0'
@@ -43,8 +45,8 @@ export const getAuthInfoController = async (req: Request, res: Response<UserInfo
         .send(user)
 }
 
-export const signUpController = async (req: Request, res: Response<UserViewType | APIErrorResult | null>) => {
-    const result = await usersService.createUser(req.body.login, req.body.email, req.body.password, true)
+export const signUpController = async (req: Request, res: Response<UserDbType | APIErrorResult | null>) => {
+    const result = await usersService.signUpUser(req.body.login, req.body.email, req.body.password)
     if (result.status === ResultStatus.BadRequest) {
         res
             .status(StatusCodes.BAD_REQUEST_400)

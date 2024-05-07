@@ -13,31 +13,26 @@ exports.authService = void 0;
 const uuid_1 = require("uuid");
 const add_1 = require("date-fns/add");
 const mongodb_1 = require("mongodb");
-const users_query_repository_1 = require("../repositories/users-query-repository");
 const users_repository_1 = require("../repositories/users-repository");
 const email_manager_1 = require("../managers/email-manager");
 const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
-const usersDevices_query_repository_1 = require("../repositories/usersDevices-query-repository");
 const usersDevices_repository_1 = require("../repositories/usersDevices-repository");
 const users_service_1 = require("./users-service");
 exports.authService = {
-    checkCredential(loginOrEmail, password) {
+    checkCredential(userId, password, passwordHash) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(loginOrEmail);
-            if (user === null)
-                return false;
-            const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(user._id.toString());
+            const userConfirmationInfo = yield users_repository_1.usersRepository.findUserConfirmationInfo(userId.toString());
             if (userConfirmationInfo !== null && !userConfirmationInfo.isConfirmed)
                 return false;
-            const isAuth = yield bcypt_adapter_1.bcryptArapter.checkPassword(password, user.passwordHash);
-            return isAuth ? user : false;
+            const isAuth = yield bcypt_adapter_1.bcryptArapter.checkPassword(password, passwordHash);
+            return isAuth ? true : false;
         });
     },
     confirmEmail(code) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(code);
+            const userConfirmationInfo = yield users_repository_1.usersRepository.findUserConfirmationInfo(code);
             if (userConfirmationInfo === null)
                 return {
                     status: settings_1.ResultStatus.BadRequest,
@@ -86,7 +81,7 @@ exports.authService = {
     },
     resentConfirmEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(email);
+            const user = yield users_repository_1.usersRepository.findUserByLoginOrEmail(email);
             const errorsMessages = {
                 errorsMessages: []
             };
@@ -96,7 +91,7 @@ exports.authService = {
                     field: "email"
                 });
             }
-            const userConfirmationInfo = yield users_query_repository_1.usersQueryRepository.findUserConfirmationInfo(user._id.toString());
+            const userConfirmationInfo = yield users_repository_1.usersRepository.findUserConfirmationInfo(user._id.toString());
             if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {
                 errorsMessages.errorsMessages.push({
                     message: "User with current email already confirmed",
@@ -138,8 +133,8 @@ exports.authService = {
             if (!oldRefreshToken || userVerifyInfo === null) {
                 return null;
             }
-            const isUserExists = yield users_query_repository_1.usersQueryRepository.findUserById(userVerifyInfo.userId);
-            const deviceSession = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getUserDeviceById(userVerifyInfo.deviceId);
+            const isUserExists = yield users_repository_1.usersRepository.findUserById(userVerifyInfo.userId);
+            const deviceSession = yield usersDevices_repository_1.usersDevicesRepository.getUserDeviceById(userVerifyInfo.deviceId);
             if (!isUserExists ||
                 !deviceSession ||
                 new Date(userVerifyInfo.iat * 1000).toISOString() !== (deviceSession === null || deviceSession === void 0 ? void 0 : deviceSession.lastActiveDate)) {
@@ -182,7 +177,7 @@ exports.authService = {
     },
     passwordRecovery(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(email);
+            const user = yield users_repository_1.usersRepository.findUserByLoginOrEmail(email);
             if (!user) {
                 return {
                     status: settings_1.ResultStatus.NoContent,
@@ -219,7 +214,7 @@ exports.authService = {
     },
     confirmPasswordRecovery(recoveryCode, newPassword) {
         return __awaiter(this, void 0, void 0, function* () {
-            const recoveryInfo = yield users_query_repository_1.usersQueryRepository.findPasswordRecoveryInfo(recoveryCode);
+            const recoveryInfo = yield users_repository_1.usersRepository.findPasswordRecoveryInfo(recoveryCode);
             if (recoveryInfo === null)
                 return {
                     status: settings_1.ResultStatus.BadRequest,

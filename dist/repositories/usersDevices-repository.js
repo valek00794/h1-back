@@ -47,4 +47,9 @@ exports.usersDevicesRepository = {
             return yield usersDevices_model_1.UsersDevicesModel.deleteOne({ deviceId });
         });
     },
+    getUserDeviceById(deviceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield usersDevices_model_1.UsersDevicesModel.findOne({ deviceId });
+        });
+    },
 };
