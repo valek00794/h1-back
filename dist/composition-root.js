@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.blogsController = void 0;
+const blogsController_1 = require("./controllers/blogsController");
+const blogs_query_repository_1 = require("./repositories/blogs-query-repository");
+const blogs_repository_1 = require("./repositories/blogs-repository");
+const blogs_service_1 = require("./services/blogs-service");
+const blogsRepository = new blogs_repository_1.BlogsRepository();
+const blogsQueryRepository = new blogs_query_repository_1.BlogsQueryRepository();
+const blogsService = new blogs_service_1.BlogsService(blogsRepository);
+exports.blogsController = new blogsController_1.BlogsController(blogsService, blogsQueryRepository);

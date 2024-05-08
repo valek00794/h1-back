@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { commentsController } from "../controllers/commentsControllers";
+import { commentsController } from "../controllers/commentsController";
 import { commentInputValidation, likeStatusInputValidation } from "../validation/commentInputValidation";
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { authJWTMiddleware } from "../middlewares/authJWTMiddleware";

@@ -1,10 +1,10 @@
 import { Router } from "express";
 
-import { postsController } from '../controllers/postsControllers'
+import { postsController } from '../controllers/postsController'
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { postsBlogIdInputValidation, postsInputValidation } from "../validation/postsInputValidation";
 import { commentInputValidation } from "../validation/commentInputValidation";
-import { commentsController} from "../controllers/commentsControllers";
+import { commentsController} from "../controllers/commentsController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { authJWTMiddleware } from "../middlewares/authJWTMiddleware";
 import { userIdFromJWTMiddleware } from "../middlewares/userIdFromJWTMiddleware";

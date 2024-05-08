@@ -9,15 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogsController = void 0;
-const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
-const blogs_service_1 = require("../services/blogs-service");
+exports.BlogsController = void 0;
 const settings_1 = require("../settings");
 class BlogsController {
+    constructor(blogsService, blogsQueryRepository) {
+        this.blogsService = blogsService;
+        this.blogsQueryRepository = blogsQueryRepository;
+    }
     getBlogsController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
-            const blogs = yield blogs_query_repository_1.blogsQueryRepository.getBlogs(query);
+            const blogs = yield this.blogsQueryRepository.getBlogs(query);
             res
                 .status(settings_1.StatusCodes.OK_200)
                 .json(blogs);
@@ -25,7 +27,7 @@ class BlogsController {
     }
     findBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(req.params.id);
+            const blog = yield this.blogsQueryRepository.findBlog(req.params.id);
             if (!blog) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -39,7 +41,7 @@ class BlogsController {
     }
     deleteBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blogIsDeleted = yield blogs_service_1.blogsService.deleteBlog(req.params.id);
+            const blogIsDeleted = yield this.blogsService.deleteBlog(req.params.id);
             if (!blogIsDeleted) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -53,8 +55,8 @@ class BlogsController {
     }
     createBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdBlog = yield blogs_service_1.blogsService.createBlog(req.body);
-            const newBlog = blogs_query_repository_1.blogsQueryRepository.mapToOutput(createdBlog);
+            const createdBlog = yield this.blogsService.createBlog(req.body);
+            const newBlog = this.blogsQueryRepository.mapToOutput(createdBlog);
             res
                 .status(settings_1.StatusCodes.CREATED_201)
                 .json(newBlog);
@@ -62,18 +64,18 @@ class BlogsController {
     }
     updateBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(req.params.id);
+            const blog = yield this.blogsQueryRepository.findBlog(req.params.id);
             if (blog === null) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            yield blogs_service_1.blogsService.updateBlog(req.body, req.params.id);
+            yield this.blogsService.updateBlog(req.body, req.params.id);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();
         });
     }
 }
-exports.blogsController = new BlogsController();
+exports.BlogsController = BlogsController;
