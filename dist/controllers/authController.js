@@ -9,24 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authController = void 0;
-const users_service_1 = require("../services/users-service");
+exports.AuthController = void 0;
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
-const users_query_repository_1 = require("../repositories/users-query-repository");
 const settings_1 = require("../settings");
-const auth_service_1 = require("../services/auth-service");
-const usersDevices_service_1 = require("../services/usersDevices-service");
 class AuthController {
+    constructor(authService, usersService, usersDevicesService, usersQueryRepository) {
+        this.authService = authService;
+        this.usersService = usersService;
+        this.usersDevicesService = usersDevicesService;
+        this.usersQueryRepository = usersQueryRepository;
+    }
     signInController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail);
+            const user = yield this.usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail);
             if (user === null) {
                 res
                     .status(settings_1.StatusCodes.UNAUTHORIZED_401)
                     .send();
                 return;
             }
-            const checkCredential = yield auth_service_1.authService.checkCredential(user._id, req.body.password, user.passwordHash);
+            const checkCredential = yield this.authService.checkCredential(user._id, req.body.password, user.passwordHash);
             if (!checkCredential) {
                 res
                     .status(settings_1.StatusCodes.UNAUTHORIZED_401)
@@ -36,7 +38,7 @@ class AuthController {
             const tokens = yield jwt_adapter_1.jwtAdapter.createJWT(user._id);
             const deviceTitle = req.headers['user-agent'] || 'unknown device';
             const ipAddress = req.ip || '0.0.0.0';
-            yield usersDevices_service_1.usersDevicesService.addUserDevice(tokens.refreshToken, deviceTitle, ipAddress);
+            yield this.usersDevicesService.addUserDevice(tokens.refreshToken, deviceTitle, ipAddress);
             res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true, });
             res
                 .status(settings_1.StatusCodes.OK_200)
@@ -47,7 +49,7 @@ class AuthController {
     }
     getAuthInfoController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_query_repository_1.usersQueryRepository.findUserById(req.user.userId);
+            const user = yield this.usersQueryRepository.findUserById(req.user.userId);
             if (!req.user || !req.user.userId || !user) {
                 res
                     .status(settings_1.StatusCodes.UNAUTHORIZED_401)
@@ -61,7 +63,7 @@ class AuthController {
     }
     signUpController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield users_service_1.usersService.signUpUser(req.body.login, req.body.email, req.body.password);
+            const result = yield this.usersService.signUpUser(req.body.login, req.body.email, req.body.password);
             if (result.status === settings_1.ResultStatus.BadRequest) {
                 res
                     .status(settings_1.StatusCodes.BAD_REQUEST_400)
@@ -78,7 +80,7 @@ class AuthController {
     }
     signUpConfimationController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const confirmResult = yield auth_service_1.authService.confirmEmail(req.body.code);
+            const confirmResult = yield this.authService.confirmEmail(req.body.code);
             if (confirmResult.status === settings_1.ResultStatus.BadRequest) {
                 res
                     .status(settings_1.StatusCodes.BAD_REQUEST_400)
@@ -95,7 +97,7 @@ class AuthController {
     }
     signUpEmailResendingController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const sendResult = yield auth_service_1.authService.resentConfirmEmail(req.body.email);
+            const sendResult = yield this.authService.resentConfirmEmail(req.body.email);
             if (sendResult.status === settings_1.ResultStatus.BadRequest) {
                 res
                     .status(settings_1.StatusCodes.BAD_REQUEST_400)
@@ -113,7 +115,7 @@ class AuthController {
     refreshTokenController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const oldRefreshToken = req.cookies.refreshToken;
-            const renewResult = yield auth_service_1.authService.renewTokens(oldRefreshToken);
+            const renewResult = yield this.authService.renewTokens(oldRefreshToken);
             if (renewResult.status === settings_1.ResultStatus.Unauthorized) {
                 res
                     .status(settings_1.StatusCodes.UNAUTHORIZED_401)
@@ -121,7 +123,7 @@ class AuthController {
                 return;
             }
             if (renewResult.status === settings_1.ResultStatus.Success) {
-                yield usersDevices_service_1.usersDevicesService.updateUserDevice(oldRefreshToken, renewResult.data.refreshToken);
+                yield this.usersDevicesService.updateUserDevice(oldRefreshToken, renewResult.data.refreshToken);
                 res.cookie('refreshToken', renewResult.data.refreshToken, { httpOnly: true, secure: true, });
                 res
                     .status(settings_1.StatusCodes.OK_200)
@@ -135,7 +137,7 @@ class AuthController {
     logoutController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const refreshToken = req.cookies.refreshToken;
-            const logoutResult = yield auth_service_1.authService.logoutUser(refreshToken);
+            const logoutResult = yield this.authService.logoutUser(refreshToken);
             if (logoutResult.status === settings_1.ResultStatus.Unauthorized) {
                 res
                     .status(settings_1.StatusCodes.UNAUTHORIZED_401)
@@ -152,7 +154,7 @@ class AuthController {
     }
     passwordRecoveryController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield auth_service_1.authService.passwordRecovery(req.body.email);
+            const result = yield this.authService.passwordRecovery(req.body.email);
             if (result.status === settings_1.ResultStatus.NoContent) {
                 res
                     .status(settings_1.StatusCodes.NO_CONTENT_204)
@@ -163,7 +165,7 @@ class AuthController {
     }
     confirmPasswordRecoveryController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield auth_service_1.authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword);
+            const result = yield this.authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword);
             if (result.status === settings_1.ResultStatus.BadRequest) {
                 res
                     .status(settings_1.StatusCodes.BAD_REQUEST_400)
@@ -179,4 +181,4 @@ class AuthController {
         });
     }
 }
-exports.authController = new AuthController();
+exports.AuthController = AuthController;

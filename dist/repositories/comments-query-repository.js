@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentsQueryRepository = void 0;
+exports.CommentsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const comments_model_1 = require("../db/mongo/comments.model");
 const comments_types_1 = require("../types/comments-types");
@@ -82,4 +82,4 @@ class CommentsQueryRepository {
         return new likes_types_1.LikesInfoView(likesCount, dislikesCount, myLikeStatus);
     }
 }
-exports.commentsQueryRepository = new CommentsQueryRepository();
+exports.CommentsQueryRepository = CommentsQueryRepository;

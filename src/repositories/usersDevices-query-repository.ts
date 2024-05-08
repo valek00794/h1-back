@@ -1,7 +1,7 @@
 import { UsersDevicesType } from "../types/users-types"
 import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
-class UsersDevicesQueryRepository {
+export class UsersDevicesQueryRepository {
     async getAllActiveDevicesByUser(userId: string): Promise<UsersDevicesType[]> {
         const userDevices = await UsersDevicesModel.find({ userId })
         return userDevices.map(device => this.mapToOutput(device))
@@ -21,5 +21,3 @@ class UsersDevicesQueryRepository {
         }
     }
 }
-
-export const usersDevicesQueryRepository = new UsersDevicesQueryRepository()

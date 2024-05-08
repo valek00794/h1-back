@@ -6,7 +6,7 @@ import { SearchQueryParametersType } from '../types/query-types'
 import { BlogsModel } from '../db/mongo/blogs.model'
 import { Paginator } from '../types/result-types'
 
-class BlogsQueryRepository {
+export class BlogsQueryRepository {
     async getBlogs(query?: SearchQueryParametersType): Promise<Paginator<BlogView[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         const findOptions = sanitizationQuery.searchNameTerm !== null ? { name: { $regex: sanitizationQuery.searchNameTerm, $options: 'i' } } : {}
@@ -47,4 +47,5 @@ class BlogsQueryRepository {
     }
 }
 
-export const blogsQueryRepository = new BlogsQueryRepository()
+
+

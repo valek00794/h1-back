@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersDevicesQueryRepository = void 0;
+exports.UsersDevicesQueryRepository = void 0;
 const usersDevices_model_1 = require("../db/mongo/usersDevices.model");
 class UsersDevicesQueryRepository {
     getAllActiveDevicesByUser(userId) {
@@ -33,4 +33,4 @@ class UsersDevicesQueryRepository {
         };
     }
 }
-exports.usersDevicesQueryRepository = new UsersDevicesQueryRepository();
+exports.UsersDevicesQueryRepository = UsersDevicesQueryRepository;

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postsQueryRepository = void 0;
+exports.PostsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const utils_1 = require("../utils");
 const posts_model_1 = require("../db/mongo/posts.model");
@@ -52,4 +52,4 @@ class PostsQueryRepository {
         };
     }
 }
-exports.postsQueryRepository = new PostsQueryRepository();
+exports.PostsQueryRepository = PostsQueryRepository;

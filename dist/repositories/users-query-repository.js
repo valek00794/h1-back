@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersQueryRepository = void 0;
+exports.UsersQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const utils_1 = require("../utils");
 const users_model_1 = require("../db/mongo/users.model");
@@ -61,4 +61,4 @@ class UsersQueryRepository {
         };
     }
 }
-exports.usersQueryRepository = new UsersQueryRepository();
+exports.UsersQueryRepository = UsersQueryRepository;

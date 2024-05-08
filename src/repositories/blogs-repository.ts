@@ -1,7 +1,7 @@
 import { BlogDbType, Blog } from '../types/blogs-types'
 import { BlogsModel } from '../db/mongo/blogs.model'
 
-class BlogsRepository {
+export class BlogsRepository {
     async createBlog(newBlog: Blog): Promise<BlogDbType> {
         const blog = new BlogsModel(newBlog)
         await blog.save()
@@ -23,4 +23,3 @@ class BlogsRepository {
     }
 }
 
-export const blogsRepository = new BlogsRepository()

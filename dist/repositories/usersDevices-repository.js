@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersDevicesRepository = void 0;
+exports.UsersDevicesRepository = void 0;
 const usersDevices_model_1 = require("../db/mongo/usersDevices.model");
 class UsersDevicesRepository {
     addUserDevice(device) {
@@ -53,4 +53,4 @@ class UsersDevicesRepository {
         });
     }
 }
-exports.usersDevicesRepository = new UsersDevicesRepository();
+exports.UsersDevicesRepository = UsersDevicesRepository;

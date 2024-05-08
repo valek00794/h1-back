@@ -1,7 +1,7 @@
 import { PostDbType, Post } from '../types/posts-types'
 import { PostsModel } from '../db/mongo/posts.model'
 
-class PostsRepository  {
+export class PostsRepository  {
     async createPost(newPost: Post): Promise<PostDbType> {
         const post = new PostsModel(newPost)
         await post.save()
@@ -22,5 +22,3 @@ class PostsRepository  {
         return await PostsModel.findById(id)
     }
 }
-
-export const postsRepository = new PostsRepository()

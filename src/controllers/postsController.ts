@@ -2,23 +2,28 @@ import { Request, Response } from 'express'
 
 import { PostViewType } from '../types/posts-types'
 import { SearchQueryParametersType } from '../types/query-types';
-import { postsQueryRepository } from '../repositories/posts-query-repository';
-import { postsService } from '../services/posts-service';
 import { StatusCodes } from '../settings';
-import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { Paginator } from '../types/result-types';
+import { PostsService } from '../services/posts-service';
+import { PostsQueryRepository } from '../repositories/posts-query-repository';
+import { BlogsQueryRepository } from '../repositories/blogs-query-repository';
 
-class PostsController {
+export class PostsController {
+    constructor(
+        protected postsService: PostsService,
+        protected postsQueryRepository: PostsQueryRepository,
+        protected blogsQueryRepository: BlogsQueryRepository) { }
+
     async getPostsController(req: Request, res: Response<Paginator<PostViewType[]>>) {
         const query = req.query as unknown as SearchQueryParametersType;
-        const posts = await postsQueryRepository.getPosts(query)
+        const posts = await this.postsQueryRepository.getPosts(query)
         res
             .status(StatusCodes.OK_200)
             .json(posts)
     }
 
     async findPostController(req: Request, res: Response<false | PostViewType>) {
-        const post = await postsQueryRepository.findPost(req.params.id)
+        const post = await this.postsQueryRepository.findPost(req.params.id)
         if (!post) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -32,21 +37,21 @@ class PostsController {
 
     async findPostsOfBlogController(req: Request, res: Response<Paginator<PostViewType[]>>) {
         const query = req.query as unknown as SearchQueryParametersType;
-        const blog = await blogsQueryRepository.findBlog(req.params.blogId)
+        const blog = await this.blogsQueryRepository.findBlog(req.params.blogId)
         if (!blog) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
                 .send()
             return
         }
-        const posts = await postsQueryRepository.getPosts(query, req.params.blogId)
+        const posts = await this.postsQueryRepository.getPosts(query, req.params.blogId)
         res
             .status(StatusCodes.OK_200)
             .json(posts)
     }
 
     async deletePostController(req: Request, res: Response<boolean>) {
-        const postIsDeleted = await postsService.deletePost(req.params.id)
+        const postIsDeleted = await this.postsService.deletePost(req.params.id)
         if (!postIsDeleted) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -59,30 +64,30 @@ class PostsController {
     }
 
     async createPostController(req: Request, res: Response<PostViewType>) {
-        const createdPost = await postsService.createPost(req.body)
-        const newPost = postsQueryRepository.mapToOutput(createdPost)
+        const createdPost = await this.postsService.createPost(req.body)
+        const newPost = this.postsQueryRepository.mapToOutput(createdPost)
         res
             .status(StatusCodes.CREATED_201)
             .json(newPost)
     }
 
     async createPostForBlogController(req: Request, res: Response<PostViewType>) {
-        const blog = await blogsQueryRepository.findBlog(req.params.blogId)
+        const blog = await this.blogsQueryRepository.findBlog(req.params.blogId)
         if (!blog) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
                 .send()
             return
         }
-        const createdPost = await postsService.createPost(req.body, req.params.blogId)
-        const newPost = postsQueryRepository.mapToOutput(createdPost)
+        const createdPost = await this.postsService.createPost(req.body, req.params.blogId)
+        const newPost = this.postsQueryRepository.mapToOutput(createdPost)
         res
             .status(StatusCodes.CREATED_201)
             .json(newPost)
     }
 
     async updatePostController(req: Request, res: Response<boolean>) {
-        const isUpdatedPost = await postsService.updatePost(req.body, req.params.id)
+        const isUpdatedPost = await this.postsService.updatePost(req.body, req.params.id)
         if (!isUpdatedPost) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -95,4 +100,4 @@ class PostsController {
     }
 
 }
-export const postsController = new PostsController()
+

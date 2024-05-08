@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express"
 
 import { jwtAdapter } from "../adapters/jwt/jwt-adapter"
-import { usersQueryRepository } from "../repositories/users-query-repository"
 import { SETTINGS, StatusCodes } from "../settings"
 import { UserInfoType } from "../types/users-types"
+import { usersQueryRepository } from "../composition-root"
 
 export const authJWTMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {

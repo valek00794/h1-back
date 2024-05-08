@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.blogsQueryRepository = void 0;
+exports.BlogsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
 const blogs_types_1 = require("../types/blogs-types");
 const utils_1 = require("../utils");
@@ -47,4 +47,4 @@ class BlogsQueryRepository {
         return new blogs_types_1.BlogView(blog._id, blog.name, blog.description, blog.websiteUrl, blog.createdAt, blog.isMembership);
     }
 }
-exports.blogsQueryRepository = new BlogsQueryRepository();
+exports.BlogsQueryRepository = BlogsQueryRepository;

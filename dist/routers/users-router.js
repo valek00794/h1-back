@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersRouter = void 0;
 const express_1 = require("express");
-const usersController_1 = require("../controllers/usersController");
 const usersInputValidation_1 = require("../validation/usersInputValidation");
 const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddleware");
 const authMiddleware_1 = require("../middlewares/authMiddleware");
+const composition_root_1 = require("../composition-root");
 exports.usersRouter = (0, express_1.Router)();
-exports.usersRouter.get('/', authMiddleware_1.authMiddleware, usersController_1.usersController.getUsersController);
-exports.usersRouter.post('/', authMiddleware_1.authMiddleware, usersInputValidation_1.userDataInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, usersController_1.usersController.createUserController);
-exports.usersRouter.delete('/:id', authMiddleware_1.authMiddleware, usersController_1.usersController.deleteUserController);
+exports.usersRouter.get('/', authMiddleware_1.authMiddleware, composition_root_1.usersController.getUsersController.bind(composition_root_1.usersController));
+exports.usersRouter.post('/', authMiddleware_1.authMiddleware, usersInputValidation_1.userDataInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, composition_root_1.usersController.createUserController.bind(composition_root_1.usersController));
+exports.usersRouter.delete('/:id', authMiddleware_1.authMiddleware, composition_root_1.usersController.deleteUserController.bind(composition_root_1.usersController));

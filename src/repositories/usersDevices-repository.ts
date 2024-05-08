@@ -4,7 +4,7 @@ import { UpdateWriteOpResult } from 'mongoose'
 import { UserDeviceInfoType, UsersDevicesType } from '../types/users-types'
 import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
-class UsersDevicesRepository {
+export class UsersDevicesRepository {
     async addUserDevice(device: UsersDevicesType) {
         const newDevice = new UsersDevicesModel(device)
         await newDevice.save()
@@ -40,5 +40,3 @@ class UsersDevicesRepository {
         return await UsersDevicesModel.findOne({ deviceId })
     }
 }
-
-export const usersDevicesRepository = new UsersDevicesRepository()

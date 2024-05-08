@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postsRepository = void 0;
+exports.PostsRepository = void 0;
 const posts_model_1 = require("../db/mongo/posts.model");
 class PostsRepository {
     createPost(newPost) {
@@ -37,4 +37,4 @@ class PostsRepository {
         });
     }
 }
-exports.postsRepository = new PostsRepository();
+exports.PostsRepository = PostsRepository;
