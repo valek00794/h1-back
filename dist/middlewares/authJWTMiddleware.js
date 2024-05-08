@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authJWTMiddleware = void 0;
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
-const users_query_repository_1 = require("../repositories/users-query-repository");
 const settings_1 = require("../settings");
+const composition_root_1 = require("../composition-root");
 const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.headers.authorization) {
         res
@@ -27,7 +27,7 @@ const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             req.user = {};
         }
         req.user.userId = userVerifyInfo.userId;
-        const user = yield users_query_repository_1.usersQueryRepository.findUserById(userVerifyInfo.userId);
+        const user = yield composition_root_1.usersQueryRepository.findUserById(userVerifyInfo.userId);
         if (user) {
             req.user.login = user.login;
         }

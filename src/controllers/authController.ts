@@ -1,25 +1,33 @@
 import { Request, Response } from 'express'
 
-import { usersService } from '../services/users-service';
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter';
-import { usersQueryRepository } from '../repositories/users-query-repository';
+
 import { TokenOutType } from '../adapters/jwt/jwt-types';
 import { UserDbType, UserInfoType } from '../types/users-types';
-import { APIErrorResult, FieldError } from '../types/result-types';
+import { APIErrorResult } from '../types/result-types';
 import { ResultStatus, StatusCodes } from '../settings';
-import { authService } from '../services/auth-service';
-import { usersDevicesService } from '../services/usersDevices-service';
 
-class AuthController {
+import { AuthService } from '../services/auth-service';
+import { UsersQueryRepository } from '../repositories/users-query-repository';
+import { UsersService } from '../services/users-service';
+import { UsersDevicesService } from '../services/usersDevices-service';
+
+export class AuthController {
+    constructor(
+        protected authService: AuthService,
+        protected usersQueryRepository: UsersQueryRepository,
+        protected usersService: UsersService,
+        protected usersDevicesService: UsersDevicesService) { }
+
     async signInController(req: Request, res: Response<TokenOutType>) {
-        const user = await usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail)
+        const user = await this.usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail)
         if (user === null) {
             res
                 .status(StatusCodes.UNAUTHORIZED_401)
                 .send()
             return
         }
-        const checkCredential = await authService.checkCredential(user._id, req.body.password, user.passwordHash)
+        const checkCredential = await this.authService.checkCredential(user._id, req.body.password, user.passwordHash)
         if (!checkCredential) {
             res
                 .status(StatusCodes.UNAUTHORIZED_401)
@@ -29,7 +37,7 @@ class AuthController {
         const tokens = await jwtAdapter.createJWT(user._id!)
         const deviceTitle = req.headers['user-agent'] || 'unknown device'
         const ipAddress = req.ip || '0.0.0.0'
-        await usersDevicesService.addUserDevice(tokens.refreshToken, deviceTitle, ipAddress)
+        await this.usersDevicesService.addUserDevice(tokens.refreshToken, deviceTitle, ipAddress)
         res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true, })
         res
             .status(StatusCodes.OK_200)
@@ -39,7 +47,7 @@ class AuthController {
     }
 
     async getAuthInfoController(req: Request, res: Response<UserInfoType | false>) {
-        const user = await usersQueryRepository.findUserById(req.user!.userId)
+        const user = await this.usersQueryRepository.findUserById(req.user!.userId)
         if (!req.user || !req.user.userId || !user) {
             res
                 .status(StatusCodes.UNAUTHORIZED_401)
@@ -52,7 +60,7 @@ class AuthController {
     }
 
     async signUpController(req: Request, res: Response<UserDbType | APIErrorResult | null>) {
-        const result = await usersService.signUpUser(req.body.login, req.body.email, req.body.password)
+        const result = await this.usersService.signUpUser(req.body.login, req.body.email, req.body.password)
         if (result.status === ResultStatus.BadRequest) {
             res
                 .status(StatusCodes.BAD_REQUEST_400)
@@ -68,7 +76,7 @@ class AuthController {
     }
 
     async signUpConfimationController(req: Request, res: Response<APIErrorResult | null>) {
-        const confirmResult = await authService.confirmEmail(req.body.code)
+        const confirmResult = await this.authService.confirmEmail(req.body.code)
         if (confirmResult.status === ResultStatus.BadRequest) {
             res
                 .status(StatusCodes.BAD_REQUEST_400)
@@ -84,7 +92,7 @@ class AuthController {
     }
 
     async signUpEmailResendingController(req: Request, res: Response<APIErrorResult | null>) {
-        const sendResult = await authService.resentConfirmEmail(req.body.email)
+        const sendResult = await this.authService.resentConfirmEmail(req.body.email)
         if (sendResult.status === ResultStatus.BadRequest) {
             res
                 .status(StatusCodes.BAD_REQUEST_400)
@@ -101,7 +109,7 @@ class AuthController {
 
     async refreshTokenController(req: Request, res: Response<TokenOutType>) {
         const oldRefreshToken = req.cookies.refreshToken
-        const renewResult = await authService.renewTokens(oldRefreshToken)
+        const renewResult = await this.authService.renewTokens(oldRefreshToken)
         if (renewResult.status === ResultStatus.Unauthorized) {
             res
                 .status(StatusCodes.UNAUTHORIZED_401)
@@ -110,7 +118,7 @@ class AuthController {
         }
 
         if (renewResult.status === ResultStatus.Success) {
-            await usersDevicesService.updateUserDevice(oldRefreshToken, renewResult.data!.refreshToken)
+            await this.usersDevicesService.updateUserDevice(oldRefreshToken, renewResult.data!.refreshToken)
             res.cookie('refreshToken', renewResult.data!.refreshToken, { httpOnly: true, secure: true, })
             res
                 .status(StatusCodes.OK_200)
@@ -123,7 +131,7 @@ class AuthController {
 
     async logoutController(req: Request, res: Response) {
         const refreshToken = req.cookies.refreshToken
-        const logoutResult = await authService.logoutUser(refreshToken)
+        const logoutResult = await this.authService.logoutUser(refreshToken)
         if (logoutResult.status === ResultStatus.Unauthorized) {
             res
                 .status(StatusCodes.UNAUTHORIZED_401)
@@ -140,7 +148,7 @@ class AuthController {
     }
 
     async passwordRecoveryController(req: Request, res: Response) {
-        const result = await authService.passwordRecovery(req.body.email)
+        const result = await this.authService.passwordRecovery(req.body.email)
         if (result.status === ResultStatus.NoContent) {
             res
                 .status(StatusCodes.NO_CONTENT_204)
@@ -150,7 +158,7 @@ class AuthController {
     }
 
     async confirmPasswordRecoveryController(req: Request, res: Response<APIErrorResult | null>) {
-        const result = await authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
+        const result = await this.authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
         if (result.status === ResultStatus.BadRequest) {
             res
                 .status(StatusCodes.BAD_REQUEST_400)
@@ -166,4 +174,3 @@ class AuthController {
     }
 }
 
-export const authController = new AuthController()

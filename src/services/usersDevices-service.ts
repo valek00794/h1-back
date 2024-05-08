@@ -2,12 +2,14 @@ import { DeleteResult, UpdateResult } from 'mongodb'
 
 import { ResultStatus, SETTINGS } from '../settings'
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
-import { usersDevicesRepository } from '../repositories/usersDevices-repository'
 import { UsersDevicesType } from '../types/users-types'
-import { authService } from './auth-service'
 import { Result } from '../types/result-types'
+import { UsersDevicesRepository } from '../repositories/usersDevices-repository'
+import { AuthService } from './auth-service'
 
-class UsersDevicesService {
+export class UsersDevicesService {
+    constructor(protected usersDevicesRepository: UsersDevicesRepository, protected authService: AuthService) { }
+
     async addUserDevice(refreshToken: string, deviceTitle: string, ipAddress: string): Promise<UsersDevicesType> {
         const userVerifyInfo = await jwtAdapter.getUserInfoByToken(refreshToken, SETTINGS.JWT.RT_SECRET)
         const device = {
@@ -18,7 +20,7 @@ class UsersDevicesService {
             lastActiveDate: new Date(userVerifyInfo!.iat! * 1000).toISOString(),
             expiryDate: new Date(userVerifyInfo!.exp! * 1000).toISOString(),
         }
-        return await usersDevicesRepository.addUserDevice(device)
+        return await this.usersDevicesRepository.addUserDevice(device)
     }
 
     async updateUserDevice(oldRefreshToken: string, refreshToken: string): Promise<UpdateResult<UsersDevicesType>> {
@@ -26,11 +28,11 @@ class UsersDevicesService {
         const userVerifyInfo = await jwtAdapter.getUserInfoByToken(refreshToken, SETTINGS.JWT.RT_SECRET)
         const newLastActiveDate = new Date(userVerifyInfo!.iat! * 1000).toISOString()
         const newExpiryDate = new Date(userVerifyInfo!.exp! * 1000).toISOString()
-        return await usersDevicesRepository.updateUserDevice(userVerifyInfoByOldToken!, newLastActiveDate, newExpiryDate)
+        return await this.usersDevicesRepository.updateUserDevice(userVerifyInfoByOldToken!, newLastActiveDate, newExpiryDate)
     }
 
     async deleteAllDevicesByUser(refreshToken: string): Promise<Result<null | DeleteResult>> {
-        const userVerifyInfo = await authService.checkUserByRefreshToken(refreshToken)
+        const userVerifyInfo = await this.authService.checkUserByRefreshToken(refreshToken)
         if (userVerifyInfo.data === null) {
             return new Result<null>(
                 ResultStatus.Unauthorized,
@@ -38,7 +40,7 @@ class UsersDevicesService {
                 null
             )
         }
-        const deleteResult = await usersDevicesRepository.deleteUserDevices(userVerifyInfo.data)
+        const deleteResult = await this.usersDevicesRepository.deleteUserDevices(userVerifyInfo.data)
         return new Result<DeleteResult>(
             ResultStatus.NoContent,
             deleteResult,
@@ -46,7 +48,7 @@ class UsersDevicesService {
         )
     }
     async deleteUserDeviceById(deviceId: string): Promise<Result<DeleteResult>> {
-        const deleteResult = await usersDevicesRepository.deleteUserDevicebyId(deviceId)
+        const deleteResult = await this.usersDevicesRepository.deleteUserDevicebyId(deviceId)
         return new Result<DeleteResult>(
             ResultStatus.NoContent,
             deleteResult,
@@ -55,4 +57,3 @@ class UsersDevicesService {
     }
 }
 
-export const usersDevicesService = new UsersDevicesService()

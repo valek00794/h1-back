@@ -1,9 +1,8 @@
 import { Router } from "express"
-
-import { usersDevicesController } from "../controllers/usersDevicesController"
+import { usersDevicesController } from "../composition-root"
 
 export const usersDevicesRouter = Router()
 
-usersDevicesRouter.get('/', usersDevicesController.getActiveDevicesByUserController)
-usersDevicesRouter.delete('/', usersDevicesController.deleteAllDevicesByUserController)
-usersDevicesRouter.delete('/:deviceId', usersDevicesController.deleteUserDeviceByIdController)
+usersDevicesRouter.get('/', usersDevicesController.getActiveDevicesByUserController.bind(usersDevicesController))
+usersDevicesRouter.delete('/', usersDevicesController.deleteAllDevicesByUserController.bind(usersDevicesController))
+usersDevicesRouter.delete('/:deviceId', usersDevicesController.deleteUserDeviceByIdController.bind(usersDevicesController))
