@@ -8,7 +8,7 @@ import { CommentLikesStatusModel } from '../db/mongo/commentLikesStatus-model'
 import { LikeStatus, LikesInfo, LikesInfoView } from '../types/likes-types'
 import { Paginator } from '../types/result-types'
 
-class CommentsQueryRepository {
+export class CommentsQueryRepository {
     async getComments(postId: string, query?: SearchQueryParametersType, userId?: string): Promise<Paginator<CommentView[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
@@ -87,5 +87,3 @@ class CommentsQueryRepository {
         return new LikesInfoView(likesCount, dislikesCount, myLikeStatus)
     }
 }
-
-export const commentsQueryRepository = new CommentsQueryRepository()

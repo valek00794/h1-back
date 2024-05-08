@@ -1,16 +1,18 @@
 import { Request, Response } from 'express'
 
 import { Comment } from '../types/comments-types';
-import { commentsQueryRepository } from '../repositories/comments-query-repository';
-import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { SearchQueryParametersType } from '../types/query-types';
-import { commentsService } from '../services/comments-service';
 import { StatusCodes } from '../settings';
 import { Paginator } from '../types/result-types';
+import { CommentsService } from '../services/comments-service';
+import { CommentsQueryRepository } from '../repositories/comments-query-repository';
+import { PostsQueryRepository } from '../repositories/posts-query-repository';
 
-class CommentsController {
+export class CommentsController {
+    constructor(protected commentsService: CommentsService, protected commentsQueryRepository: CommentsQueryRepository, protected postsQueryRepository: PostsQueryRepository) { }
+
     async findCommentController(req: Request, res: Response<false | Comment>) {
-        const comment = await commentsQueryRepository.findComment(req.params.id, req.user?.userId!)
+        const comment = await this.commentsQueryRepository.findComment(req.params.id, req.user?.userId!)
         if (!comment) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -27,7 +29,7 @@ class CommentsController {
             userId: req.user?.userId!,
             userLogin: req.user?.login!
         }
-        const comment = await commentsQueryRepository.findComment(req.params.commentId)
+        const comment = await this.commentsQueryRepository.findComment(req.params.commentId)
         if (!comment) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -42,7 +44,7 @@ class CommentsController {
             return
         }
 
-        await commentsService.deleteComment(req.params.commentId)
+        await this.commentsService.deleteComment(req.params.commentId)
         res
             .status(StatusCodes.NO_CONTENT_204)
             .send()
@@ -55,7 +57,7 @@ class CommentsController {
                 .send()
             return
         }
-        const post = await postsQueryRepository.findPost(req.params.postId)
+        const post = await this.postsQueryRepository.findPost(req.params.postId)
         if (!post) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -66,8 +68,8 @@ class CommentsController {
             userId: req.user?.userId!,
             userLogin: req.user?.login!
         }
-        const createdComment = await commentsService.createComment(req.body, commentatorInfo, req.params.postId)
-        const comment = commentsQueryRepository.mapToOutput(createdComment)
+        const createdComment = await this.commentsService.createComment(req.body, commentatorInfo, req.params.postId)
+        const comment = this.commentsQueryRepository.mapToOutput(createdComment)
         res
             .status(StatusCodes.CREATED_201)
             .send(comment)
@@ -80,7 +82,7 @@ class CommentsController {
                 .send()
             return
         }
-        const comment = await commentsQueryRepository.findComment(req.params.commentId)
+        const comment = await this.commentsQueryRepository.findComment(req.params.commentId)
         if (!comment) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -98,7 +100,7 @@ class CommentsController {
                 .send()
             return
         }
-        await commentsService.updateComment(req.body, comment)
+        await this.commentsService.updateComment(req.body, comment)
         res
             .status(StatusCodes.NO_CONTENT_204)
             .send()
@@ -106,14 +108,14 @@ class CommentsController {
 
     async getCommentsForPostController(req: Request, res: Response<Paginator<Comment[]>>) {
         const query = req.query as unknown as SearchQueryParametersType;
-        const post = await postsQueryRepository.findPost(req.params.postId)
+        const post = await this.postsQueryRepository.findPost(req.params.postId)
         if (!post) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
                 .send()
             return
         }
-        const comments = await commentsQueryRepository.getComments(req.params.postId, query, req.user?.userId!)
+        const comments = await this.commentsQueryRepository.getComments(req.params.postId, query, req.user?.userId!)
         res
             .status(StatusCodes.OK_200)
             .send(comments)
@@ -126,18 +128,17 @@ class CommentsController {
                 .send()
             return
         }
-        const comment = await commentsQueryRepository.findComment(req.params.commentId)
+        const comment = await this.commentsQueryRepository.findComment(req.params.commentId)
         if (!comment) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
                 .send()
             return
         }
-        await commentsService.changeCommentLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId)
+        await this.commentsService.changeCommentLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId)
         res
             .status(StatusCodes.NO_CONTENT_204)
             .send()
     }
 }
 
-export const commentsController = new CommentsController()

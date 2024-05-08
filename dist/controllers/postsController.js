@@ -9,16 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postsController = void 0;
-const posts_query_repository_1 = require("../repositories/posts-query-repository");
-const posts_service_1 = require("../services/posts-service");
+exports.PostsController = void 0;
 const settings_1 = require("../settings");
-const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 class PostsController {
+    constructor(postsService, postsQueryRepository, blogsQueryRepository) {
+        this.postsService = postsService;
+        this.postsQueryRepository = postsQueryRepository;
+        this.blogsQueryRepository = blogsQueryRepository;
+    }
     getPostsController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
-            const posts = yield posts_query_repository_1.postsQueryRepository.getPosts(query);
+            const posts = yield this.postsQueryRepository.getPosts(query);
             res
                 .status(settings_1.StatusCodes.OK_200)
                 .json(posts);
@@ -26,7 +28,7 @@ class PostsController {
     }
     findPostController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.id);
+            const post = yield this.postsQueryRepository.findPost(req.params.id);
             if (!post) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -41,14 +43,14 @@ class PostsController {
     findPostsOfBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(req.params.blogId);
+            const blog = yield this.blogsQueryRepository.findBlog(req.params.blogId);
             if (!blog) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            const posts = yield posts_query_repository_1.postsQueryRepository.getPosts(query, req.params.blogId);
+            const posts = yield this.postsQueryRepository.getPosts(query, req.params.blogId);
             res
                 .status(settings_1.StatusCodes.OK_200)
                 .json(posts);
@@ -56,7 +58,7 @@ class PostsController {
     }
     deletePostController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const postIsDeleted = yield posts_service_1.postsService.deletePost(req.params.id);
+            const postIsDeleted = yield this.postsService.deletePost(req.params.id);
             if (!postIsDeleted) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -70,8 +72,8 @@ class PostsController {
     }
     createPostController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdPost = yield posts_service_1.postsService.createPost(req.body);
-            const newPost = posts_query_repository_1.postsQueryRepository.mapToOutput(createdPost);
+            const createdPost = yield this.postsService.createPost(req.body);
+            const newPost = this.postsQueryRepository.mapToOutput(createdPost);
             res
                 .status(settings_1.StatusCodes.CREATED_201)
                 .json(newPost);
@@ -79,15 +81,15 @@ class PostsController {
     }
     createPostForBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlog(req.params.blogId);
+            const blog = yield this.blogsQueryRepository.findBlog(req.params.blogId);
             if (!blog) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            const createdPost = yield posts_service_1.postsService.createPost(req.body, req.params.blogId);
-            const newPost = posts_query_repository_1.postsQueryRepository.mapToOutput(createdPost);
+            const createdPost = yield this.postsService.createPost(req.body, req.params.blogId);
+            const newPost = this.postsQueryRepository.mapToOutput(createdPost);
             res
                 .status(settings_1.StatusCodes.CREATED_201)
                 .json(newPost);
@@ -95,7 +97,7 @@ class PostsController {
     }
     updatePostController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isUpdatedPost = yield posts_service_1.postsService.updatePost(req.body, req.params.id);
+            const isUpdatedPost = yield this.postsService.updatePost(req.body, req.params.id);
             if (!isUpdatedPost) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -108,4 +110,4 @@ class PostsController {
         });
     }
 }
-exports.postsController = new PostsController();
+exports.PostsController = PostsController;

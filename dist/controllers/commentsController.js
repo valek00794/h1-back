@@ -9,16 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentsController = void 0;
-const comments_query_repository_1 = require("../repositories/comments-query-repository");
-const posts_query_repository_1 = require("../repositories/posts-query-repository");
-const comments_service_1 = require("../services/comments-service");
+exports.CommentsController = void 0;
 const settings_1 = require("../settings");
 class CommentsController {
+    constructor(commentsService, commentsQueryRepository, postsQueryRepository) {
+        this.commentsService = commentsService;
+        this.commentsQueryRepository = commentsQueryRepository;
+        this.postsQueryRepository = postsQueryRepository;
+    }
     findCommentController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(req.params.id, (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
+            const comment = yield this.commentsQueryRepository.findComment(req.params.id, (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
             if (!comment) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -37,7 +39,7 @@ class CommentsController {
                 userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
                 userLogin: (_b = req.user) === null || _b === void 0 ? void 0 : _b.login
             };
-            const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(req.params.commentId);
+            const comment = yield this.commentsQueryRepository.findComment(req.params.commentId);
             if (!comment) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -51,7 +53,7 @@ class CommentsController {
                     .send();
                 return;
             }
-            yield comments_service_1.commentsService.deleteComment(req.params.commentId);
+            yield this.commentsService.deleteComment(req.params.commentId);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();
@@ -66,7 +68,7 @@ class CommentsController {
                     .send();
                 return;
             }
-            const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.postId);
+            const post = yield this.postsQueryRepository.findPost(req.params.postId);
             if (!post) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -77,8 +79,8 @@ class CommentsController {
                 userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
                 userLogin: (_b = req.user) === null || _b === void 0 ? void 0 : _b.login
             };
-            const createdComment = yield comments_service_1.commentsService.createComment(req.body, commentatorInfo, req.params.postId);
-            const comment = comments_query_repository_1.commentsQueryRepository.mapToOutput(createdComment);
+            const createdComment = yield this.commentsService.createComment(req.body, commentatorInfo, req.params.postId);
+            const comment = this.commentsQueryRepository.mapToOutput(createdComment);
             res
                 .status(settings_1.StatusCodes.CREATED_201)
                 .send(comment);
@@ -93,7 +95,7 @@ class CommentsController {
                     .send();
                 return;
             }
-            const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(req.params.commentId);
+            const comment = yield this.commentsQueryRepository.findComment(req.params.commentId);
             if (!comment) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -111,7 +113,7 @@ class CommentsController {
                     .send();
                 return;
             }
-            yield comments_service_1.commentsService.updateComment(req.body, comment);
+            yield this.commentsService.updateComment(req.body, comment);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();
@@ -121,14 +123,14 @@ class CommentsController {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             const query = req.query;
-            const post = yield posts_query_repository_1.postsQueryRepository.findPost(req.params.postId);
+            const post = yield this.postsQueryRepository.findPost(req.params.postId);
             if (!post) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            const comments = yield comments_query_repository_1.commentsQueryRepository.getComments(req.params.postId, query, (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
+            const comments = yield this.commentsQueryRepository.getComments(req.params.postId, query, (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
             res
                 .status(settings_1.StatusCodes.OK_200)
                 .send(comments);
@@ -142,18 +144,18 @@ class CommentsController {
                     .send();
                 return;
             }
-            const comment = yield comments_query_repository_1.commentsQueryRepository.findComment(req.params.commentId);
+            const comment = yield this.commentsQueryRepository.findComment(req.params.commentId);
             if (!comment) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            yield comments_service_1.commentsService.changeCommentLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId);
+            yield this.commentsService.changeCommentLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();
         });
     }
 }
-exports.commentsController = new CommentsController();
+exports.CommentsController = CommentsController;

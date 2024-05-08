@@ -9,21 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentsService = void 0;
+exports.CommentsService = void 0;
 const mongodb_1 = require("mongodb");
 const comments_types_1 = require("../types/comments-types");
-const comments_repository_1 = require("../repositories/comments-repository");
 const likes_types_1 = require("../types/likes-types");
 const settings_1 = require("../settings");
 const result_types_1 = require("../types/result-types");
 class CommentsService {
+    constructor(commentsRepository) {
+        this.commentsRepository = commentsRepository;
+    }
     createComment(body, commentatorInfo, postId) {
         return __awaiter(this, void 0, void 0, function* () {
             const newComment = new comments_types_1.Comment(body.content, {
                 userId: commentatorInfo.userId,
                 userLogin: commentatorInfo.userLogin,
             }, new Date().toISOString(), new mongodb_1.ObjectId(postId));
-            return yield comments_repository_1.commentsRepository.createComment(newComment);
+            return yield this.commentsRepository.createComment(newComment);
         });
     }
     updateComment(body, comment) {
@@ -32,7 +34,7 @@ class CommentsService {
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin,
             }, comment.createdAt, comment.postId);
-            return yield comments_repository_1.commentsRepository.updateComment(updatedComment, comment.id.toString());
+            return yield this.commentsRepository.updateComment(updatedComment, comment.id.toString());
         });
     }
     deleteComment(id) {
@@ -40,22 +42,22 @@ class CommentsService {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            return yield comments_repository_1.commentsRepository.deleteComment(id);
+            return yield this.commentsRepository.deleteComment(id);
         });
     }
     changeCommentLikeStatus(commentId, likeStatus, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             if (likeStatus === likes_types_1.LikeStatus.Like) {
-                yield comments_repository_1.commentsRepository.likeComment(commentId, userId);
+                yield this.commentsRepository.likeComment(commentId, userId);
             }
             if (likeStatus === likes_types_1.LikeStatus.Dislike) {
-                yield comments_repository_1.commentsRepository.dislikeComment(commentId, userId);
+                yield this.commentsRepository.dislikeComment(commentId, userId);
             }
             if (likeStatus === likes_types_1.LikeStatus.None) {
-                yield comments_repository_1.commentsRepository.removeLikeStatusComment(commentId, userId);
+                yield this.commentsRepository.removeLikeStatusComment(commentId, userId);
             }
             return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });
     }
 }
-exports.commentsService = new CommentsService();
+exports.CommentsService = CommentsService;

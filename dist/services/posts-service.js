@@ -9,21 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postsService = void 0;
+exports.PostsService = void 0;
 const mongodb_1 = require("mongodb");
 const posts_types_1 = require("../types/posts-types");
-const posts_repository_1 = require("../repositories/posts-repository");
-const blogs_repository_1 = require("../repositories/blogs-repository");
 class PostsService {
+    constructor(postsRepository, blogsRepository) {
+        this.postsRepository = postsRepository;
+        this.blogsRepository = blogsRepository;
+    }
     createPost(body, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
             let getBlogId = blogId && mongodb_1.ObjectId.isValid(blogId) ? blogId : body.blogId;
             const newPost = new posts_types_1.Post(body.title, body.shortDescription, body.content, new mongodb_1.ObjectId(getBlogId), '', new Date().toISOString());
-            const blog = yield blogs_repository_1.blogsRepository.findBlog(getBlogId);
+            const blog = yield this.blogsRepository.findBlog(getBlogId);
             if (blog) {
                 newPost.blogName = blog.name;
             }
-            return yield posts_repository_1.postsRepository.createPost(newPost);
+            return yield this.postsRepository.createPost(newPost);
         });
     }
     updatePost(body, id) {
@@ -31,16 +33,16 @@ class PostsService {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            const post = yield posts_repository_1.postsRepository.findPost(id);
+            const post = yield this.postsRepository.findPost(id);
             if (!post) {
                 return false;
             }
             const updatedPost = new posts_types_1.Post(body.title, body.shortDescription, body.content, new mongodb_1.ObjectId(body.blogId), '', post.createdAt);
-            const blog = yield blogs_repository_1.blogsRepository.findBlog(body.blogId.toString());
+            const blog = yield this.blogsRepository.findBlog(body.blogId.toString());
             if (blog) {
                 updatedPost.blogName = blog.name;
             }
-            return yield posts_repository_1.postsRepository.updatePost(updatedPost, id);
+            return yield this.postsRepository.updatePost(updatedPost, id);
         });
     }
     deletePost(id) {
@@ -48,8 +50,8 @@ class PostsService {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            return yield posts_repository_1.postsRepository.deletePost(id);
+            return yield this.postsRepository.deletePost(id);
         });
     }
 }
-exports.postsService = new PostsService();
+exports.PostsService = PostsService;

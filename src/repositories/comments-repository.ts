@@ -3,7 +3,7 @@ import { CommentsModel } from '../db/mongo/comments.model'
 import { LikesInfo } from '../types/likes-types'
 import { CommentLikesStatusModel } from '../db/mongo/commentLikesStatus-model'
 
-class CommentsRepository {
+export class CommentsRepository {
     async createComment(newComment: Comment): Promise<CommentDbType> {
         const comment = new CommentsModel(newComment)
         const commentLikesInfo = new CommentLikesStatusModel({
@@ -55,5 +55,3 @@ class CommentsRepository {
         )
     }
 }
-
-export const commentsRepository = new CommentsRepository()

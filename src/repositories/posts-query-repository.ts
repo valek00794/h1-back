@@ -6,7 +6,7 @@ import { SearchQueryParametersType } from '../types/query-types'
 import { PostsModel } from '../db/mongo/posts.model'
 import { Paginator } from '../types/result-types'
 
-class PostsQueryRepository {
+export class PostsQueryRepository {
     async getPosts(query: SearchQueryParametersType, blogId?: string): Promise<Paginator<PostViewType[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
@@ -51,5 +51,3 @@ class PostsQueryRepository {
         }
     }
 }
-
-export const postsQueryRepository = new PostsQueryRepository()
