@@ -5,7 +5,7 @@ import { getSanitizationQuery } from "../utils"
 import { SearchQueryParametersType } from "../types/query-types"
 import { UsersModel } from "../db/mongo/users.model"
 import { Paginator } from "../types/result-types"
-class UsersQueryRepository {
+export class UsersQueryRepository {
     async findUserById(id: string): Promise<UserInfoType | false> {
         if (!ObjectId.isValid(id)) {
             return false
@@ -57,5 +57,3 @@ class UsersQueryRepository {
         }
     }
 }
-
-export const usersQueryRepository = new UsersQueryRepository()

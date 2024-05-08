@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersRepository = void 0;
+exports.UsersRepository = void 0;
 const users_model_1 = require("../db/mongo/users.model");
 const usersEmailConfirmation_model_1 = require("../db/mongo/usersEmailConfirmation.model");
 const usersRecoveryPasssword_model_1 = require("../db/mongo/usersRecoveryPasssword.model");
@@ -77,4 +77,4 @@ class UsersRepository {
         });
     }
 }
-exports.usersRepository = new UsersRepository();
+exports.UsersRepository = UsersRepository;

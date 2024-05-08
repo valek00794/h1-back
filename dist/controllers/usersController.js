@@ -9,15 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersController = void 0;
-const users_service_1 = require("../services/users-service");
-const users_query_repository_1 = require("../repositories/users-query-repository");
+exports.UsersController = void 0;
 const settings_1 = require("../settings");
 class UsersController {
+    constructor(usersService, usersQueryRepository) {
+        this.usersService = usersService;
+        this.usersQueryRepository = usersQueryRepository;
+    }
     createUserController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const createdUser = yield users_service_1.usersService.createUser(req.body.login, req.body.email, req.body.password);
-            const user = users_query_repository_1.usersQueryRepository.mapToOutput(createdUser);
+            const createdUser = yield this.usersService.createUser(req.body.login, req.body.email, req.body.password);
+            const user = this.usersQueryRepository.mapToOutput(createdUser);
             res
                 .status(settings_1.StatusCodes.CREATED_201)
                 .json(user);
@@ -27,7 +29,7 @@ class UsersController {
     getUsersController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = req.query;
-            const users = yield users_query_repository_1.usersQueryRepository.getAllUsers(query);
+            const users = yield this.usersQueryRepository.getAllUsers(query);
             res
                 .status(settings_1.StatusCodes.OK_200)
                 .json(users);
@@ -35,7 +37,7 @@ class UsersController {
     }
     deleteUserController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userIsDeleted = yield users_service_1.usersService.deleteUserById(req.params.id);
+            const userIsDeleted = yield this.usersService.deleteUserById(req.params.id);
             if (!userIsDeleted) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -48,4 +50,4 @@ class UsersController {
         });
     }
 }
-exports.usersController = new UsersController();
+exports.UsersController = UsersController;

@@ -9,16 +9,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersService = void 0;
+exports.UsersService = void 0;
 const mongodb_1 = require("mongodb");
 const uuid_1 = require("uuid");
 const add_1 = require("date-fns/add");
-const users_repository_1 = require("../repositories/users-repository");
 const email_manager_1 = require("../managers/email-manager");
 const result_types_1 = require("../types/result-types");
 const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
 class UsersService {
+    constructor(usersRepository) {
+        this.usersRepository = usersRepository;
+    }
     signUpUser(login, email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
@@ -37,14 +39,14 @@ class UsersService {
                     isConfirmed: false
                 }
             };
-            const createdUser = yield users_repository_1.usersRepository.createUser(signUpData);
+            const createdUser = yield this.usersRepository.createUser(signUpData);
             if (signUpData.emailConfirmation) {
                 try {
                     yield email_manager_1.emailManager.sendEmailConfirmationMessage(signUpData.user.email, signUpData.emailConfirmation.confirmationCode);
                 }
                 catch (error) {
                     console.error(error);
-                    users_repository_1.usersRepository.deleteUserById(createdUser._id.toString());
+                    this.usersRepository.deleteUserById(createdUser._id.toString());
                     const errors = {
                         errorsMessages: [{
                                 message: "Error sending confirmation email",
@@ -69,7 +71,7 @@ class UsersService {
                 },
                 emailConfirmation: false
             };
-            return yield users_repository_1.usersRepository.createUser(signUpData);
+            return yield this.usersRepository.createUser(signUpData);
         });
     }
     updateUserPassword(userId, password) {
@@ -78,7 +80,7 @@ class UsersService {
                 return false;
             }
             const passwordHash = yield bcypt_adapter_1.bcryptArapter.generateHash(password);
-            return yield users_repository_1.usersRepository.updateUserPassword(userId, passwordHash);
+            return yield this.usersRepository.updateUserPassword(userId, passwordHash);
         });
     }
     deleteUserById(id) {
@@ -86,8 +88,8 @@ class UsersService {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
-            return yield users_repository_1.usersRepository.deleteUserById(id);
+            return yield this.usersRepository.deleteUserById(id);
         });
     }
 }
-exports.usersService = new UsersService();
+exports.UsersService = UsersService;
