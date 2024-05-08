@@ -21,8 +21,8 @@ import { PostsService } from "./services/posts-service";
 import { UsersService } from "./services/users-service";
 import { UsersDevicesService } from "./services/usersDevices-service";
 
-const blogsRepository = new BlogsRepository()
-const blogsQueryRepository = new BlogsQueryRepository()
+ const blogsRepository = new BlogsRepository()
+ export const blogsQueryRepository = new BlogsQueryRepository()
 const blogsService = new BlogsService(blogsRepository)
 
 const postsQueryRepository = new PostsQueryRepository()
@@ -34,7 +34,7 @@ const commentsRepository = new CommentsRepository()
 const commentsService = new CommentsService(commentsRepository)
 
 export const usersQueryRepository = new UsersQueryRepository()
-const usersRepository = new UsersRepository()
+export const usersRepository = new UsersRepository()
 const usersService = new UsersService(usersRepository)
 
 const usersDevicesQueryRepository = new UsersDevicesQueryRepository()

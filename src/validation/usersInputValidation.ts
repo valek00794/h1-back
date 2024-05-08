@@ -1,7 +1,5 @@
 import { body } from 'express-validator'
-
-import { usersQueryRepository } from '../repositories/users-query-repository'
-import { usersRepository } from '../repositories/users-repository'
+import { usersRepository } from '../composition-root'
 
 const VALIDATE_PHARAMS = {
     password: {
