@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.recoveryCodeInputValidation = exports.confirmationCodeInputValidation = exports.emailInputValidation = exports.userDataInputValidation = void 0;
 const express_validator_1 = require("express-validator");
-const users_query_repository_1 = require("../repositories/users-query-repository");
+const users_repository_1 = require("../repositories/users-repository");
 const VALIDATE_PHARAMS = {
     password: {
         minLength: 6,
@@ -39,7 +39,7 @@ exports.userDataInputValidation = [
         .withMessage(`The field length should be from ${VALIDATE_PHARAMS.login.minLength} to ${VALIDATE_PHARAMS.login.maxLength}`)
         .matches(VALIDATE_PHARAMS.login.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.login.pattern}`)
         .custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(value);
+        const user = yield users_repository_1.usersRepository.findUserByLoginOrEmail(value);
         if (user !== null) {
             throw new Error('User with current login already exists');
         }
@@ -52,7 +52,7 @@ exports.userDataInputValidation = [
         .withMessage('The field is required')
         .matches(VALIDATE_PHARAMS.email.pattern).withMessage(`The field has a pattern ${VALIDATE_PHARAMS.email.pattern}`)
         .custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield users_query_repository_1.usersQueryRepository.findUserByLoginOrEmail(value);
+        const user = yield users_repository_1.usersRepository.findUserByLoginOrEmail(value);
         if (user !== null) {
             throw new Error('User with current email already exists');
         }

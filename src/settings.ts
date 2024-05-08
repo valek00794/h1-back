@@ -24,6 +24,7 @@ export const SETTINGS = {
             USERS_PASSWORD_RECOVERY: process.env.USERS_PASSWORD_RECOVERY_COLLECTION_NAME || '',
             USERS_DEVICES: process.env.USERS_DEVICES_COLLECTION_NAME || '',
             COMMENTS: process.env.COMMENTS_COLLECTION_NAME || '',
+            COMMENTS_LIKE_STATUS: process.env.COMMENTS_LIKE_STATUS_COLLECTION_NAME || '',
             API_REQUESTS: process.env.API_REQUESTS_COLLECTION_NAME || '',
         },
 

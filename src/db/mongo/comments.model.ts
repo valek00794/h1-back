@@ -1,9 +1,9 @@
 import mongoose, { Schema } from 'mongoose'
 
 import { SETTINGS } from '../../settings'
-import { CommentType } from '../../types/comments-types'
+import { Comment } from '../../types/comments-types'
 
-export const CommentsSchema = new mongoose.Schema<CommentType>({
+export const CommentsSchema = new mongoose.Schema<Comment>({
     content: { type: String, required: true },
     commentatorInfo: {
         userId: { type: String, required: true },
@@ -14,4 +14,4 @@ export const CommentsSchema = new mongoose.Schema<CommentType>({
     postId: { type: Schema.Types.ObjectId, required: false },
 })
 
-export const CommentsModel = mongoose.model<CommentType>(SETTINGS.DB.collection.COMMENTS, CommentsSchema)
+export const CommentsModel = mongoose.model<Comment>(SETTINGS.DB.collection.COMMENTS, CommentsSchema)

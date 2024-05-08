@@ -1,42 +1,41 @@
 import { ObjectId } from 'mongodb'
 
-import { BlogType, BlogViewType } from '../types/blogs-types'
+import { BlogDbType, Blog } from '../types/blogs-types'
 import { blogsRepository } from '../repositories/blogs-repository'
-import { blogsQueryRepository } from '../repositories/blogs-query-repository'
 
-export const blogsService = {
-    async createBlog(body: BlogType): Promise<BlogViewType> {
-        const newBlog: BlogType = {
-            name: body.name,
-            description: body.description,
-            websiteUrl: body.websiteUrl,
-            createdAt: new Date().toISOString(),
-            isMembership: false
-        }
-        const createdBlog = await blogsRepository.createBlog(newBlog)
-        return blogsQueryRepository.mapToOutput(createdBlog)
-    },
+class BlogsService {
+    async createBlog(body: Blog): Promise<BlogDbType> {
+        const newBlog= new Blog(
+            body.name,
+            body.description,
+            body.websiteUrl,
+            new Date().toISOString(),
+            false
+        )
+        return await blogsRepository.createBlog(newBlog)
+    }
 
-    async updateBlog(body: BlogType, id: string): Promise<boolean> {
-        const blog = await blogsQueryRepository.findBlog(id)
-        if (!blog) {
+    async updateBlog(body: Blog, id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) {
             return false
         }
-        const updatedblog: BlogType = {
-            name: body.name,
-            description: body.description,
-            websiteUrl: body.websiteUrl,
-            createdAt: blog.createdAt,
-            isMembership: false,
-        }
+        const blog = await blogsRepository.findBlog(id)
+        const updatedblog = new Blog(
+            body.name,
+            body.description,
+            body.websiteUrl,
+            blog!.createdAt,
+            false,
+        )
         return await blogsRepository.updateBlog(updatedblog, id)
-
-    },
+    }
 
     async deleteBlog(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
             return false
         }
         return await blogsRepository.deleteBlog(id)
-    },
+    }
 }
+
+export const blogsService = new BlogsService()

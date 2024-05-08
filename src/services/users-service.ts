@@ -3,16 +3,15 @@ import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns/add'
 
-import { UserSignUpType, UserType, UserViewType } from '../types/users-types'
-import { usersQueryRepository } from '../repositories/users-query-repository'
+import { UserDbType, UserSignUpType } from '../types/users-types'
 import { usersRepository } from '../repositories/users-repository'
 import { emailManager } from '../managers/email-manager'
 import { APIErrorResult, Result } from '../types/result-types'
 import { ResultStatus } from '../settings'
 import { bcryptArapter } from '../adapters/bcypt-adapter'
 
-export const usersService = {
-    async createUser(login: string, email: string, password: string, requireConfirmation?: boolean): Promise<Result<UserViewType | APIErrorResult | null>> {
+class UsersService {
+    async signUpUser(login: string, email: string, password: string): Promise<Result<null>> {
         const passwordHash = await bcryptArapter.generateHash(password)
         const signUpData: UserSignUpType = {
             user: {
@@ -21,10 +20,7 @@ export const usersService = {
                 passwordHash,
                 createdAt: new Date().toISOString(),
             },
-            emailConfirmation: false
-        }
-        if (requireConfirmation) {
-            signUpData.emailConfirmation = {
+            emailConfirmation: {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date(), {
                     hours: 1
@@ -40,29 +36,39 @@ export const usersService = {
             } catch (error) {
                 console.error(error)
                 usersRepository.deleteUserById(createdUser._id!.toString())
-                return {
-                    status: ResultStatus.BadRequest,
-                    data: {
-                        errorsMessages: [{
-                            message: "Error sending confirmation email",
-                            field: "Email sender"
-                        }]
-                    }
+                const errors: APIErrorResult = {
+                    errorsMessages: [{
+                        message: "Error sending confirmation email",
+                        field: "Email sender"
+                    }]
                 }
+                return new Result<null>(
+                    ResultStatus.BadRequest,
+                    null,
+                    errors
+                )
             }
         }
-        if (requireConfirmation) {
-            return {
-                status: ResultStatus.NoContent,
-                data: null
-            }
-        }
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
+    }
 
-        return {
-            status: ResultStatus.Created,
-            data: usersQueryRepository.mapToOutput(createdUser),
+    async createUser(login: string, email: string, password: string): Promise<UserDbType> {
+        const passwordHash = await bcryptArapter.generateHash(password)
+        const signUpData: UserSignUpType = {
+            user: {
+                login,
+                email,
+                passwordHash,
+                createdAt: new Date().toISOString(),
+            },
+            emailConfirmation: false
         }
-    },
+        return await usersRepository.createUser(signUpData)
+    }
 
     async updateUserPassword(userId: string, password: string): Promise<boolean> {
         if (!ObjectId.isValid(userId)) {
@@ -70,7 +76,7 @@ export const usersService = {
         }
         const passwordHash = await bcryptArapter.generateHash(password)
         return await usersRepository.updateUserPassword(userId, passwordHash)
-    },
+    }
 
     async deleteUserById(id: string): Promise<boolean> {
         if (!ObjectId.isValid(id)) {
@@ -79,3 +85,5 @@ export const usersService = {
         return await usersRepository.deleteUserById(id)
     }
 }
+
+export const usersService = new UsersService()

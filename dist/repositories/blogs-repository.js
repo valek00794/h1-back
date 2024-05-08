@@ -11,24 +11,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRepository = void 0;
 const blogs_model_1 = require("../db/mongo/blogs.model");
-exports.blogsRepository = {
+class BlogsRepository {
     createBlog(newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
             const blog = new blogs_model_1.BlogsModel(newBlog);
             yield blog.save();
             return blog;
         });
-    },
+    }
     updateBlog(updatedBlog, id) {
         return __awaiter(this, void 0, void 0, function* () {
             const updatedResult = yield blogs_model_1.BlogsModel.findByIdAndUpdate(id, updatedBlog, { new: true });
             return updatedResult ? true : false;
         });
-    },
+    }
     deleteBlog(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const deleteResult = yield blogs_model_1.BlogsModel.findByIdAndDelete(id);
             return deleteResult ? true : false;
         });
-    },
-};
+    }
+    findBlog(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield blogs_model_1.BlogsModel.findById(id);
+        });
+    }
+}
+exports.blogsRepository = new BlogsRepository();

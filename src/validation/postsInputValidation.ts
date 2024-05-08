@@ -1,6 +1,6 @@
-import { body } from 'express-validator';
+import { body } from 'express-validator'
 
-import { blogsQueryRepository } from '../repositories/blogs-query-repository';
+import { blogsQueryRepository } from '../repositories/blogs-query-repository'
 
 const VALIDATE_PHARAMS = {
     titleMaxLength: 30,
@@ -27,9 +27,8 @@ export const postsBlogIdInputValidation = [
         const blogs = await blogsQueryRepository.getBlogs()
         const blogIdIncludes = blogs.items.findIndex(el => el.id?.toString() === value)
         if (blogIdIncludes === -1) {
-            throw new Error('Blog not found');
-        } else {
-            return value;
+            throw new Error('Blog not found')
         }
+        return value
     })
 ]

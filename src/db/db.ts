@@ -11,6 +11,7 @@ import { UsersModel } from '../db/mongo/users.model';
 import { UsersDevicesModel } from '../db/mongo/usersDevices.model';
 import { UsersEmailConfirmationsModel } from '../db/mongo/usersEmailConfirmation.model';
 import { UsersRecoveryPassswordModel } from '../db/mongo/usersRecoveryPasssword.model';
+import { CommentLikesStatusModel } from './mongo/commentLikesStatus-model';
 
 dotenv.config()
 
@@ -82,4 +83,5 @@ export const setMongoDB = async () => {
   await UsersDevicesModel.collection.drop()
   await UsersEmailConfirmationsModel.collection.drop()
   await UsersRecoveryPassswordModel.collection.drop()
+  await CommentLikesStatusModel.collection.drop()
 }

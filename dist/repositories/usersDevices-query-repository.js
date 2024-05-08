@@ -11,19 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersDevicesQueryRepository = void 0;
 const usersDevices_model_1 = require("../db/mongo/usersDevices.model");
-exports.usersDevicesQueryRepository = {
+class UsersDevicesQueryRepository {
     getAllActiveDevicesByUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const userDevices = yield usersDevices_model_1.UsersDevicesModel.find({ userId });
             return userDevices.map(device => this.mapToOutput(device));
         });
-    },
+    }
     getUserDeviceById(deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
             const deviceSession = yield usersDevices_model_1.UsersDevicesModel.findOne({ deviceId });
-            return deviceSession ? this.mapToOutput(deviceSession) : false;
+            return deviceSession ? this.mapToOutput(deviceSession) : null;
         });
-    },
+    }
     mapToOutput(userDevice) {
         return {
             ip: userDevice.ip,
@@ -32,4 +32,5 @@ exports.usersDevicesQueryRepository = {
             deviceId: userDevice.deviceId,
         };
     }
-};
+}
+exports.usersDevicesQueryRepository = new UsersDevicesQueryRepository();

@@ -14,8 +14,8 @@ const settings_1 = require("../settings");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const usersDevices_repository_1 = require("../repositories/usersDevices-repository");
 const auth_service_1 = require("./auth-service");
-const usersDevices_query_repository_1 = require("../repositories/usersDevices-query-repository");
-exports.usersDevicesService = {
+const result_types_1 = require("../types/result-types");
+class UsersDevicesService {
     addUserDevice(refreshToken, deviceTitle, ipAddress) {
         return __awaiter(this, void 0, void 0, function* () {
             const userVerifyInfo = yield jwt_adapter_1.jwtAdapter.getUserInfoByToken(refreshToken, settings_1.SETTINGS.JWT.RT_SECRET);
@@ -29,7 +29,7 @@ exports.usersDevicesService = {
             };
             return yield usersDevices_repository_1.usersDevicesRepository.addUserDevice(device);
         });
-    },
+    }
     updateUserDevice(oldRefreshToken, refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             const userVerifyInfoByOldToken = yield jwt_adapter_1.jwtAdapter.getUserInfoByToken(oldRefreshToken, settings_1.SETTINGS.JWT.RT_SECRET);
@@ -38,66 +38,22 @@ exports.usersDevicesService = {
             const newExpiryDate = new Date(userVerifyInfo.exp * 1000).toISOString();
             return yield usersDevices_repository_1.usersDevicesRepository.updateUserDevice(userVerifyInfoByOldToken, newLastActiveDate, newExpiryDate);
         });
-    },
-    getActiveDevicesByUser(refreshToken) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userVerifyInfo = yield auth_service_1.authService.ckeckUserByRefreshToken(refreshToken);
-            if (userVerifyInfo === null) {
-                return {
-                    status: settings_1.ResultStatus.Unauthorized,
-                    data: null
-                };
-            }
-            const devices = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getAllActiveDevicesByUser(userVerifyInfo.userId);
-            return {
-                status: settings_1.ResultStatus.Success,
-                data: devices
-            };
-        });
-    },
+    }
     deleteAllDevicesByUser(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userVerifyInfo = yield auth_service_1.authService.ckeckUserByRefreshToken(refreshToken);
-            if (userVerifyInfo === null) {
-                return {
-                    status: settings_1.ResultStatus.Unauthorized,
-                    data: null
-                };
+            const userVerifyInfo = yield auth_service_1.authService.checkUserByRefreshToken(refreshToken);
+            if (userVerifyInfo.data === null) {
+                return new result_types_1.Result(settings_1.ResultStatus.Unauthorized, null, null);
             }
-            const deleteResult = yield usersDevices_repository_1.usersDevicesRepository.deleteUserDevices(userVerifyInfo);
-            return {
-                status: settings_1.ResultStatus.NoContent,
-                data: deleteResult
-            };
-        });
-    },
-    deleteUserDeviceById(refreshToken, deviceId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userVerifyInfo = yield auth_service_1.authService.ckeckUserByRefreshToken(refreshToken);
-            if (userVerifyInfo === null) {
-                return {
-                    status: settings_1.ResultStatus.Unauthorized,
-                    data: null
-                };
-            }
-            const device = yield usersDevices_query_repository_1.usersDevicesQueryRepository.getUserDeviceById(deviceId);
-            if (!device) {
-                return {
-                    status: settings_1.ResultStatus.NotFound,
-                    data: null
-                };
-            }
-            if (userVerifyInfo.userId !== device.userId) {
-                return {
-                    status: settings_1.ResultStatus.Forbidden,
-                    data: null
-                };
-            }
-            const deleteResult = yield usersDevices_repository_1.usersDevicesRepository.deleteUserDevicebyId(deviceId);
-            return {
-                status: settings_1.ResultStatus.NoContent,
-                data: deleteResult
-            };
+            const deleteResult = yield usersDevices_repository_1.usersDevicesRepository.deleteUserDevices(userVerifyInfo.data);
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, deleteResult, null);
         });
     }
-};
+    deleteUserDeviceById(deviceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const deleteResult = yield usersDevices_repository_1.usersDevicesRepository.deleteUserDevicebyId(deviceId);
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, deleteResult, null);
+        });
+    }
+}
+exports.usersDevicesService = new UsersDevicesService();

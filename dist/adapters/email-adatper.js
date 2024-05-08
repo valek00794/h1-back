@@ -25,6 +25,9 @@ exports.emailAdapter = {
                     user: process.env.EMAIL_SENDER,
                     pass: process.env.PASS_SENDER,
                 },
+                tls: {
+                    rejectUnauthorized: false // отключение проверки сертификата
+                }
             });
             const info = yield transporter.sendMail({
                 from: `Backend project  <${process.env.EMAIL_SENDER}>`,

@@ -1,29 +1,32 @@
 import { ObjectId, WithId } from 'mongodb'
 
 import { CommentatorInfoType } from './users-types'
+import { LikesInfoView } from './likes-types'
 
-export type CommentType = {
-  content: string;
-  commentatorInfo: CommentatorInfoType;
-  createdAt: string;
-  postId?: ObjectId
+export class Comment {
+  constructor(
+    public content: string,
+    public commentatorInfo: CommentatorInfoType,
+    public createdAt: string,
+    public postId?: ObjectId,
+    public likesInfo?: LikesInfoView
+  ) { }
 }
 
-export type CommentDbType = WithId<CommentType>
+export type CommentDbType = WithId<Comment>
 
 export type CommentInputType = {
-  content: string;
+  content: string
 }
 
-export type CommentViewType = CommentType & {
-  id: ObjectId;
-}
+export class CommentView {
+  constructor(
+    public id: ObjectId,
+    public content: string,
+    public commentatorInfo: CommentatorInfoType,
+    public createdAt: string,
+    public likesInfo?: LikesInfoView,
+    public postId?: ObjectId,
 
-export type PaginatorCommentsViewType = {
-  pagesCount: number;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  items: CommentViewType[];
+  ) { }
 }
-

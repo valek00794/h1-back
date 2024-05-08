@@ -7,25 +7,19 @@ export type CreatePostType = {
     blogId: string,
 }
 
-export type PostType = {
-    blogName: string,
-    createdAt: string
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: ObjectId
+export class Post {
+    constructor(
+        public title: string,
+        public shortDescription: string,
+        public content: string,
+        public blogId: ObjectId,
+        public blogName: string,
+        public createdAt: string,
+    ) { }
 }
 
-export type PostDbType = WithId<PostType>
+export type PostDbType = WithId<Post>
 
-export type PostViewType = PostType & {
+export type PostViewType = Post & {
     id: ObjectId,
-}
-
-export type PaginatorPostViewType = {
-    pagesCount: number,
-    page: number,
-    pageSize: number,
-    totalCount: number,
-    items: PostViewType[]
 }

@@ -1,12 +1,13 @@
 import { ObjectId } from 'mongodb'
 
-import { PaginatorPostViewType, PostDbType, PostType, PostViewType } from '../types/posts-types'
+import { PostDbType, PostViewType } from '../types/posts-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 import { PostsModel } from '../db/mongo/posts.model'
+import { Paginator } from '../types/result-types'
 
-export const postsQueryRepository = {
-    async getPosts(query: SearchQueryParametersType, blogId?: string): Promise<PaginatorPostViewType> {
+class PostsQueryRepository {
+    async getPosts(query: SearchQueryParametersType, blogId?: string): Promise<Paginator<PostViewType[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
         if (blogId) {
@@ -21,14 +22,14 @@ export const postsQueryRepository = {
 
         const postsCount = await PostsModel.countDocuments(findOptions)
 
-        return {
-            pagesCount: Math.ceil(postsCount / sanitizationQuery.pageSize),
-            page: sanitizationQuery.pageNumber,
-            pageSize: sanitizationQuery.pageSize,
-            totalCount: postsCount,
-            items: posts.map(post => this.mapToOutput(post))
-        }
-    },
+        return new Paginator<PostViewType[]>(
+            Math.ceil(postsCount / sanitizationQuery.pageSize),
+            sanitizationQuery.pageNumber,
+            sanitizationQuery.pageSize,
+            postsCount,
+            posts.map(post => this.mapToOutput(post))
+        )
+    }
 
     async findPost(id: string): Promise<false | PostViewType> {
         if (!ObjectId.isValid(id)) {
@@ -36,7 +37,7 @@ export const postsQueryRepository = {
         }
         const post = await PostsModel.findById(id)
         return post ? this.mapToOutput(post) : false
-    },
+    }
 
     mapToOutput(post: PostDbType): PostViewType {
         return {
@@ -48,5 +49,7 @@ export const postsQueryRepository = {
             blogName: post.blogName,
             createdAt: post.createdAt
         }
-    },
+    }
 }
+
+export const postsQueryRepository = new PostsQueryRepository()
