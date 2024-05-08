@@ -24,6 +24,7 @@ const users_model_1 = require("../db/mongo/users.model");
 const usersDevices_model_1 = require("../db/mongo/usersDevices.model");
 const usersEmailConfirmation_model_1 = require("../db/mongo/usersEmailConfirmation.model");
 const usersRecoveryPasssword_model_1 = require("../db/mongo/usersRecoveryPasssword.model");
+const commentLikesStatus_model_1 = require("./mongo/commentLikesStatus-model");
 dotenv_1.default.config();
 const runDb = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -93,5 +94,6 @@ const setMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     yield usersDevices_model_1.UsersDevicesModel.collection.drop();
     yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.collection.drop();
     yield usersRecoveryPasssword_model_1.UsersRecoveryPassswordModel.collection.drop();
+    yield commentLikesStatus_model_1.CommentLikesStatusModel.collection.drop();
 });
 exports.setMongoDB = setMongoDB;

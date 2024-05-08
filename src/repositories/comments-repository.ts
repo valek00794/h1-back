@@ -1,4 +1,4 @@
-import { CommentDbType, Comment} from '../types/comments-types'
+import { CommentDbType, Comment } from '../types/comments-types'
 import { CommentsModel } from '../db/mongo/comments.model'
 import { LikesInfo } from '../types/likes-types'
 import { CommentLikesStatusModel } from '../db/mongo/commentLikesStatus-model'
@@ -28,7 +28,7 @@ class CommentsRepository {
     }
 
     async likeComment(commentId: string, userId: string): Promise<LikesInfo | null> {
-        this.removeLikeStatusComment(commentId, userId)
+        await this.removeLikeStatusComment(commentId, userId)
         return await CommentLikesStatusModel.findOneAndUpdate(
             { commentId },
             { $addToSet: { likesUsersIds: userId } },
@@ -37,7 +37,7 @@ class CommentsRepository {
     }
 
     async dislikeComment(commentId: string, userId: string): Promise<LikesInfo | null> {
-        this.removeLikeStatusComment(commentId, userId)
+        await this.removeLikeStatusComment(commentId, userId)
         return await CommentLikesStatusModel.findOneAndUpdate(
             { commentId },
             { $addToSet: { dislikesUsersIds: userId } },

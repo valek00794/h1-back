@@ -41,13 +41,13 @@ class CommentsRepository {
     }
     likeComment(commentId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.removeLikeStatusComment(commentId, userId);
+            yield this.removeLikeStatusComment(commentId, userId);
             return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, { $addToSet: { likesUsersIds: userId } }, { new: true });
         });
     }
     dislikeComment(commentId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.removeLikeStatusComment(commentId, userId);
+            yield this.removeLikeStatusComment(commentId, userId);
             return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, { $addToSet: { dislikesUsersIds: userId } }, { new: true });
         });
     }
