@@ -14,7 +14,10 @@ import { UsersDevicesRepository } from '../repositories/usersDevices-repository'
 import { UsersService } from './users-service'
 
 export class AuthService {
-    constructor(protected usersRepository: UsersRepository, protected usersDevicesRepository: UsersDevicesRepository, protected usersService: UsersService) { }
+    constructor(protected usersService: UsersService,
+        protected usersRepository: UsersRepository,
+        protected usersDevicesRepository: UsersDevicesRepository
+    ) { }
 
     async checkCredential(userId: ObjectId, password: string, passwordHash: string): Promise<boolean> {
         const userConfirmationInfo = await this.usersRepository.findUserConfirmationInfo(userId!.toString())

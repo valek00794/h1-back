@@ -8,7 +8,9 @@ import { UsersDevicesRepository } from '../repositories/usersDevices-repository'
 import { AuthService } from './auth-service'
 
 export class UsersDevicesService {
-    constructor(protected usersDevicesRepository: UsersDevicesRepository, protected authService: AuthService) { }
+    constructor(
+        protected authService: AuthService,
+        protected usersDevicesRepository: UsersDevicesRepository) { }
 
     async addUserDevice(refreshToken: string, deviceTitle: string, ipAddress: string): Promise<UsersDevicesType> {
         const userVerifyInfo = await jwtAdapter.getUserInfoByToken(refreshToken, SETTINGS.JWT.RT_SECRET)

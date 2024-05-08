@@ -8,7 +8,9 @@ import { UsersQueryRepository } from '../repositories/users-query-repository';
 import { UsersService } from '../services/users-service';
 
 export class UsersController {
-    constructor(protected usersService: UsersService, protected usersQueryRepository: UsersQueryRepository) { }
+    constructor(
+        protected usersService: UsersService,
+        protected usersQueryRepository: UsersQueryRepository) { }
 
     async createUserController(req: Request, res: Response<UserViewType>) {
         const createdUser = await this.usersService.createUser(req.body.login, req.body.email, req.body.password)

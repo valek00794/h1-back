@@ -13,11 +13,11 @@ exports.AuthController = void 0;
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const settings_1 = require("../settings");
 class AuthController {
-    constructor(authService, usersQueryRepository, usersService, usersDevicesService) {
+    constructor(authService, usersService, usersDevicesService, usersQueryRepository) {
         this.authService = authService;
-        this.usersQueryRepository = usersQueryRepository;
         this.usersService = usersService;
         this.usersDevicesService = usersDevicesService;
+        this.usersQueryRepository = usersQueryRepository;
     }
     signInController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

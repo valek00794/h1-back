@@ -9,7 +9,9 @@ import { BlogsQueryRepository } from '../repositories/blogs-query-repository';
 
 
 export class BlogsController {
-    constructor(protected blogsService: BlogsService, protected blogsQueryRepository: BlogsQueryRepository) { }
+    constructor(
+        protected blogsService: BlogsService,
+        protected blogsQueryRepository: BlogsQueryRepository) { }
 
     async getBlogsController(req: Request, res: Response<Paginator<BlogView[]>>) {
         const query = req.query as unknown as SearchQueryParametersType;

@@ -9,7 +9,10 @@ import { CommentsQueryRepository } from '../repositories/comments-query-reposito
 import { PostsQueryRepository } from '../repositories/posts-query-repository';
 
 export class CommentsController {
-    constructor(protected commentsService: CommentsService, protected commentsQueryRepository: CommentsQueryRepository, protected postsQueryRepository: PostsQueryRepository) { }
+    constructor(
+        protected commentsService: CommentsService,
+        protected commentsQueryRepository: CommentsQueryRepository,
+        protected postsQueryRepository: PostsQueryRepository) { }
 
     async findCommentController(req: Request, res: Response<false | Comment>) {
         const comment = await this.commentsQueryRepository.findComment(req.params.id, req.user?.userId!)

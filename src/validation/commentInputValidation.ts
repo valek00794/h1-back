@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+
 import { LikeStatus } from '../types/likes-types'
 
 const VALIDATE_PHARAMS = {

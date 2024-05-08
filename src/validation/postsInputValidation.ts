@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+
 import { blogsQueryRepository } from '../composition-root'
 
 const VALIDATE_PHARAMS = {

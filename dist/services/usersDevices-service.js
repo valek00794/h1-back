@@ -14,9 +14,9 @@ const settings_1 = require("../settings");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const result_types_1 = require("../types/result-types");
 class UsersDevicesService {
-    constructor(usersDevicesRepository, authService) {
-        this.usersDevicesRepository = usersDevicesRepository;
+    constructor(authService, usersDevicesRepository) {
         this.authService = authService;
+        this.usersDevicesRepository = usersDevicesRepository;
     }
     addUserDevice(refreshToken, deviceTitle, ipAddress) {
         return __awaiter(this, void 0, void 0, function* () {

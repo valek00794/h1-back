@@ -19,10 +19,10 @@ const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 class AuthService {
-    constructor(usersRepository, usersDevicesRepository, usersService) {
+    constructor(usersService, usersRepository, usersDevicesRepository) {
+        this.usersService = usersService;
         this.usersRepository = usersRepository;
         this.usersDevicesRepository = usersDevicesRepository;
-        this.usersService = usersService;
     }
     checkCredential(userId, password, passwordHash) {
         return __awaiter(this, void 0, void 0, function* () {

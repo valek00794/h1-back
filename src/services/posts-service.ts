@@ -5,7 +5,10 @@ import { BlogsRepository } from "../repositories/blogs-repository"
 import { PostsRepository } from "../repositories/posts-repository"
 
 export class PostsService {
-    constructor(protected postsRepository: PostsRepository, protected blogsRepository: BlogsRepository) { }
+    constructor(
+        protected postsRepository: PostsRepository, 
+        protected blogsRepository: BlogsRepository) { }
+
     async createPost(body: CreatePostType, blogId?: string): Promise<PostDbType> {
         let getBlogId = blogId && ObjectId.isValid(blogId) ? blogId : body.blogId
 

@@ -15,9 +15,10 @@ import { UsersDevicesService } from '../services/usersDevices-service';
 export class AuthController {
     constructor(
         protected authService: AuthService,
-        protected usersQueryRepository: UsersQueryRepository,
         protected usersService: UsersService,
-        protected usersDevicesService: UsersDevicesService) { }
+        protected usersDevicesService: UsersDevicesService,
+        protected usersQueryRepository: UsersQueryRepository,
+    ) { }
 
     async signInController(req: Request, res: Response<TokenOutType>) {
         const user = await this.usersQueryRepository.findUserByLoginOrEmail(req.body.loginOrEmail)
