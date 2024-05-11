@@ -7,24 +7,26 @@ import { AuthService } from '../services/auth-service'
 import { UsersDevicesService } from '../services/usersDevices-service'
 export class UsersDevicesController {
     constructor(
-        protected authService: AuthService, 
-        protected usersDevicesService: UsersDevicesService, 
+        protected authService: AuthService,
+        protected usersDevicesService: UsersDevicesService,
         protected usersDevicesQueryRepository: UsersDevicesQueryRepository) { }
 
     async getActiveDevicesByUserController(req: Request, res: Response<null | UsersDevicesType[]>) {
         const refreshToken = req.cookies.refreshToken
-        const userVerifyInfo = await this.authService.checkUserByRefreshToken(refreshToken)
-        if (userVerifyInfo.data === null) {
+        const devicesResult = await this.usersDevicesService.getActiveDevicesByUser(refreshToken)
+        if (devicesResult.status === ResultStatus.Unauthorized) {
             res
                 .status(StatusCodes.UNAUTHORIZED_401)
                 .send()
             return
         }
-        const devices = await this.usersDevicesQueryRepository.getAllActiveDevicesByUser(userVerifyInfo.data.userId)
-        res
-            .status(StatusCodes.OK_200)
-            .send(devices)
-        return
+
+        if (devicesResult.status === ResultStatus.Success) {
+            res
+                .status(StatusCodes.OK_200)
+                .send(devicesResult.data)
+            return
+        }
     }
 
     async deleteAllDevicesByUserController(req: Request, res: Response) {
@@ -46,31 +48,32 @@ export class UsersDevicesController {
     }
 
     async deleteUserDeviceByIdController(req: Request, res: Response) {
-        const userVerifyInfo = await this.authService.checkUserByRefreshToken(req.cookies.refreshToken)
-        if (userVerifyInfo.data === null) {
+        const refreshToken = req.cookies.refreshToken
+        const devicesResult = await this.usersDevicesService.deleteUserDeviceById(refreshToken, req.params.deviceId)
+        if (devicesResult.status === ResultStatus.Unauthorized) {
             res
                 .status(StatusCodes.UNAUTHORIZED_401)
                 .send()
             return
         }
-        const device = await this.usersDevicesQueryRepository.getUserDeviceById(req.params.deviceId)
-        if (device === null) {
+        if (devicesResult.status === ResultStatus.NotFound) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
                 .send()
             return
         }
-        if (userVerifyInfo.data.userId !== device.userId) {
+        if (devicesResult.status === ResultStatus.Forbidden) {
             res
                 .status(StatusCodes.FORBIDDEN_403)
                 .send()
             return
         }
-        await this.usersDevicesService.deleteUserDeviceById(userVerifyInfo.data.userId)
-        res
-            .status(StatusCodes.NO_CONTENT_204)
-            .send()
-        return
+        if (devicesResult.status === ResultStatus.NoContent) {
+            res
+                .status(StatusCodes.NO_CONTENT_204)
+                .send()
+            return
+        }
     }
 }
 

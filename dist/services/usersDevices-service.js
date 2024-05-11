@@ -41,6 +41,17 @@ class UsersDevicesService {
             return yield this.usersDevicesRepository.updateUserDevice(userVerifyInfoByOldToken, newLastActiveDate, newExpiryDate);
         });
     }
+    getActiveDevicesByUser(refreshToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const userVerifyInfo = yield this.authService.checkUserByRefreshToken(refreshToken);
+            if (userVerifyInfo === null) {
+                return new result_types_1.Result(settings_1.ResultStatus.Unauthorized, null, null);
+            }
+            const devices = yield this.usersDevicesRepository.getAllActiveDevicesByUser((_a = userVerifyInfo.data) === null || _a === void 0 ? void 0 : _a.userId);
+            return new result_types_1.Result(settings_1.ResultStatus.Success, devices, null);
+        });
+    }
     deleteAllDevicesByUser(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             const userVerifyInfo = yield this.authService.checkUserByRefreshToken(refreshToken);
@@ -51,10 +62,22 @@ class UsersDevicesService {
             return new result_types_1.Result(settings_1.ResultStatus.NoContent, deleteResult, null);
         });
     }
-    deleteUserDeviceById(deviceId) {
+    deleteUserDeviceById(refreshToken, deviceId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const deleteResult = yield this.usersDevicesRepository.deleteUserDevicebyId(deviceId);
-            return new result_types_1.Result(settings_1.ResultStatus.NoContent, deleteResult, null);
+            var _a;
+            const userVerifyInfo = yield this.authService.checkUserByRefreshToken(refreshToken);
+            if (userVerifyInfo === null) {
+                return new result_types_1.Result(settings_1.ResultStatus.Unauthorized, null, null);
+            }
+            const device = yield this.usersDevicesRepository.getUserDeviceById(deviceId);
+            if (!device) {
+                return new result_types_1.Result(settings_1.ResultStatus.NotFound, null, null);
+            }
+            if (((_a = userVerifyInfo.data) === null || _a === void 0 ? void 0 : _a.userId) !== device.userId) {
+                return new result_types_1.Result(settings_1.ResultStatus.Forbidden, null, null);
+            }
+            yield this.usersDevicesRepository.deleteUserDevicebyId(deviceId);
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });
     }
 }

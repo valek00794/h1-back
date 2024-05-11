@@ -20,18 +20,19 @@ class UsersDevicesController {
     getActiveDevicesByUserController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const refreshToken = req.cookies.refreshToken;
-            const userVerifyInfo = yield this.authService.checkUserByRefreshToken(refreshToken);
-            if (userVerifyInfo.data === null) {
+            const devicesResult = yield this.usersDevicesService.getActiveDevicesByUser(refreshToken);
+            if (devicesResult.status === settings_1.ResultStatus.Unauthorized) {
                 res
                     .status(settings_1.StatusCodes.UNAUTHORIZED_401)
                     .send();
                 return;
             }
-            const devices = yield this.usersDevicesQueryRepository.getAllActiveDevicesByUser(userVerifyInfo.data.userId);
-            res
-                .status(settings_1.StatusCodes.OK_200)
-                .send(devices);
-            return;
+            if (devicesResult.status === settings_1.ResultStatus.Success) {
+                res
+                    .status(settings_1.StatusCodes.OK_200)
+                    .send(devicesResult.data);
+                return;
+            }
         });
     }
     deleteAllDevicesByUserController(req, res) {
@@ -54,31 +55,32 @@ class UsersDevicesController {
     }
     deleteUserDeviceByIdController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userVerifyInfo = yield this.authService.checkUserByRefreshToken(req.cookies.refreshToken);
-            if (userVerifyInfo.data === null) {
+            const refreshToken = req.cookies.refreshToken;
+            const devicesResult = yield this.usersDevicesService.deleteUserDeviceById(refreshToken, req.params.deviceId);
+            if (devicesResult.status === settings_1.ResultStatus.Unauthorized) {
                 res
                     .status(settings_1.StatusCodes.UNAUTHORIZED_401)
                     .send();
                 return;
             }
-            const device = yield this.usersDevicesQueryRepository.getUserDeviceById(req.params.deviceId);
-            if (device === null) {
+            if (devicesResult.status === settings_1.ResultStatus.NotFound) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            if (userVerifyInfo.data.userId !== device.userId) {
+            if (devicesResult.status === settings_1.ResultStatus.Forbidden) {
                 res
                     .status(settings_1.StatusCodes.FORBIDDEN_403)
                     .send();
                 return;
             }
-            yield this.usersDevicesService.deleteUserDeviceById(userVerifyInfo.data.userId);
-            res
-                .status(settings_1.StatusCodes.NO_CONTENT_204)
-                .send();
-            return;
+            if (devicesResult.status === settings_1.ResultStatus.NoContent) {
+                res
+                    .status(settings_1.StatusCodes.NO_CONTENT_204)
+                    .send();
+                return;
+            }
         });
     }
 }

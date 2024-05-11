@@ -39,4 +39,8 @@ export class UsersDevicesRepository {
     async getUserDeviceById(deviceId: string): Promise<UsersDevicesType | null> {
         return await UsersDevicesModel.findOne({ deviceId })
     }
+
+    async getAllActiveDevicesByUser(userId: string): Promise<UsersDevicesType[]> {
+        return await UsersDevicesModel.find({ userId })
+    }
 }
