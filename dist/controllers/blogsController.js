@@ -64,14 +64,13 @@ class BlogsController {
     }
     updateBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield this.blogsQueryRepository.findBlog(req.params.id);
-            if (blog === null) {
+            const updatedBlog = yield this.blogsService.updateBlog(req.body, req.params.id);
+            if (!updatedBlog) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            yield this.blogsService.updateBlog(req.body, req.params.id);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();

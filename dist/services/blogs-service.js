@@ -28,6 +28,9 @@ class BlogsService {
                 return false;
             }
             const blog = yield this.blogsRepository.findBlog(id);
+            if (!blog) {
+                return false;
+            }
             const updatedblog = new blogs_types_1.Blog(body.name, body.description, body.websiteUrl, blog.createdAt, false);
             return yield this.blogsRepository.updateBlog(updatedblog, id);
         });

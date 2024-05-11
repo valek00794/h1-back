@@ -22,6 +22,9 @@ export class BlogsService {
             return false
         }
         const blog = await this.blogsRepository.findBlog(id)
+        if (!blog) {
+            return false
+        }
         const updatedblog = new Blog(
             body.name,
             body.description,

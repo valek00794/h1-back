@@ -57,14 +57,13 @@ export class BlogsController {
     }
 
     async updateBlogController(req: Request, res: Response<boolean>) {
-        const blog = await this.blogsQueryRepository.findBlog(req.params.id)
-        if (blog === null) {
+        const updatedBlog = await this.blogsService.updateBlog(req.body, req.params.id)
+        if (!updatedBlog) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
                 .send()
             return
         }
-        await this.blogsService.updateBlog(req.body, req.params.id)
         res
             .status(StatusCodes.NO_CONTENT_204)
             .send()
