@@ -8,7 +8,7 @@ export class UserView {
         public login: string,
         public email: string,
         public createdAt: string,
-    ) {}
+    ) { }
 }
 
 export type UserType = {
@@ -18,16 +18,20 @@ export type UserType = {
     passwordHash: string,
 }
 
-export type UserInfoType = {
-    userId: string,
-    login: string,
-    email?: string
+export class UserInfo {
+    constructor(
+        public userId: string,
+        public login: string,
+        public email?: string,
+    ) { }
 }
 
-export type CommentatorInfoType = {
-    userId: string,
-    userLogin: string,
-    email?: string
+export class CommentatorInfo {
+    constructor(
+        public userId: string,
+        public userLogin: string,
+        public email?: string,
+    ) { }
 }
 
 export type UserEmailConfirmationInfoType = {
@@ -63,7 +67,7 @@ export class UsersDevicesOutput {
         public title: string,
         public deviceId: string,
         public lastActiveDate?: string,
-    ) {}
+    ) { }
 }
 
 export type UserDeviceInfoType = {

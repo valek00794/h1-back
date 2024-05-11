@@ -112,7 +112,7 @@ class UsersService {
                     errorsMessages: []
                 };
                 errors.errorsMessages.push({
-                    message: "Error sending confirmation email",
+                    message: "Error sending recovery email",
                     field: "Email sender"
                 });
                 return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);

@@ -1,22 +1,22 @@
 import { ObjectId } from "mongodb"
 
-import { UserDbType, UserInfoType, UserView } from "../types/users-types"
+import { UserDbType, UserInfo, UserView } from "../types/users-types"
 import { getSanitizationQuery } from "../utils"
 import { SearchQueryParametersType } from "../types/query-types"
 import { UsersModel } from "../db/mongo/users.model"
 import { Paginator } from "../types/result-types"
 
 export class UsersQueryRepository {
-    async findUserById(id: string): Promise<UserInfoType | false> {
+    async findUserById(id: string): Promise<UserInfo | false> {
         if (!ObjectId.isValid(id)) {
             return false
         }
         const user = await UsersModel.findById(id)
-        return user ? {
-            email: user.email,
-            login: user.login,
-            userId: id
-        }
+        return user ? new UserInfo(
+            user.email,
+            user.login,
+            id
+        )
             : false
     }
 

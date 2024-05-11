@@ -83,6 +83,7 @@ class AuthService {
                     message: "User with current email not found",
                     field: "email"
                 });
+                return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
             }
             const userConfirmationInfo = yield this.usersRepository.findUserConfirmationInfo(user._id.toString());
             if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {

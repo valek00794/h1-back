@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter';
 
 import { TokenOutType } from '../adapters/jwt/jwt-types';
-import { UserDbType, UserInfoType } from '../types/users-types';
+import { UserDbType, UserInfo } from '../types/users-types';
 import { APIErrorResult } from '../types/result-types';
 import { ResultStatus, StatusCodes } from '../settings';
 
@@ -47,7 +47,7 @@ export class AuthController {
             })
     }
 
-    async getAuthInfoController(req: Request, res: Response<UserInfoType | false>) {
+    async getAuthInfoController(req: Request, res: Response<UserInfo | false>) {
         const user = await this.usersQueryRepository.findUserById(req.user!.userId)
         if (!req.user || !req.user.userId || !user) {
             res

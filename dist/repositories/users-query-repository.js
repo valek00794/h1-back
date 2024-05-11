@@ -22,11 +22,7 @@ class UsersQueryRepository {
                 return false;
             }
             const user = yield users_model_1.UsersModel.findById(id);
-            return user ? {
-                email: user.email,
-                login: user.login,
-                userId: id
-            }
+            return user ? new users_types_1.UserInfo(user.email, user.login, id)
                 : false;
         });
     }

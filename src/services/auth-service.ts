@@ -89,8 +89,13 @@ export class AuthService {
                 message: "User with current email not found",
                 field: "email"
             })
+            return new Result<null>(
+                ResultStatus.BadRequest,
+                null,
+                errors
+            )
         }
-        const userConfirmationInfo = await this.usersRepository.findUserConfirmationInfo(user!._id!.toString())
+        const userConfirmationInfo = await this.usersRepository.findUserConfirmationInfo(user._id!.toString())
         if (userConfirmationInfo !== null && userConfirmationInfo.isConfirmed) {
             errors.errorsMessages.push({
                 message: "User with current email already confirmed",
@@ -122,7 +127,7 @@ export class AuthService {
             )
         }
 
-        await this.usersRepository.updateConfirmationInfo(user!._id!, newUserConfirmationInfo)
+        await this.usersRepository.updateConfirmationInfo(user._id!, newUserConfirmationInfo)
         return new Result<null>(
             ResultStatus.NoContent,
             null,

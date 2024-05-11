@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 
 import { CommentDbType, CommentInputType, Comment, CommentView } from "../types/comments-types"
-import { CommentatorInfoType } from "../types/users-types"
+import { CommentatorInfo } from "../types/users-types"
 import { LikeStatus } from "../types/likes-types"
 import { ResultStatus } from "../settings"
 import { Result } from "../types/result-types"
@@ -15,10 +15,10 @@ export class CommentsService {
     ) { }
 
     async createComment(body: CommentInputType, postId: string, userId: string, userLogin: string): Promise<Result<CommentDbType>> {
-        const commentatorInfo: CommentatorInfoType = {
+        const commentatorInfo = new CommentatorInfo(
             userId,
             userLogin
-        }
+        )
         const newComment = new Comment(
             body.content,
             {
@@ -37,10 +37,10 @@ export class CommentsService {
     }
 
     async updateComment(body: CommentInputType, comment: CommentView, userId: string, userLogin: string): Promise<Result<null>> {
-        const commentatorInfo: CommentatorInfoType = {
+        const commentatorInfo = new CommentatorInfo(
             userId,
             userLogin
-        }
+        )
         if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
             comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
             return new Result<null>(
@@ -68,10 +68,10 @@ export class CommentsService {
     }
 
     async deleteComment(comment: CommentView, userId: string, userLogin: string): Promise<Result<null>> {
-        const commentatorInfo: CommentatorInfoType = {
+        const commentatorInfo = new CommentatorInfo(
             userId,
             userLogin
-        }
+        )
         if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
             comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
             return new Result<null>(

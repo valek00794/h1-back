@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb"
 
-import { UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UserSignUpType, UserDbType, UserInfoType } from "../types/users-types"
+import { UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UserSignUpType, UserDbType, UserType } from "../types/users-types"
 import { UsersModel } from "../db/mongo/users.model"
 import { UsersEmailConfirmationsModel } from "../db/mongo/usersEmailConfirmation.model"
 import { UsersRecoveryPassswordModel } from "../db/mongo/usersRecoveryPasssword.model"
@@ -54,7 +54,7 @@ export class UsersRepository {
         return await UsersRecoveryPassswordModel.findOne({ $or: [{ recoveryCode: recoveryCodeOrUserId }, { userId: recoveryCodeOrUserId }] })
     }
 
-    async findUserById(id: string): Promise<false | UserInfoType | null> {
+    async findUserById(id: string): Promise<UserType | null> {
         return await UsersModel.findById(id)
     }
 }

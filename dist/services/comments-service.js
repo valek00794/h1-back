@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommentsService = void 0;
 const mongodb_1 = require("mongodb");
 const comments_types_1 = require("../types/comments-types");
+const users_types_1 = require("../types/users-types");
 const likes_types_1 = require("../types/likes-types");
 const settings_1 = require("../settings");
 const result_types_1 = require("../types/result-types");
@@ -22,10 +23,7 @@ class CommentsService {
     }
     createComment(body, postId, userId, userLogin) {
         return __awaiter(this, void 0, void 0, function* () {
-            const commentatorInfo = {
-                userId,
-                userLogin
-            };
+            const commentatorInfo = new users_types_1.CommentatorInfo(userId, userLogin);
             const newComment = new comments_types_1.Comment(body.content, {
                 userId: commentatorInfo.userId,
                 userLogin: commentatorInfo.userLogin,
@@ -36,10 +34,7 @@ class CommentsService {
     }
     updateComment(body, comment, userId, userLogin) {
         return __awaiter(this, void 0, void 0, function* () {
-            const commentatorInfo = {
-                userId,
-                userLogin
-            };
+            const commentatorInfo = new users_types_1.CommentatorInfo(userId, userLogin);
             if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
                 comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
                 return new result_types_1.Result(settings_1.ResultStatus.Forbidden, null, null);
@@ -54,10 +49,7 @@ class CommentsService {
     }
     deleteComment(comment, userId, userLogin) {
         return __awaiter(this, void 0, void 0, function* () {
-            const commentatorInfo = {
-                userId,
-                userLogin
-            };
+            const commentatorInfo = new users_types_1.CommentatorInfo(userId, userLogin);
             if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
                 comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
                 return new result_types_1.Result(settings_1.ResultStatus.Forbidden, null, null);

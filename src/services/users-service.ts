@@ -111,7 +111,7 @@ export class UsersService {
                 errorsMessages: []
             }
             errors.errorsMessages.push({
-                message: "Error sending confirmation email",
+                message: "Error sending recovery email",
                 field: "Email sender"
             })
             return new Result<null>(
