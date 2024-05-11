@@ -58,5 +58,10 @@ class CommentsRepository {
             }, { new: true });
         });
     }
+    findComment(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield comments_model_1.CommentsModel.findById(id);
+        });
+    }
 }
 exports.CommentsRepository = CommentsRepository;

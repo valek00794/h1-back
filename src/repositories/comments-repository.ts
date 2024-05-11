@@ -54,4 +54,8 @@ export class CommentsRepository {
             { new: true }
         )
     }
+
+    async findComment(id: string): Promise<CommentDbType | null> {
+        return await CommentsModel.findById(id)
+    }
 }

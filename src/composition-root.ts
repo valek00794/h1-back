@@ -31,7 +31,7 @@ const postsService = new PostsService(postsRepository, blogsRepository)
 
 const commentsQueryRepository = new CommentsQueryRepository()
 const commentsRepository = new CommentsRepository()
-const commentsService = new CommentsService(commentsRepository)
+const commentsService = new CommentsService(commentsRepository, postsRepository)
 
 export const usersQueryRepository = new UsersQueryRepository()
 export const usersRepository = new UsersRepository()

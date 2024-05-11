@@ -16,33 +16,54 @@ const likes_types_1 = require("../types/likes-types");
 const settings_1 = require("../settings");
 const result_types_1 = require("../types/result-types");
 class CommentsService {
-    constructor(commentsRepository) {
+    constructor(commentsRepository, postsRepository) {
         this.commentsRepository = commentsRepository;
+        this.postsRepository = postsRepository;
     }
-    createComment(body, commentatorInfo, postId) {
+    createComment(body, postId, userId, userLogin) {
         return __awaiter(this, void 0, void 0, function* () {
+            const commentatorInfo = {
+                userId,
+                userLogin
+            };
             const newComment = new comments_types_1.Comment(body.content, {
                 userId: commentatorInfo.userId,
                 userLogin: commentatorInfo.userLogin,
             }, new Date().toISOString(), new mongodb_1.ObjectId(postId));
-            return yield this.commentsRepository.createComment(newComment);
+            const comment = yield this.commentsRepository.createComment(newComment);
+            return new result_types_1.Result(settings_1.ResultStatus.Created, comment, null);
         });
     }
-    updateComment(body, comment) {
+    updateComment(body, comment, userId, userLogin) {
         return __awaiter(this, void 0, void 0, function* () {
+            const commentatorInfo = {
+                userId,
+                userLogin
+            };
+            if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
+                comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
+                return new result_types_1.Result(settings_1.ResultStatus.Forbidden, null, null);
+            }
             const updatedComment = new comments_types_1.Comment(body.content, {
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin,
             }, comment.createdAt, comment.postId);
-            return yield this.commentsRepository.updateComment(updatedComment, comment.id.toString());
+            yield this.commentsRepository.updateComment(updatedComment, comment.id.toString());
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });
     }
-    deleteComment(id) {
+    deleteComment(comment, userId, userLogin) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!mongodb_1.ObjectId.isValid(id)) {
-                return false;
+            const commentatorInfo = {
+                userId,
+                userLogin
+            };
+            if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
+                comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
+                return new result_types_1.Result(settings_1.ResultStatus.Forbidden, null, null);
             }
-            return yield this.commentsRepository.deleteComment(id);
+            yield this.commentsRepository.deleteComment(comment.id.toString());
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });
     }
     changeCommentLikeStatus(commentId, likeStatus, userId) {
