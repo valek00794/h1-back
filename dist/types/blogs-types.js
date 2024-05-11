@@ -11,14 +11,10 @@ class Blog {
     }
 }
 exports.Blog = Blog;
-class BlogView {
-    constructor(id, name, description, websiteUrl, createdAt, isMembership) {
+class BlogView extends Blog {
+    constructor(blog, id) {
+        super(blog.name, blog.description, blog.websiteUrl, blog.createdAt, blog.isMembership);
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.websiteUrl = websiteUrl;
-        this.createdAt = createdAt;
-        this.isMembership = isMembership;
     }
 }
 exports.BlogView = BlogView;

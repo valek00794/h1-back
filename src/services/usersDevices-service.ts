@@ -49,6 +49,7 @@ export class UsersDevicesService {
             null
         )
     }
+
     async deleteUserDeviceById(deviceId: string): Promise<Result<DeleteResult>> {
         const deleteResult = await this.usersDevicesRepository.deleteUserDevicebyId(deviceId)
         return new Result<DeleteResult>(

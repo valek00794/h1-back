@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { PostViewType } from '../types/posts-types'
+import { PostView } from '../types/posts-types'
 import { SearchQueryParametersType } from '../types/query-types';
 import { StatusCodes } from '../settings';
 import { Paginator } from '../types/result-types';
@@ -14,7 +14,7 @@ export class PostsController {
         protected postsQueryRepository: PostsQueryRepository,
         protected blogsQueryRepository: BlogsQueryRepository) { }
 
-    async getPostsController(req: Request, res: Response<Paginator<PostViewType[]>>) {
+    async getPostsController(req: Request, res: Response<Paginator<PostView[]>>) {
         const query = req.query as unknown as SearchQueryParametersType;
         const posts = await this.postsQueryRepository.getPosts(query)
         res
@@ -22,7 +22,7 @@ export class PostsController {
             .json(posts)
     }
 
-    async findPostController(req: Request, res: Response<false | PostViewType>) {
+    async findPostController(req: Request, res: Response<false | PostView>) {
         const post = await this.postsQueryRepository.findPost(req.params.id)
         if (!post) {
             res
@@ -35,7 +35,7 @@ export class PostsController {
             .json(post)
     }
 
-    async findPostsOfBlogController(req: Request, res: Response<Paginator<PostViewType[]>>) {
+    async findPostsOfBlogController(req: Request, res: Response<Paginator<PostView[]>>) {
         const query = req.query as unknown as SearchQueryParametersType;
         const blog = await this.blogsQueryRepository.findBlog(req.params.blogId)
         if (!blog) {
@@ -63,7 +63,7 @@ export class PostsController {
             .send()
     }
 
-    async createPostController(req: Request, res: Response<PostViewType>) {
+    async createPostController(req: Request, res: Response<PostView>) {
         const createdPost = await this.postsService.createPost(req.body)
         const newPost = this.postsQueryRepository.mapToOutput(createdPost)
         res
@@ -71,7 +71,7 @@ export class PostsController {
             .json(newPost)
     }
 
-    async createPostForBlogController(req: Request, res: Response<PostViewType>) {
+    async createPostForBlogController(req: Request, res: Response<PostView>) {
         const blog = await this.blogsQueryRepository.findBlog(req.params.blogId)
         if (!blog) {
             res

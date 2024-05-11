@@ -6,7 +6,7 @@ import { PostsRepository } from "../repositories/posts-repository"
 
 export class PostsService {
     constructor(
-        protected postsRepository: PostsRepository, 
+        protected postsRepository: PostsRepository,
         protected blogsRepository: BlogsRepository) { }
 
     async createPost(body: CreatePostType, blogId?: string): Promise<PostDbType> {

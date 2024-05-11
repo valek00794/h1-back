@@ -19,8 +19,7 @@ const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 class AuthService {
-    constructor(usersService, usersRepository, usersDevicesRepository) {
-        this.usersService = usersService;
+    constructor(usersRepository, usersDevicesRepository) {
         this.usersRepository = usersRepository;
         this.usersDevicesRepository = usersDevicesRepository;
     }
@@ -152,70 +151,6 @@ class AuthService {
                 return new result_types_1.Result(settings_1.ResultStatus.Unauthorized, null, null);
             }
             yield this.usersDevicesRepository.deleteUserDevicebyId(userVerifyInfo.data.deviceId);
-            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
-        });
-    }
-    passwordRecovery(email) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.usersRepository.findUserByLoginOrEmail(email);
-            if (user === null) {
-                return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
-            }
-            const newUserRecoveryPasswordInfo = {
-                recoveryCode: (0, uuid_1.v4)(),
-                expirationDate: (0, add_1.add)(new Date(), {
-                    hours: 1
-                }),
-            };
-            try {
-                yield email_manager_1.emailManager.sendEmailPasswordRecoveryMessage(email, newUserRecoveryPasswordInfo.recoveryCode);
-            }
-            catch (error) {
-                console.error(error);
-                const errors = {
-                    errorsMessages: []
-                };
-                errors.errorsMessages.push({
-                    message: "Error sending confirmation email",
-                    field: "Email sender"
-                });
-                return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
-            }
-            yield this.usersRepository.updatePasswordRecoveryInfo(user._id, newUserRecoveryPasswordInfo);
-            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
-        });
-    }
-    confirmPasswordRecovery(recoveryCode, newPassword) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const recoveryInfo = yield this.usersRepository.findPasswordRecoveryInfo(recoveryCode);
-            const errors = {
-                errorsMessages: []
-            };
-            if (recoveryInfo === null) {
-                errors.errorsMessages.push({
-                    message: "User with current recovery code not found",
-                    field: "recoveryCode"
-                });
-                return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
-            }
-            if (recoveryInfo !== null) {
-                if (recoveryInfo.recoveryCode !== recoveryCode) {
-                    errors.errorsMessages.push({
-                        message: "Recovery code does not match",
-                        field: "recoveryCode"
-                    });
-                }
-                if (recoveryInfo.expirationDate < new Date()) {
-                    errors.errorsMessages.push({
-                        message: "Recovery code has expired, needs to be requested again",
-                        field: "recoveryCode"
-                    });
-                }
-                if (errors.errorsMessages.length !== 0) {
-                    return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
-                }
-            }
-            yield this.usersService.updateUserPassword(recoveryInfo.userId, newPassword);
             return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });
     }

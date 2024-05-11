@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersDevicesQueryRepository = void 0;
+const users_types_1 = require("../types/users-types");
 const usersDevices_model_1 = require("../db/mongo/usersDevices.model");
 class UsersDevicesQueryRepository {
     getAllActiveDevicesByUser(userId) {
@@ -25,12 +26,7 @@ class UsersDevicesQueryRepository {
         });
     }
     mapToOutput(userDevice) {
-        return {
-            ip: userDevice.ip,
-            title: userDevice.title,
-            lastActiveDate: userDevice.lastActiveDate,
-            deviceId: userDevice.deviceId,
-        };
+        return new users_types_1.UsersDevicesOutput(userDevice.ip, userDevice.title, userDevice.deviceId, userDevice.lastActiveDate);
     }
 }
 exports.UsersDevicesQueryRepository = UsersDevicesQueryRepository;

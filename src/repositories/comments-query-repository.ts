@@ -10,6 +10,7 @@ import { Paginator } from '../types/result-types'
 
 export class CommentsQueryRepository {
     async getComments(postId: string, query?: SearchQueryParametersType, userId?: string): Promise<Paginator<CommentView[]>> {
+
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
         if (postId) {
@@ -31,7 +32,6 @@ export class CommentsQueryRepository {
         }))
 
         return new Paginator<CommentView[]>(
-            Math.ceil(commentsCount / sanitizationQuery.pageSize),
             sanitizationQuery.pageNumber,
             sanitizationQuery.pageSize,
             commentsCount,

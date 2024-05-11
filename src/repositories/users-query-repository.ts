@@ -1,10 +1,11 @@
 import { ObjectId } from "mongodb"
 
-import { UserDbType, UserInfoType, UserViewType } from "../types/users-types"
+import { UserDbType, UserInfoType, UserView } from "../types/users-types"
 import { getSanitizationQuery } from "../utils"
 import { SearchQueryParametersType } from "../types/query-types"
 import { UsersModel } from "../db/mongo/users.model"
 import { Paginator } from "../types/result-types"
+
 export class UsersQueryRepository {
     async findUserById(id: string): Promise<UserInfoType | false> {
         if (!ObjectId.isValid(id)) {
@@ -23,7 +24,7 @@ export class UsersQueryRepository {
         return await UsersModel.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] })
     }
 
-    async getAllUsers(query?: SearchQueryParametersType): Promise<Paginator<UserViewType[]>> {
+    async getAllUsers(query?: SearchQueryParametersType): Promise<Paginator<UserView[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {
             $or: [
@@ -39,8 +40,7 @@ export class UsersQueryRepository {
 
         const usersCount = await UsersModel.countDocuments(findOptions)
 
-        return new Paginator<UserViewType[]>(
-            Math.ceil(usersCount / sanitizationQuery.pageSize),
+        return new Paginator<UserView[]>(
             sanitizationQuery.pageNumber,
             sanitizationQuery.pageSize,
             usersCount,
@@ -48,12 +48,12 @@ export class UsersQueryRepository {
         )
     }
 
-    mapToOutput(user: UserDbType): UserViewType {
-        return {
-            id: user._id!,
-            login: user.login,
-            email: user.email,
-            createdAt: user.createdAt
-        }
+    mapToOutput(user: UserDbType): UserView {
+        return new UserView(
+            user._id!,
+            user.login,
+            user.email,
+            user.createdAt
+        )
     }
 }

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-import { BlogDbType, BlogView } from '../types/blogs-types'
+import { Blog, BlogDbType, BlogView } from '../types/blogs-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 import { BlogsModel } from '../db/mongo/blogs.model'
@@ -19,13 +19,12 @@ export class BlogsQueryRepository {
 
         const blogsCount = await BlogsModel.countDocuments(findOptions)
 
-        return {
-            pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
-            page: sanitizationQuery.pageNumber,
-            pageSize: sanitizationQuery.pageSize,
-            totalCount: blogsCount,
-            items: blogs.map(blog => this.mapToOutput(blog))
-        }
+        return new Paginator<BlogView[]>(
+            sanitizationQuery.pageNumber,
+            sanitizationQuery.pageSize,
+            blogsCount,
+            blogs.map(blog => this.mapToOutput(blog))
+        )
     }
 
     async findBlog(id: string): Promise<null | BlogView> {
@@ -36,14 +35,15 @@ export class BlogsQueryRepository {
         return blog ? this.mapToOutput(blog) : null
     }
 
-    mapToOutput(blog: BlogDbType) {
-        return new BlogView(blog._id,
+    mapToOutput(blog: BlogDbType): BlogView {
+        const outBlog = new Blog(
             blog.name,
             blog.description,
             blog.websiteUrl,
             blog.createdAt,
-            blog.isMembership,
-        )
+            blog.isMembership)
+
+        return new BlogView(outBlog, blog._id)
     }
 }
 

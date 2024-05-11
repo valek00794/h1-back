@@ -32,9 +32,8 @@ exports.postsBlogIdInputValidation = [
     (0, express_validator_1.body)('blogId').trim()
         .notEmpty().withMessage('The field is required'),
     (0, express_validator_1.body)('blogId').custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const blogs = yield composition_root_1.blogsQueryRepository.getBlogs();
-        const blogIdIncludes = blogs.items.findIndex(el => { var _a; return ((_a = el.id) === null || _a === void 0 ? void 0 : _a.toString()) === value; });
-        if (blogIdIncludes === -1) {
+        const blogs = yield composition_root_1.blogsQueryRepository.findBlog(value);
+        if (blogs === null) {
             throw new Error('Blog not found');
         }
         return value;

@@ -2,11 +2,13 @@ import { ObjectId, WithId } from "mongodb"
 
 export type UserDbType = WithId<UserType>
 
-export type UserViewType = {
-    id: ObjectId,
-    login: string,
-    email: string,
-    createdAt: string
+export class UserView {
+    constructor(
+        public id: ObjectId,
+        public login: string,
+        public email: string,
+        public createdAt: string,
+    ) {}
 }
 
 export type UserType = {
@@ -53,6 +55,15 @@ export type UsersDevicesType = {
     ip: string,
     lastActiveDate?: string,
     expiryDate?: string
+}
+
+export class UsersDevicesOutput {
+    constructor(
+        public ip: string,
+        public title: string,
+        public deviceId: string,
+        public lastActiveDate?: string,
+    ) {}
 }
 
 export type UserDeviceInfoType = {

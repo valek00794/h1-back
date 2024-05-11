@@ -149,7 +149,7 @@ export class AuthController {
     }
 
     async passwordRecoveryController(req: Request, res: Response) {
-        const result = await this.authService.passwordRecovery(req.body.email)
+        const result = await this.usersService.passwordRecovery(req.body.email)
         if (result.status === ResultStatus.NoContent) {
             res
                 .status(StatusCodes.NO_CONTENT_204)
@@ -159,7 +159,7 @@ export class AuthController {
     }
 
     async confirmPasswordRecoveryController(req: Request, res: Response<APIErrorResult | null>) {
-        const result = await this.authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
+        const result = await this.usersService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
         if (result.status === ResultStatus.BadRequest) {
             res
                 .status(StatusCodes.BAD_REQUEST_400)

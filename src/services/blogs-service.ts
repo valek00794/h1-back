@@ -5,7 +5,7 @@ import { BlogsRepository } from '../repositories/blogs-repository'
 
 export class BlogsService {
     constructor(protected blogsRepository: BlogsRepository) { }
-    
+
     async createBlog(body: Blog): Promise<BlogDbType> {
         const newBlog = new Blog(
             body.name,

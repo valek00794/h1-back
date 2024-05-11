@@ -11,10 +11,9 @@ import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
 import { JWTTokensOutType } from '../adapters/jwt/jwt-types'
 import { UsersRepository } from '../repositories/users-repository'
 import { UsersDevicesRepository } from '../repositories/usersDevices-repository'
-import { UsersService } from './users-service'
 
 export class AuthService {
-    constructor(protected usersService: UsersService,
+    constructor(
         protected usersRepository: UsersRepository,
         protected usersDevicesRepository: UsersDevicesRepository
     ) { }
@@ -180,97 +179,6 @@ export class AuthService {
             )
         }
         await this.usersDevicesRepository.deleteUserDevicebyId(userVerifyInfo.data.deviceId)
-        return new Result<null>(
-            ResultStatus.NoContent,
-            null,
-            null
-        )
-    }
-
-    async passwordRecovery(email: string): Promise<Result<null>> {
-        const user = await this.usersRepository.findUserByLoginOrEmail(email)
-        if (user === null) {
-            return new Result<null>(
-                ResultStatus.NoContent,
-                null,
-                null
-            )
-        }
-
-        const newUserRecoveryPasswordInfo = {
-            recoveryCode: uuidv4(),
-            expirationDate: add(new Date(), {
-                hours: 1
-            }),
-        }
-        try {
-            await emailManager.sendEmailPasswordRecoveryMessage(email, newUserRecoveryPasswordInfo.recoveryCode)
-        } catch (error) {
-            console.error(error)
-            const errors: APIErrorResult = {
-                errorsMessages: []
-            }
-            errors.errorsMessages.push({
-                message: "Error sending confirmation email",
-                field: "Email sender"
-            })
-            return new Result<null>(
-                ResultStatus.BadRequest,
-                null,
-                errors
-            )
-        }
-        await this.usersRepository.updatePasswordRecoveryInfo(user!._id!, newUserRecoveryPasswordInfo)
-        return new Result<null>(
-            ResultStatus.NoContent,
-            null,
-            null
-        )
-    }
-
-    async confirmPasswordRecovery(recoveryCode: string, newPassword: string): Promise<Result<null>> {
-        const recoveryInfo = await this.usersRepository.findPasswordRecoveryInfo(recoveryCode)
-        const errors: APIErrorResult = {
-            errorsMessages: []
-        }
-        if (recoveryInfo === null) {
-            errors.errorsMessages.push({
-                message: "User with current recovery code not found",
-                field: "recoveryCode"
-            })
-            return new Result<null>(
-                ResultStatus.BadRequest,
-                null,
-                errors
-
-            )
-        }
-
-        if (recoveryInfo !== null) {
-            if (recoveryInfo.recoveryCode !== recoveryCode) {
-                errors.errorsMessages.push({
-                    message: "Recovery code does not match",
-                    field: "recoveryCode"
-                })
-            }
-            if (recoveryInfo.expirationDate < new Date()) {
-                errors.errorsMessages.push({
-                    message: "Recovery code has expired, needs to be requested again",
-                    field: "recoveryCode"
-                })
-            }
-
-            if (errors.errorsMessages.length !== 0) {
-                return new Result<null>(
-                    ResultStatus.BadRequest,
-                    null,
-                    errors
-                )
-            }
-        }
-
-        await this.usersService.updateUserPassword(recoveryInfo!.userId!, newPassword)
-
         return new Result<null>(
             ResultStatus.NoContent,
             null,

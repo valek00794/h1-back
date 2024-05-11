@@ -154,7 +154,7 @@ class AuthController {
     }
     passwordRecoveryController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.authService.passwordRecovery(req.body.email);
+            const result = yield this.usersService.passwordRecovery(req.body.email);
             if (result.status === settings_1.ResultStatus.NoContent) {
                 res
                     .status(settings_1.StatusCodes.NO_CONTENT_204)
@@ -165,7 +165,7 @@ class AuthController {
     }
     confirmPasswordRecoveryController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword);
+            const result = yield this.usersService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword);
             if (result.status === settings_1.ResultStatus.BadRequest) {
                 res
                     .status(settings_1.StatusCodes.BAD_REQUEST_400)

@@ -39,7 +39,7 @@ const usersService = new UsersService(usersRepository)
 
 const usersDevicesQueryRepository = new UsersDevicesQueryRepository()
 const usersDevicesRepository = new UsersDevicesRepository()
-const authService = new AuthService(usersService, usersRepository, usersDevicesRepository)
+const authService = new AuthService(usersRepository, usersDevicesRepository)
 const usersDevicesService = new UsersDevicesService(authService, usersDevicesRepository)
 
 

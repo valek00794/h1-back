@@ -1,4 +1,4 @@
-import { UsersDevicesType } from "../types/users-types"
+import { UsersDevicesOutput, UsersDevicesType } from "../types/users-types"
 import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
 export class UsersDevicesQueryRepository {
@@ -12,12 +12,12 @@ export class UsersDevicesQueryRepository {
         return deviceSession ? this.mapToOutput(deviceSession) : null
     }
 
-    mapToOutput(userDevice: UsersDevicesType) {
-        return {
-            ip: userDevice.ip,
-            title: userDevice.title,
-            lastActiveDate: userDevice.lastActiveDate,
-            deviceId: userDevice.deviceId,
-        }
+    mapToOutput(userDevice: UsersDevicesType): UsersDevicesOutput {
+        return new UsersDevicesOutput(
+            userDevice.ip,
+            userDevice.title,
+            userDevice.deviceId,
+            userDevice.lastActiveDate
+        )
     }
 }

@@ -14,6 +14,7 @@ const mongodb_1 = require("mongodb");
 const blogs_types_1 = require("../types/blogs-types");
 const utils_1 = require("../utils");
 const blogs_model_1 = require("../db/mongo/blogs.model");
+const result_types_1 = require("../types/result-types");
 class BlogsQueryRepository {
     getBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25,13 +26,7 @@ class BlogsQueryRepository {
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
                 .limit(sanitizationQuery.pageSize);
             const blogsCount = yield blogs_model_1.BlogsModel.countDocuments(findOptions);
-            return {
-                pagesCount: Math.ceil(blogsCount / sanitizationQuery.pageSize),
-                page: sanitizationQuery.pageNumber,
-                pageSize: sanitizationQuery.pageSize,
-                totalCount: blogsCount,
-                items: blogs.map(blog => this.mapToOutput(blog))
-            };
+            return new result_types_1.Paginator(sanitizationQuery.pageNumber, sanitizationQuery.pageSize, blogsCount, blogs.map(blog => this.mapToOutput(blog)));
         });
     }
     findBlog(id) {
@@ -44,7 +39,8 @@ class BlogsQueryRepository {
         });
     }
     mapToOutput(blog) {
-        return new blogs_types_1.BlogView(blog._id, blog.name, blog.description, blog.websiteUrl, blog.createdAt, blog.isMembership);
+        const outBlog = new blogs_types_1.Blog(blog.name, blog.description, blog.websiteUrl, blog.createdAt, blog.isMembership);
+        return new blogs_types_1.BlogView(outBlog, blog._id);
     }
 }
 exports.BlogsQueryRepository = BlogsQueryRepository;

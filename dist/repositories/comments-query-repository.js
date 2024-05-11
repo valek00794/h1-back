@@ -36,7 +36,7 @@ class CommentsQueryRepository {
                 const mapedlikesInfo = this.mapLikesInfo(userId, likesInfo);
                 return this.mapToOutput(comment, mapedlikesInfo);
             })));
-            return new result_types_1.Paginator(Math.ceil(commentsCount / sanitizationQuery.pageSize), sanitizationQuery.pageNumber, sanitizationQuery.pageSize, commentsCount, commentsItems);
+            return new result_types_1.Paginator(sanitizationQuery.pageNumber, sanitizationQuery.pageSize, commentsCount, commentsItems);
         });
     }
     findComment(id, userId) {

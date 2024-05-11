@@ -9,8 +9,8 @@ import { CommentsRepository } from "../repositories/comments-repository"
 
 export class CommentsService {
     constructor(protected commentsRepository: CommentsRepository) { }
-    
-    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentDbType> {
+
+    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId: string): Promise<CommentDbType> {
         const newComment = new Comment(
             body.content,
             {

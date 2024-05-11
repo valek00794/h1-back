@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
+const posts_types_1 = require("../types/posts-types");
 const utils_1 = require("../utils");
 const posts_model_1 = require("../db/mongo/posts.model");
 const result_types_1 = require("../types/result-types");
@@ -28,7 +29,7 @@ class PostsQueryRepository {
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
                 .limit(sanitizationQuery.pageSize);
             const postsCount = yield posts_model_1.PostsModel.countDocuments(findOptions);
-            return new result_types_1.Paginator(Math.ceil(postsCount / sanitizationQuery.pageSize), sanitizationQuery.pageNumber, sanitizationQuery.pageSize, postsCount, posts.map(post => this.mapToOutput(post)));
+            return new result_types_1.Paginator(sanitizationQuery.pageNumber, sanitizationQuery.pageSize, postsCount, posts.map(post => this.mapToOutput(post)));
         });
     }
     findPost(id) {
@@ -41,15 +42,8 @@ class PostsQueryRepository {
         });
     }
     mapToOutput(post) {
-        return {
-            id: post._id,
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt
-        };
+        const outPost = new posts_types_1.Post(post.title, post.shortDescription, post.content, post.blogId, post.blogName, post.createdAt);
+        return new posts_types_1.PostView(outPost, post._id);
     }
 }
 exports.PostsQueryRepository = PostsQueryRepository;
