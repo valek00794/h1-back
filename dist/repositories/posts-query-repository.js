@@ -16,6 +16,9 @@ const utils_1 = require("../utils");
 const posts_model_1 = require("../db/mongo/posts.model");
 const result_types_1 = require("../types/result-types");
 class PostsQueryRepository {
+    constructor(likesQueryRepository) {
+        this.likesQueryRepository = likesQueryRepository;
+    }
     getPosts(query, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
@@ -41,7 +44,7 @@ class PostsQueryRepository {
             return post ? this.mapToOutput(post) : false;
         });
     }
-    mapToOutput(post) {
+    mapToOutput(post, extendedLikesInfo) {
         const outPost = new posts_types_1.Post(post.title, post.shortDescription, post.content, post.blogId, post.blogName, post.createdAt);
         return new posts_types_1.PostView(outPost, post._id);
     }

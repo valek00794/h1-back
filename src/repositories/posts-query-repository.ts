@@ -5,8 +5,13 @@ import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 import { PostsModel } from '../db/mongo/posts.model'
 import { Paginator } from '../types/result-types'
+import { LikesQueryRepository } from './likes-query-repository'
+import { ExtendedLikesInfo } from '../types/likes-types'
 
 export class PostsQueryRepository {
+    constructor(
+        protected likesQueryRepository: LikesQueryRepository,
+    ) { }
     async getPosts(query: SearchQueryParametersType, blogId?: string): Promise<Paginator<PostView[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
@@ -38,7 +43,7 @@ export class PostsQueryRepository {
         return post ? this.mapToOutput(post) : false
     }
 
-    mapToOutput(post: PostDbType): PostView {
+    mapToOutput(post: PostDbType, extendedLikesInfo?: ExtendedLikesInfo): PostView {
         const outPost = new Post(
             post.title,
             post.shortDescription,

@@ -94,6 +94,6 @@ const setMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     yield usersDevices_model_1.UsersDevicesModel.collection.drop();
     yield usersEmailConfirmation_model_1.UsersEmailConfirmationsModel.collection.drop();
     yield usersRecoveryPasssword_model_1.UsersRecoveryPassswordModel.collection.drop();
-    yield commentLikesStatus_model_1.CommentLikesStatusModel.collection.drop();
+    yield commentLikesStatus_model_1.LikesStatusModel.collection.drop();
 });
 exports.setMongoDB = setMongoDB;

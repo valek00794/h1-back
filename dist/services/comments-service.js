@@ -13,7 +13,6 @@ exports.CommentsService = void 0;
 const mongodb_1 = require("mongodb");
 const comments_types_1 = require("../types/comments-types");
 const users_types_1 = require("../types/users-types");
-const likes_types_1 = require("../types/likes-types");
 const settings_1 = require("../settings");
 const result_types_1 = require("../types/result-types");
 class CommentsService {
@@ -55,20 +54,6 @@ class CommentsService {
                 return new result_types_1.Result(settings_1.ResultStatus.Forbidden, null, null);
             }
             yield this.commentsRepository.deleteComment(comment.id.toString());
-            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
-        });
-    }
-    changeCommentLikeStatus(commentId, likeStatus, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (likeStatus === likes_types_1.LikeStatus.Like) {
-                yield this.commentsRepository.likeComment(commentId, userId);
-            }
-            if (likeStatus === likes_types_1.LikeStatus.Dislike) {
-                yield this.commentsRepository.dislikeComment(commentId, userId);
-            }
-            if (likeStatus === likes_types_1.LikeStatus.None) {
-                yield this.commentsRepository.removeLikeStatusComment(commentId, userId);
-            }
             return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });
     }

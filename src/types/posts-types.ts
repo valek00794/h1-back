@@ -1,4 +1,5 @@
 import { ObjectId, WithId } from "mongodb"
+import { ExtendedLikesInfo } from "./likes-types"
 
 export type CreatePostType = {
     title: string,

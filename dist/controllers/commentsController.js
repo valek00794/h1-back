@@ -11,9 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommentsController = void 0;
 const settings_1 = require("../settings");
+const likes_types_1 = require("../types/likes-types");
 class CommentsController {
-    constructor(commentsService, commentsQueryRepository, postsQueryRepository) {
+    constructor(commentsService, likesService, commentsQueryRepository, postsQueryRepository) {
         this.commentsService = commentsService;
+        this.likesService = likesService;
         this.commentsQueryRepository = commentsQueryRepository;
         this.postsQueryRepository = postsQueryRepository;
     }
@@ -125,7 +127,7 @@ class CommentsController {
                     .send();
                 return;
             }
-            yield this.commentsService.changeCommentLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId);
+            yield this.likesService.changeLikeStatus(req.params.commentId, likes_types_1.LikeStatusParrent.Comment, req.body.likeStatus, req.user.userId);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();

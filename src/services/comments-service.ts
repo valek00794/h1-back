@@ -2,16 +2,16 @@ import { ObjectId } from "mongodb"
 
 import { CommentDbType, CommentInputType, Comment, CommentView } from "../types/comments-types"
 import { CommentatorInfo } from "../types/users-types"
-import { LikeStatus } from "../types/likes-types"
 import { ResultStatus } from "../settings"
 import { Result } from "../types/result-types"
 import { CommentsRepository } from "../repositories/comments-repository"
 import { PostsRepository } from "../repositories/posts-repository"
+import { LikesRepository } from "../repositories/likes-repository"
 
 export class CommentsService {
     constructor(
         protected commentsRepository: CommentsRepository,
-        protected postsRepository: PostsRepository
+        protected postsRepository: PostsRepository,
     ) { }
 
     async createComment(body: CommentInputType, postId: string, userId: string, userLogin: string): Promise<Result<CommentDbType>> {
@@ -81,24 +81,6 @@ export class CommentsService {
             )
         }
         await this.commentsRepository.deleteComment(comment.id.toString())
-        return new Result<null>(
-            ResultStatus.NoContent,
-            null,
-            null
-        )
-    }
-
-    async changeCommentLikeStatus(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
-        if (likeStatus === LikeStatus.Like) {
-            await this.commentsRepository.likeComment(commentId, userId)
-        }
-        if (likeStatus === LikeStatus.Dislike) {
-            await this.commentsRepository.dislikeComment(commentId, userId)
-        }
-        if (likeStatus === LikeStatus.None) {
-            await this.commentsRepository.removeLikeStatusComment(commentId, userId)
-        }
-
         return new Result<null>(
             ResultStatus.NoContent,
             null,

@@ -23,13 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LikesStatusModel = exports.LikesStatusSchema = void 0;
+exports.PostLikesStatusModel = exports.CommentLikesStatusSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const settings_1 = require("../../settings");
-exports.LikesStatusSchema = new mongoose_1.default.Schema({
+exports.CommentLikesStatusSchema = new mongoose_1.default.Schema({
     parrentId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
-    parrentName: { type: String, required: true },
     likesUsersIds: { type: [String], required: true },
     dislikesUsersIds: { type: [String], required: true },
 });
-exports.LikesStatusModel = mongoose_1.default.model(settings_1.SETTINGS.DB.collection.LIKE_STATUS, exports.LikesStatusSchema);
+exports.PostLikesStatusModel = mongoose_1.default.model(settings_1.SETTINGS.DB.collection.LIKE_STATUS, exports.CommentLikesStatusSchema);

@@ -11,11 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsRepository = void 0;
 const posts_model_1 = require("../db/mongo/posts.model");
+const commentLikesStatus_model_1 = require("../db/mongo/commentLikesStatus-model");
+const likes_types_1 = require("../types/likes-types");
 class PostsRepository {
     createPost(newPost) {
         return __awaiter(this, void 0, void 0, function* () {
             const post = new posts_model_1.PostsModel(newPost);
+            const postLikesInfo = new commentLikesStatus_model_1.LikesStatusModel({
+                parrentId: post._id,
+                parrentName: likes_types_1.LikeStatusParrent.Post,
+                likesUsersIds: [],
+                dislikesUsersIds: []
+            });
             yield post.save();
+            yield postLikesInfo.save();
             return post;
         });
     }

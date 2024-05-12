@@ -14,10 +14,12 @@ const mongodb_1 = require("mongodb");
 const comments_model_1 = require("../db/mongo/comments.model");
 const comments_types_1 = require("../types/comments-types");
 const utils_1 = require("../utils");
-const commentLikesStatus_model_1 = require("../db/mongo/commentLikesStatus-model");
 const likes_types_1 = require("../types/likes-types");
 const result_types_1 = require("../types/result-types");
 class CommentsQueryRepository {
+    constructor(likesQueryRepository) {
+        this.likesQueryRepository = likesQueryRepository;
+    }
     getComments(postId, query, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
@@ -32,8 +34,8 @@ class CommentsQueryRepository {
                 .limit(sanitizationQuery.pageSize);
             const commentsCount = yield comments_model_1.CommentsModel.countDocuments(findOptions);
             const commentsItems = yield Promise.all(comments.map((comment) => __awaiter(this, void 0, void 0, function* () {
-                const likesInfo = yield this.getLikesInfo(comment.id);
-                const mapedlikesInfo = this.mapLikesInfo(userId, likesInfo);
+                const likesInfo = yield this.likesQueryRepository.getLikesInfo(comment.id, likes_types_1.LikeStatusParrent.Comment);
+                const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId, likesInfo);
                 return this.mapToOutput(comment, mapedlikesInfo);
             })));
             return new result_types_1.Paginator(sanitizationQuery.pageNumber, sanitizationQuery.pageSize, commentsCount, commentsItems);
@@ -47,16 +49,11 @@ class CommentsQueryRepository {
             const comment = yield comments_model_1.CommentsModel.findById(id);
             let outputComment;
             if (comment) {
-                const likesInfo = yield this.getLikesInfo(id);
-                const mapedlikesInfo = this.mapLikesInfo(userId, likesInfo);
+                const likesInfo = yield this.likesQueryRepository.getLikesInfo(id, likes_types_1.LikeStatusParrent.Comment);
+                const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId, likesInfo);
                 outputComment = this.mapToOutput(comment, mapedlikesInfo);
             }
             return comment && outputComment ? outputComment : false;
-        });
-    }
-    getLikesInfo(commentId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOne({ commentId });
         });
     }
     mapToOutput(comment, likesInfo) {
@@ -68,18 +65,6 @@ class CommentsQueryRepository {
             dislikesCount: (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesCount) || 0,
             myStatus: (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.myStatus) || likes_types_1.LikeStatus.None
         });
-    }
-    mapLikesInfo(userId, likesInfo) {
-        let myLikeStatus = likes_types_1.LikeStatus.None;
-        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.includes(userId))) {
-            myLikeStatus = likes_types_1.LikeStatus.Like;
-        }
-        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.includes(userId))) {
-            myLikeStatus = likes_types_1.LikeStatus.Dislike;
-        }
-        const likesCount = (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.length) || 0;
-        const dislikesCount = (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.length) || 0;
-        return new likes_types_1.LikesInfoView(likesCount, dislikesCount, myLikeStatus);
     }
 }
 exports.CommentsQueryRepository = CommentsQueryRepository;
