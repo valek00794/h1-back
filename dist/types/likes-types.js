@@ -8,9 +8,10 @@ var LikeStatus;
     LikeStatus["Dislike"] = "Dislike";
 })(LikeStatus || (exports.LikeStatus = LikeStatus = {}));
 class LikesInfo {
-    constructor(parrentId, authorId, status, addedAt) {
+    constructor(parrentId, authorId, authorLogin, status, addedAt) {
         this.parrentId = parrentId;
         this.authorId = authorId;
+        this.authorLogin = authorLogin;
         this.status = status;
         this.addedAt = addedAt;
     }
@@ -33,8 +34,8 @@ class NewestLike {
 }
 exports.NewestLike = NewestLike;
 class ExtendedLikesInfo extends LikesInfoView {
-    constructor(likesInfoView, newestLikes) {
-        super(likesInfoView.likesCount, likesInfoView.dislikesCount, likesInfoView.myStatus);
+    constructor(likesCount, dislikesCount, myStatus, newestLikes) {
+        super(likesCount, dislikesCount, myStatus);
         this.newestLikes = newestLikes;
     }
 }

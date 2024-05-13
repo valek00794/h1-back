@@ -7,23 +7,26 @@ import { Paginator } from '../types/result-types';
 import { PostsService } from '../services/posts-service';
 import { PostsQueryRepository } from '../repositories/posts-query-repository';
 import { BlogsQueryRepository } from '../repositories/blogs-query-repository';
+import { LikesService } from '../services/likes-service';
 
 export class PostsController {
     constructor(
         protected postsService: PostsService,
+        protected likesService: LikesService,
         protected postsQueryRepository: PostsQueryRepository,
-        protected blogsQueryRepository: BlogsQueryRepository) { }
+        protected blogsQueryRepository: BlogsQueryRepository
+    ) { }
 
     async getPostsController(req: Request, res: Response<Paginator<PostView[]>>) {
         const query = req.query as unknown as SearchQueryParametersType;
-        const posts = await this.postsQueryRepository.getPosts(query)
+        const posts = await this.postsQueryRepository.getPosts(query, undefined, req.user?.userId!)
         res
             .status(StatusCodes.OK_200)
             .json(posts)
     }
 
     async findPostController(req: Request, res: Response<false | PostView>) {
-        const post = await this.postsQueryRepository.findPost(req.params.id)
+        const post = await this.postsQueryRepository.findPost(req.params.id, req.user?.userId!)
         if (!post) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
@@ -44,7 +47,7 @@ export class PostsController {
                 .send()
             return
         }
-        const posts = await this.postsQueryRepository.getPosts(query, req.params.blogId)
+        const posts = await this.postsQueryRepository.getPosts(query, req.params.blogId, req.user!.userId)
         res
             .status(StatusCodes.OK_200)
             .json(posts)
@@ -99,5 +102,18 @@ export class PostsController {
             .send()
     }
 
+    async changePostLikeStatusController(req: Request, res: Response<Paginator<Comment[]>>) {
+        const post = await this.postsQueryRepository.findPost(req.params.postId)
+        if (!post) {
+            res
+                .status(StatusCodes.NOT_FOUND_404)
+                .send()
+            return
+        }
+        await this.likesService.changeLikeStatus(req.params.postId, req.body.likeStatus, req.user!.userId, req.user!.login)
+        res
+            .status(StatusCodes.NO_CONTENT_204)
+            .send()
+    }
 }
 

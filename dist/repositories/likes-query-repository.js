@@ -18,10 +18,26 @@ class LikesQueryRepository {
             return yield likeStatus_model_1.LikeStatusModel.find({ parrentId });
         });
     }
-    mapLikesInfo(userId, likesInfo) {
+    getNewestLikes(parrentId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const VIEW_LIKES_COUNT = 3;
+            const newestLike = yield likeStatus_model_1.LikeStatusModel
+                .find({ parrentId, status: likes_types_1.LikeStatus.Like })
+                .sort({ addedAt: -1 })
+                .limit(VIEW_LIKES_COUNT);
+            return this.mapNewestLikes(newestLike);
+        });
+    }
+    mapLikesInfo(likesInfo, userId) {
         var _a;
         const likesInfoView = new likes_types_1.LikesInfoView(likesInfo.filter(like => like.status === likes_types_1.LikeStatus.Like).length, likesInfo.filter(like => like.status === likes_types_1.LikeStatus.Dislike).length, ((_a = likesInfo.find(like => like.authorId.toHexString() === userId)) === null || _a === void 0 ? void 0 : _a.status) || likes_types_1.LikeStatus.None);
         return likesInfoView;
+    }
+    mapExtendedLikesInfo(likesInfo, newestLikes) {
+        return new likes_types_1.ExtendedLikesInfo(likesInfo.likesCount, likesInfo.dislikesCount, likesInfo.myStatus, newestLikes);
+    }
+    mapNewestLikes(likesInfo) {
+        return likesInfo.map(like => new likes_types_1.NewestLike(like.addedAt, like.authorId.toString(), like.authorLogin));
     }
 }
 exports.LikesQueryRepository = LikesQueryRepository;

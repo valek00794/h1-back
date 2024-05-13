@@ -6,12 +6,13 @@ import { inputValidationMiddleware } from "../middlewares/inputValidationMiddlew
 import { postsInputValidation } from "../validation/postsInputValidation";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { blogsController, postsController } from "../composition-root";
+import { userIdFromJWTMiddleware } from "../middlewares/userIdFromJWTMiddleware";
 
 export const blogsRouter = Router();
 
 blogsRouter.get('/', blogsController.getBlogsController.bind(blogsController))
 blogsRouter.get('/:id', blogsController.findBlogController.bind(blogsController))
-blogsRouter.get('/:blogId/posts', postsController.findPostsOfBlogController.bind(postsController))
+blogsRouter.get('/:blogId/posts', userIdFromJWTMiddleware, postsController.findPostsOfBlogController.bind(postsController))
 blogsRouter.post('/:blogId/posts', authMiddleware, postsInputValidation, inputValidationMiddleware, postsController.createPostForBlogController.bind(postsController))
 blogsRouter.post('/', authMiddleware, blogsInputValidation, inputValidationMiddleware, blogsController.createBlogController.bind(blogsController))
 blogsRouter.put('/:id', authMiddleware, blogsInputValidation, inputValidationMiddleware, blogsController.updateBlogController.bind(blogsController))

@@ -10,20 +10,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LikesService = void 0;
+const likes_types_1 = require("../types/likes-types");
 const settings_1 = require("../settings");
 const result_types_1 = require("../types/result-types");
 class LikesService {
     constructor(likesRepository) {
         this.likesRepository = likesRepository;
     }
-    changeLikeStatus(parrentId, likeStatus, userId) {
+    changeLikeStatus(parrentId, likeStatus, userId, userLogin) {
         return __awaiter(this, void 0, void 0, function* () {
-            const likeInfo = yield this.likesRepository.getLikeInfo(parrentId, userId);
-            if (likeInfo === null) {
-                yield this.likesRepository.createLikeInfo(parrentId, userId, likeStatus);
+            if (likeStatus === likes_types_1.LikeStatus.None) {
+                yield this.likesRepository.deleteLikeInfo(parrentId, userId);
             }
             else {
-                yield this.likesRepository.updateLikeInfo(parrentId, userId, likeStatus);
+                yield this.likesRepository.updateLikeInfo(parrentId, userId, userLogin, likeStatus);
             }
             return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
         });

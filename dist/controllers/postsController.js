@@ -12,15 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsController = void 0;
 const settings_1 = require("../settings");
 class PostsController {
-    constructor(postsService, postsQueryRepository, blogsQueryRepository) {
+    constructor(postsService, likesService, postsQueryRepository, blogsQueryRepository) {
         this.postsService = postsService;
+        this.likesService = likesService;
         this.postsQueryRepository = postsQueryRepository;
         this.blogsQueryRepository = blogsQueryRepository;
     }
     getPostsController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const query = req.query;
-            const posts = yield this.postsQueryRepository.getPosts(query);
+            const posts = yield this.postsQueryRepository.getPosts(query, undefined, (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
             res
                 .status(settings_1.StatusCodes.OK_200)
                 .json(posts);
@@ -28,7 +30,8 @@ class PostsController {
     }
     findPostController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const post = yield this.postsQueryRepository.findPost(req.params.id);
+            var _a;
+            const post = yield this.postsQueryRepository.findPost(req.params.id, (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId);
             if (!post) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
@@ -50,7 +53,7 @@ class PostsController {
                     .send();
                 return;
             }
-            const posts = yield this.postsQueryRepository.getPosts(query, req.params.blogId);
+            const posts = yield this.postsQueryRepository.getPosts(query, req.params.blogId, req.user.userId);
             res
                 .status(settings_1.StatusCodes.OK_200)
                 .json(posts);
@@ -104,6 +107,21 @@ class PostsController {
                     .send();
                 return;
             }
+            res
+                .status(settings_1.StatusCodes.NO_CONTENT_204)
+                .send();
+        });
+    }
+    changePostLikeStatusController(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const post = yield this.postsQueryRepository.findPost(req.params.postId);
+            if (!post) {
+                res
+                    .status(settings_1.StatusCodes.NOT_FOUND_404)
+                    .send();
+                return;
+            }
+            yield this.likesService.changeLikeStatus(req.params.postId, req.body.likeStatus, req.user.userId, req.user.login);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();

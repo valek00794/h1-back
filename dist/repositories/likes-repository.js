@@ -12,24 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LikesRepository = void 0;
 const likeStatus_model_1 = require("../db/mongo/likeStatus-model");
 class LikesRepository {
-    createLikeInfo(parrentId, authorId, status) {
+    updateLikeInfo(parrentId, authorId, authorLogin, status) {
         return __awaiter(this, void 0, void 0, function* () {
-            const likesInfo = new likeStatus_model_1.LikeStatusModel({
-                parrentId,
-                authorId,
-                status,
-                addedAt: new Date().toISOString(),
-            });
-            yield likesInfo.save();
-            return likesInfo;
-        });
-    }
-    updateLikeInfo(parrentId, authorId, status) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield likeStatus_model_1.LikeStatusModel.findOneAndUpdate({ parrentId, authorId }, {
+            return yield likeStatus_model_1.LikeStatusModel.findOneAndUpdate({ parrentId, authorId, authorLogin }, {
                 status,
                 addedAt: new Date().toISOString()
-            }, { new: true });
+            }, { new: true, upsert: true });
+        });
+    }
+    deleteLikeInfo(parrentId, authorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield likeStatus_model_1.LikeStatusModel.findOneAndDelete({ parrentId, authorId });
         });
     }
     getLikeInfo(parrentId, authorId) {

@@ -30,7 +30,7 @@ export class CommentsQueryRepository {
 
         const commentsItems = await Promise.all(comments.map(async comment => {
             const likesInfo = await this.likesQueryRepository.getLikesInfo(comment.id)
-            const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId!, likesInfo!)
+            const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo!, userId)
             return this.mapToOutput(comment, mapedlikesInfo)
         }))
 
@@ -50,7 +50,7 @@ export class CommentsQueryRepository {
         let outputComment
         if (comment) {
             const likesInfo = await this.likesQueryRepository.getLikesInfo(id)
-            const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId!, likesInfo!)
+            const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo!, userId)
             outputComment = this.mapToOutput(comment, mapedlikesInfo)
         }
         return comment && outputComment ? outputComment : false

@@ -20,7 +20,11 @@ export class Post {
 }
 
 export class PostView extends Post {
-    constructor(post: Post, public id: ObjectId) {
+    constructor(
+        post: Post,
+        public id: ObjectId,
+        public extendedLikesInfo?: ExtendedLikesInfo
+    ) {
         super(post.title,
             post.shortDescription,
             post.content,

@@ -29,6 +29,7 @@ const settings_1 = require("../../settings");
 exports.LikeStatusSchema = new mongoose_1.default.Schema({
     parrentId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
     authorId: { type: mongoose_1.Schema.Types.ObjectId, required: true },
+    authorLogin: { type: String, required: true },
     status: { type: String, required: true },
     addedAt: { type: Date, required: true },
 });

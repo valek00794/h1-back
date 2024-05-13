@@ -9,12 +9,11 @@ export class LikesService {
         protected likesRepository: LikesRepository,
     ) { }
 
-    async changeLikeStatus(parrentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
-        const likeInfo = await this.likesRepository.getLikeInfo(parrentId, userId)
-        if (likeInfo === null) {
-            await this.likesRepository.createLikeInfo(parrentId, userId, likeStatus)
+    async changeLikeStatus(parrentId: string, likeStatus: LikeStatus, userId: string, userLogin: string): Promise<Result<null>> {
+        if (likeStatus === LikeStatus.None) {
+            await this.likesRepository.deleteLikeInfo(parrentId, userId)
         } else {
-            await this.likesRepository.updateLikeInfo(parrentId, userId, likeStatus)
+            await this.likesRepository.updateLikeInfo(parrentId, userId, userLogin, likeStatus)
         }
         return new Result<null>(
             ResultStatus.NoContent,

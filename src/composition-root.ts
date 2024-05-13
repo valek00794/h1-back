@@ -53,7 +53,7 @@ const usersDevicesService = new UsersDevicesService(authService, usersDevicesRep
 
 export const blogsController = new BlogsController(blogsService, blogsQueryRepository)
 export const commentsController = new CommentsController(commentsService, likesService, commentsQueryRepository, postsQueryRepository)
-export const postsController = new PostsController(postsService, postsQueryRepository, blogsQueryRepository)
+export const postsController = new PostsController(postsService, likesService, postsQueryRepository, blogsQueryRepository)
 export const usersController = new UsersController(usersService, usersQueryRepository)
 export const authController = new AuthController(authService, usersService, usersDevicesService, usersQueryRepository)
 export const usersDevicesController = new UsersDevicesController(authService, usersDevicesService, usersDevicesQueryRepository)

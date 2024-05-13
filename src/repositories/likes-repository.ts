@@ -3,25 +3,20 @@ import { LikeStatusModel } from '../db/mongo/likeStatus-model'
 import { LikeStatus, LikesInfo } from '../types/likes-types'
 
 export class LikesRepository {
-    async createLikeInfo(parrentId: string, authorId: string, status: LikeStatus): Promise<LikesInfo> {
-        const likesInfo = new LikeStatusModel({
-            parrentId,
-            authorId,
-            status,
-            addedAt: new Date().toISOString(),
-        })
-        await likesInfo.save()
-        return likesInfo
-    }
-
-    async updateLikeInfo(parrentId: string, authorId: string, status: LikeStatus): Promise<LikesInfo | null> {
+    async updateLikeInfo(parrentId: string, authorId: string, authorLogin: string, status: LikeStatus): Promise<LikesInfo | null> {
         return await LikeStatusModel.findOneAndUpdate(
-            { parrentId, authorId },
+            { parrentId, authorId, authorLogin },
             {
                 status,
                 addedAt: new Date().toISOString()
             },
-            { new: true }
+            { new: true, upsert: true }
+        )
+    }
+
+    async deleteLikeInfo(parrentId: string, authorId: string): Promise<LikesInfo | null> {
+        return await LikeStatusModel.findOneAndDelete(
+            { parrentId, authorId }
         )
     }
 

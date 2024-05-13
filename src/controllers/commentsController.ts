@@ -114,7 +114,7 @@ export class CommentsController {
                 .send()
             return
         }
-        await this.likesService.changeLikeStatus(req.params.commentId, req.body.likeStatus, req.user!.userId)
+        await this.likesService.changeLikeStatus(req.params.commentId, req.body.likeStatus, req.user!.userId, req.user!.login)
         res
             .status(StatusCodes.NO_CONTENT_204)
             .send()

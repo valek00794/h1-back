@@ -126,7 +126,7 @@ class CommentsController {
                     .send();
                 return;
             }
-            yield this.likesService.changeLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId);
+            yield this.likesService.changeLikeStatus(req.params.commentId, req.body.likeStatus, req.user.userId, req.user.login);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();

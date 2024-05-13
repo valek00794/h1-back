@@ -10,6 +10,7 @@ export class LikesInfo {
     constructor(
         public parrentId: ObjectId,
         public authorId: ObjectId,
+        public authorLogin: string,
         public status: LikeStatus,
         public addedAt: Date,
     ) { }
@@ -34,11 +35,12 @@ export class NewestLike {
 }
 
 export class ExtendedLikesInfo extends LikesInfoView {
-    constructor(likesInfoView: LikesInfoView,
-        public newestLikes: [NewestLike]) {
-        super(
-            likesInfoView.likesCount,
-            likesInfoView.dislikesCount,
-            likesInfoView.myStatus,)
+    constructor(
+        likesCount: number,
+        dislikesCount: number,
+        myStatus: LikeStatus,
+        public newestLikes: NewestLike[]
+    ) {
+        super(likesCount, dislikesCount, myStatus);
     }
 }

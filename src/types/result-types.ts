@@ -25,6 +25,7 @@ export class SuccessResult<T> extends Result<T> {
 }
 
 export class Paginator<T> {
+    public pagesCount: number
     constructor(
         public page: number,
         public pageSize: number,
@@ -32,9 +33,7 @@ export class Paginator<T> {
         public items: T
     ) {
         this.pagesCount = Math.ceil(this.totalCount / this.pageSize)
-
     }
-    public readonly pagesCount: number
 }
 
 
