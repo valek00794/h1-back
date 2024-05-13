@@ -18,8 +18,10 @@ export class LikesQueryRepository {
     }
 
     mapExtendedLikesInfo(likesInfo: LikesInfo[], userId?: string): ExtendedLikesInfo {
-        const newestLikes = likesInfo.sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime()).slice(0, 3)
-        const mappedLikesInfo = this.mapLikesInfo(likesInfo!, userId)
+        const newestLikes = likesInfo.filter(like => like.status === LikeStatus.Like)
+            .sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime())
+            .slice(0, 3)
+        const mappedLikesInfo = this.mapLikesInfo(likesInfo, userId)
         const newestLikesView = newestLikes.map(like =>
             new NewestLike(
                 like.addedAt,

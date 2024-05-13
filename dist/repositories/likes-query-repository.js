@@ -31,7 +31,9 @@ let LikesQueryRepository = class LikesQueryRepository {
         return likesInfoView;
     }
     mapExtendedLikesInfo(likesInfo, userId) {
-        const newestLikes = likesInfo.sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime()).slice(0, 3);
+        const newestLikes = likesInfo.filter(like => like.status === likes_types_1.LikeStatus.Like)
+            .sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime())
+            .slice(0, 3);
         const mappedLikesInfo = this.mapLikesInfo(likesInfo, userId);
         const newestLikesView = newestLikes.map(like => new likes_types_1.NewestLike(like.addedAt, like.authorId.toString(), like.authorLogin));
         return new likes_types_1.ExtendedLikesInfo(mappedLikesInfo.likesCount, mappedLikesInfo.dislikesCount, mappedLikesInfo.myStatus, newestLikesView);

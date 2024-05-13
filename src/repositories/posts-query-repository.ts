@@ -31,7 +31,7 @@ export class PostsQueryRepository {
 
         const postsItems = await Promise.all(posts.map(async post => {
             const likesInfo = await this.likesQueryRepository.getLikesInfo(post.id)
-            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo)
+            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo, userId)
             return this.mapToOutput(post, mapedlikesInfo)
         }))
 
@@ -51,7 +51,7 @@ export class PostsQueryRepository {
         let outputPost
         if (post) {
             const likesInfo = await this.likesQueryRepository.getLikesInfo(post.id)
-            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo)
+            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo, userId)
             outputPost = this.mapToOutput(post, mapedlikesInfo)
         }
         return post && outputPost ? outputPost : false
