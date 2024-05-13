@@ -29,9 +29,7 @@ export class PostsQueryRepository {
 
         const postsItems = await Promise.all(posts.map(async post => {
             const likesInfo = await this.likesQueryRepository.getLikesInfo(post.id)
-            const newestLikes = await this.likesQueryRepository.getNewestLikes(post.id)
-            const mappedLikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo!, userId)
-            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(mappedLikesInfo, newestLikes)
+            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo)
             return this.mapToOutput(post, mapedlikesInfo)
         }))
 
@@ -50,10 +48,8 @@ export class PostsQueryRepository {
         const post = await PostsModel.findById(id)
         let outputPost
         if (post) {
-            const likesInfo = await this.likesQueryRepository.getLikesInfo(id)
-            const newestLikes = await this.likesQueryRepository.getNewestLikes(id)
-            const mappedLikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo!, userId)
-            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(mappedLikesInfo, newestLikes)
+            const likesInfo = await this.likesQueryRepository.getLikesInfo(post.id)
+            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo)
             outputPost = this.mapToOutput(post, mapedlikesInfo)
         }
         return post && outputPost ? outputPost : false

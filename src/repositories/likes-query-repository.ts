@@ -5,16 +5,6 @@ export class LikesQueryRepository {
     async getLikesInfo(parrentId: string): Promise<LikesInfo[]> {
         return await LikeStatusModel.find({ parrentId })
     }
-
-    async getNewestLikes(parrentId: string): Promise<NewestLike[]> {
-        const VIEW_LIKES_COUNT = 3
-        const newestLike = await LikeStatusModel
-            .find({ parrentId, status: LikeStatus.Like })
-            .sort({ addedAt: -1 })
-            .limit(VIEW_LIKES_COUNT)
-        return this.mapNewestLikes(newestLike)
-    }
-
     mapLikesInfo(likesInfo: LikesInfo[], userId?: string): LikesInfoView {
         const likesInfoView = new LikesInfoView(
             likesInfo.filter(like => like.status === LikeStatus.Like).length,
@@ -24,22 +14,19 @@ export class LikesQueryRepository {
         return likesInfoView
     }
 
-    mapExtendedLikesInfo(likesInfo: LikesInfoView, newestLikes: NewestLike[]): ExtendedLikesInfo {
-        return new ExtendedLikesInfo(
-            likesInfo.likesCount,
-            likesInfo.dislikesCount,
-            likesInfo.myStatus, newestLikes
-        )
-    }
-
-    mapNewestLikes(likesInfo: LikesInfo[]): NewestLike[] {
-        return likesInfo.map(like =>
+    mapExtendedLikesInfo(likesInfo: LikesInfo[], userId?: string): ExtendedLikesInfo {
+        const newestLikes = likesInfo.sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime()).slice(0, 3)
+        const mappedLikesInfo = this.mapLikesInfo(likesInfo!, userId)
+        const newestLikesView = newestLikes.map(like =>
             new NewestLike(
                 like.addedAt,
                 like.authorId.toString(),
                 like.authorLogin,
-            )
+            ))
+        return new ExtendedLikesInfo(
+            mappedLikesInfo.likesCount,
+            mappedLikesInfo.dislikesCount,
+            mappedLikesInfo.myStatus, newestLikesView
         )
     }
-
 }

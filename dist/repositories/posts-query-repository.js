@@ -35,9 +35,7 @@ class PostsQueryRepository {
             const postsCount = yield posts_model_1.PostsModel.countDocuments(findOptions);
             const postsItems = yield Promise.all(posts.map((post) => __awaiter(this, void 0, void 0, function* () {
                 const likesInfo = yield this.likesQueryRepository.getLikesInfo(post.id);
-                const newestLikes = yield this.likesQueryRepository.getNewestLikes(post.id);
-                const mappedLikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo, userId);
-                const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(mappedLikesInfo, newestLikes);
+                const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo);
                 return this.mapToOutput(post, mapedlikesInfo);
             })));
             return new result_types_1.Paginator(sanitizationQuery.pageNumber, sanitizationQuery.pageSize, postsCount, postsItems);
@@ -51,10 +49,8 @@ class PostsQueryRepository {
             const post = yield posts_model_1.PostsModel.findById(id);
             let outputPost;
             if (post) {
-                const likesInfo = yield this.likesQueryRepository.getLikesInfo(id);
-                const newestLikes = yield this.likesQueryRepository.getNewestLikes(id);
-                const mappedLikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo, userId);
-                const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(mappedLikesInfo, newestLikes);
+                const likesInfo = yield this.likesQueryRepository.getLikesInfo(post.id);
+                const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo);
                 outputPost = this.mapToOutput(post, mapedlikesInfo);
             }
             return post && outputPost ? outputPost : false;
