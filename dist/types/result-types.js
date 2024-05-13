@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Paginator = exports.Result = void 0;
+exports.Paginator = exports.SuccessResult = exports.Result = void 0;
+const settings_1 = require("../settings");
 class Result {
     constructor(status, data, errors) {
         this.status = status;
@@ -9,13 +10,19 @@ class Result {
     }
 }
 exports.Result = Result;
+class SuccessResult extends Result {
+    constructor(data) {
+        super(settings_1.ResultStatus.Success, data, null);
+    }
+}
+exports.SuccessResult = SuccessResult;
 class Paginator {
-    constructor(pagesCount, page, pageSize, totalCount, items) {
-        this.pagesCount = pagesCount;
+    constructor(page, pageSize, totalCount, items) {
         this.page = page;
         this.pageSize = pageSize;
         this.totalCount = totalCount;
         this.items = items;
+        this.pagesCount = Math.ceil(this.totalCount / this.pageSize);
     }
 }
 exports.Paginator = Paginator;

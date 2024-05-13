@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { BlogView } from '../types/blogs-types';
 import { SearchQueryParametersType } from '../types/query-types';
@@ -8,6 +9,7 @@ import { BlogsService } from '../services/blogs-service';
 import { BlogsQueryRepository } from '../repositories/blogs-query-repository';
 
 
+@injectable()
 export class BlogsController {
     constructor(
         protected blogsService: BlogsService,
@@ -57,14 +59,13 @@ export class BlogsController {
     }
 
     async updateBlogController(req: Request, res: Response<boolean>) {
-        const blog = await this.blogsQueryRepository.findBlog(req.params.id)
-        if (blog === null) {
+        const updatedBlog = await this.blogsService.updateBlog(req.body, req.params.id)
+        if (!updatedBlog) {
             res
                 .status(StatusCodes.NOT_FOUND_404)
                 .send()
             return
         }
-        await this.blogsService.updateBlog(req.body, req.params.id)
         res
             .status(StatusCodes.NO_CONTENT_204)
             .send()

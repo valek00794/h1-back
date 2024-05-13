@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,8 +19,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogsController = void 0;
+const inversify_1 = require("inversify");
 const settings_1 = require("../settings");
-class BlogsController {
+const blogs_service_1 = require("../services/blogs-service");
+const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
+let BlogsController = class BlogsController {
     constructor(blogsService, blogsQueryRepository) {
         this.blogsService = blogsService;
         this.blogsQueryRepository = blogsQueryRepository;
@@ -64,18 +76,22 @@ class BlogsController {
     }
     updateBlogController(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const blog = yield this.blogsQueryRepository.findBlog(req.params.id);
-            if (blog === null) {
+            const updatedBlog = yield this.blogsService.updateBlog(req.body, req.params.id);
+            if (!updatedBlog) {
                 res
                     .status(settings_1.StatusCodes.NOT_FOUND_404)
                     .send();
                 return;
             }
-            yield this.blogsService.updateBlog(req.body, req.params.id);
             res
                 .status(settings_1.StatusCodes.NO_CONTENT_204)
                 .send();
         });
     }
-}
+};
 exports.BlogsController = BlogsController;
+exports.BlogsController = BlogsController = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [blogs_service_1.BlogsService,
+        blogs_query_repository_1.BlogsQueryRepository])
+], BlogsController);

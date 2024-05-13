@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsBlogIdInputValidation = exports.postsInputValidation = void 0;
 const express_validator_1 = require("express-validator");
 const composition_root_1 = require("../composition-root");
+const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
+const blogsQueryRepository = composition_root_1.container.resolve(blogs_query_repository_1.BlogsQueryRepository);
 const VALIDATE_PHARAMS = {
     titleMaxLength: 30,
     shortDescriptionMaxLength: 100,
@@ -32,9 +34,8 @@ exports.postsBlogIdInputValidation = [
     (0, express_validator_1.body)('blogId').trim()
         .notEmpty().withMessage('The field is required'),
     (0, express_validator_1.body)('blogId').custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const blogs = yield composition_root_1.blogsQueryRepository.getBlogs();
-        const blogIdIncludes = blogs.items.findIndex(el => { var _a; return ((_a = el.id) === null || _a === void 0 ? void 0 : _a.toString()) === value; });
-        if (blogIdIncludes === -1) {
+        const blogs = yield blogsQueryRepository.findBlog(value);
+        if (blogs === null) {
             throw new Error('Blog not found');
         }
         return value;

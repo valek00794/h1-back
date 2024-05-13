@@ -1,15 +1,21 @@
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { CommentsModel } from '../db/mongo/comments.model'
 import { CommentDbType, CommentView } from '../types/comments-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
-import { CommentLikesStatusModel } from '../db/mongo/commentLikesStatus-model'
-import { LikeStatus, LikesInfo, LikesInfoView } from '../types/likes-types'
+import { LikeStatus, LikesInfoView } from '../types/likes-types'
 import { Paginator } from '../types/result-types'
+import { LikesQueryRepository } from './likes-query-repository'
 
+@injectable()
 export class CommentsQueryRepository {
+    constructor(
+        protected likesQueryRepository: LikesQueryRepository,
+    ) { }
     async getComments(postId: string, query?: SearchQueryParametersType, userId?: string): Promise<Paginator<CommentView[]>> {
+
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
         if (postId) {
@@ -25,13 +31,12 @@ export class CommentsQueryRepository {
         const commentsCount = await CommentsModel.countDocuments(findOptions)
 
         const commentsItems = await Promise.all(comments.map(async comment => {
-            const likesInfo = await this.getLikesInfo(comment.id)
-            const mapedlikesInfo = this.mapLikesInfo(userId!, likesInfo!)
+            const likesInfo = await this.likesQueryRepository.getLikesInfo(comment.id)
+            const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo!, userId)
             return this.mapToOutput(comment, mapedlikesInfo)
         }))
 
         return new Paginator<CommentView[]>(
-            Math.ceil(commentsCount / sanitizationQuery.pageSize),
             sanitizationQuery.pageNumber,
             sanitizationQuery.pageSize,
             commentsCount,
@@ -46,15 +51,11 @@ export class CommentsQueryRepository {
         const comment = await CommentsModel.findById(id)
         let outputComment
         if (comment) {
-            const likesInfo = await this.getLikesInfo(id)
-            const mapedlikesInfo = this.mapLikesInfo(userId!, likesInfo!)
+            const likesInfo = await this.likesQueryRepository.getLikesInfo(id)
+            const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(likesInfo!, userId)
             outputComment = this.mapToOutput(comment, mapedlikesInfo)
         }
         return comment && outputComment ? outputComment : false
-    }
-
-    async getLikesInfo(commentId: string) {
-        return await CommentLikesStatusModel.findOne({ commentId })
     }
 
     mapToOutput(comment: CommentDbType, likesInfo?: LikesInfoView): CommentView {
@@ -72,18 +73,5 @@ export class CommentsQueryRepository {
                 myStatus: likesInfo?.myStatus || LikeStatus.None
             }
         )
-    }
-
-    mapLikesInfo(userId: string, likesInfo?: LikesInfo) {
-        let myLikeStatus = LikeStatus.None
-        if (userId && likesInfo?.likesUsersIds.includes(userId)) {
-            myLikeStatus = LikeStatus.Like
-        }
-        if (userId && likesInfo?.dislikesUsersIds.includes(userId)) {
-            myLikeStatus = LikeStatus.Dislike
-        }
-        const likesCount = likesInfo?.likesUsersIds.length || 0
-        const dislikesCount = likesInfo?.dislikesUsersIds.length || 0
-        return new LikesInfoView(likesCount, dislikesCount, myLikeStatus)
     }
 }

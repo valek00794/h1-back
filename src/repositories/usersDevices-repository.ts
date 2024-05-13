@@ -1,9 +1,11 @@
 import { DeleteResult } from 'mongodb'
 import { UpdateWriteOpResult } from 'mongoose'
+import { injectable } from 'inversify';
 
 import { UserDeviceInfoType, UsersDevicesType } from '../types/users-types'
 import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
+@injectable()
 export class UsersDevicesRepository {
     async addUserDevice(device: UsersDevicesType) {
         const newDevice = new UsersDevicesModel(device)
@@ -38,5 +40,9 @@ export class UsersDevicesRepository {
 
     async getUserDeviceById(deviceId: string): Promise<UsersDevicesType | null> {
         return await UsersDevicesModel.findOne({ deviceId })
+    }
+
+    async getAllActiveDevicesByUser(userId: string): Promise<UsersDevicesType[]> {
+        return await UsersDevicesModel.find({ userId })
     }
 }

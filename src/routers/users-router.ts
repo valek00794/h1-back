@@ -3,8 +3,10 @@ import { Router } from "express";
 import { userDataInputValidation } from "../validation/usersInputValidation";
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { usersController } from "../composition-root";
+import { container } from "../composition-root";
+import { UsersController } from "../controllers/usersController";
 
+const usersController = container.resolve(UsersController)
 export const usersRouter = Router();
 
 usersRouter.get('/', authMiddleware, usersController.getUsersController.bind(usersController))

@@ -13,6 +13,8 @@ exports.authJWTMiddleware = void 0;
 const jwt_adapter_1 = require("../adapters/jwt/jwt-adapter");
 const settings_1 = require("../settings");
 const composition_root_1 = require("../composition-root");
+const users_query_repository_1 = require("../repositories/users-query-repository");
+const usersQueryRepository = composition_root_1.container.resolve(users_query_repository_1.UsersQueryRepository);
 const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.headers.authorization) {
         res
@@ -27,7 +29,7 @@ const authJWTMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             req.user = {};
         }
         req.user.userId = userVerifyInfo.userId;
-        const user = yield composition_root_1.usersQueryRepository.findUserById(userVerifyInfo.userId);
+        const user = yield usersQueryRepository.findUserById(userVerifyInfo.userId);
         if (user) {
             req.user.login = user.login;
         }

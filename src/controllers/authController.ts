@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter';
 
 import { TokenOutType } from '../adapters/jwt/jwt-types';
-import { UserDbType, UserInfoType } from '../types/users-types';
+import { UserDbType, UserInfo } from '../types/users-types';
 import { APIErrorResult } from '../types/result-types';
 import { ResultStatus, StatusCodes } from '../settings';
 
@@ -12,6 +13,7 @@ import { UsersQueryRepository } from '../repositories/users-query-repository';
 import { UsersService } from '../services/users-service';
 import { UsersDevicesService } from '../services/usersDevices-service';
 
+@injectable()
 export class AuthController {
     constructor(
         protected authService: AuthService,
@@ -47,7 +49,7 @@ export class AuthController {
             })
     }
 
-    async getAuthInfoController(req: Request, res: Response<UserInfoType | false>) {
+    async getAuthInfoController(req: Request, res: Response<UserInfo | false>) {
         const user = await this.usersQueryRepository.findUserById(req.user!.userId)
         if (!req.user || !req.user.userId || !user) {
             res
@@ -149,7 +151,7 @@ export class AuthController {
     }
 
     async passwordRecoveryController(req: Request, res: Response) {
-        const result = await this.authService.passwordRecovery(req.body.email)
+        const result = await this.usersService.passwordRecovery(req.body.email)
         if (result.status === ResultStatus.NoContent) {
             res
                 .status(StatusCodes.NO_CONTENT_204)
@@ -159,7 +161,7 @@ export class AuthController {
     }
 
     async confirmPasswordRecoveryController(req: Request, res: Response<APIErrorResult | null>) {
-        const result = await this.authService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
+        const result = await this.usersService.confirmPasswordRecovery(req.body.recoveryCode, req.body.newPassword)
         if (result.status === ResultStatus.BadRequest) {
             res
                 .status(StatusCodes.BAD_REQUEST_400)

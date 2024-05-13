@@ -1,16 +1,25 @@
 import { ObjectId } from "mongodb"
+import { injectable } from 'inversify';
 
 import { CommentDbType, CommentInputType, Comment, CommentView } from "../types/comments-types"
-import { CommentatorInfoType } from "../types/users-types"
-import { LikeStatus } from "../types/likes-types"
+import { CommentatorInfo } from "../types/users-types"
 import { ResultStatus } from "../settings"
 import { Result } from "../types/result-types"
 import { CommentsRepository } from "../repositories/comments-repository"
+import { PostsRepository } from "../repositories/posts-repository"
 
+@injectable()
 export class CommentsService {
-    constructor(protected commentsRepository: CommentsRepository) { }
-    
-    async createComment(body: CommentInputType, commentatorInfo: CommentatorInfoType, postId?: string): Promise<CommentDbType> {
+    constructor(
+        protected commentsRepository: CommentsRepository,
+        protected postsRepository: PostsRepository,
+    ) { }
+
+    async createComment(body: CommentInputType, postId: string, userId: string, userLogin: string): Promise<Result<CommentDbType>> {
+        const commentatorInfo = new CommentatorInfo(
+            userId,
+            userLogin
+        )
         const newComment = new Comment(
             body.content,
             {
@@ -20,10 +29,27 @@ export class CommentsService {
             new Date().toISOString(),
             new ObjectId(postId),
         )
-        return await this.commentsRepository.createComment(newComment)
+        const comment = await this.commentsRepository.createComment(newComment)
+        return new Result<CommentDbType>(
+            ResultStatus.Created,
+            comment,
+            null
+        )
     }
 
-    async updateComment(body: CommentInputType, comment: CommentView): Promise<boolean> {
+    async updateComment(body: CommentInputType, comment: CommentView, userId: string, userLogin: string): Promise<Result<null>> {
+        const commentatorInfo = new CommentatorInfo(
+            userId,
+            userLogin
+        )
+        if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
+            comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
+            return new Result<null>(
+                ResultStatus.Forbidden,
+                null,
+                null
+            )
+        }
         const updatedComment = new Comment(
             body.content,
             {
@@ -34,27 +60,28 @@ export class CommentsService {
             comment.postId,
 
         )
-        return await this.commentsRepository.updateComment(updatedComment, comment.id.toString())
+        await this.commentsRepository.updateComment(updatedComment, comment.id.toString())
+        return new Result<null>(
+            ResultStatus.NoContent,
+            null,
+            null
+        )
     }
 
-    async deleteComment(id: string): Promise<boolean> {
-        if (!ObjectId.isValid(id)) {
-            return false
+    async deleteComment(comment: CommentView, userId: string, userLogin: string): Promise<Result<null>> {
+        const commentatorInfo = new CommentatorInfo(
+            userId,
+            userLogin
+        )
+        if (comment.commentatorInfo.userId !== commentatorInfo.userId &&
+            comment.commentatorInfo.userLogin !== commentatorInfo.userLogin) {
+            return new Result<null>(
+                ResultStatus.Forbidden,
+                null,
+                null
+            )
         }
-        return await this.commentsRepository.deleteComment(id)
-    }
-
-    async changeCommentLikeStatus(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
-        if (likeStatus === LikeStatus.Like) {
-            await this.commentsRepository.likeComment(commentId, userId)
-        }
-        if (likeStatus === LikeStatus.Dislike) {
-            await this.commentsRepository.dislikeComment(commentId, userId)
-        }
-        if (likeStatus === LikeStatus.None) {
-            await this.commentsRepository.removeLikeStatusComment(commentId, userId)
-        }
-
+        await this.commentsRepository.deleteComment(comment.id.toString())
         return new Result<null>(
             ResultStatus.NoContent,
             null,

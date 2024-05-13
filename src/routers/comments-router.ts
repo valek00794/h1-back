@@ -4,8 +4,10 @@ import { commentInputValidation, likeStatusInputValidation } from "../validation
 import { inputValidationMiddleware } from "../middlewares/inputValidationMiddleware";
 import { authJWTMiddleware } from "../middlewares/authJWTMiddleware";
 import { userIdFromJWTMiddleware } from "../middlewares/userIdFromJWTMiddleware";
-import { commentsController } from "../composition-root";
+import { container } from "../composition-root";
+import { CommentsController } from "../controllers/commentsController";
 
+const commentsController = container.resolve(CommentsController)
 export const commentsRouter = Router();
 
 commentsRouter.get('/:id', userIdFromJWTMiddleware, commentsController.findCommentController.bind(commentsController))

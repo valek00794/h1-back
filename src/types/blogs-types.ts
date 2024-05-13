@@ -12,13 +12,13 @@ export class Blog {
 
 export type BlogDbType = WithId<Blog>
 
-export class BlogView {
-    constructor(public id: ObjectId,
-        public name: string,
-        public description: string,
-        public websiteUrl: string,
-        public createdAt: string,
-        public isMembership: boolean
-    ) {
+export class BlogView extends Blog {
+    constructor(blog: Blog, public id: ObjectId) {
+        super(blog.name,
+            blog.description,
+            blog.websiteUrl,
+            blog.createdAt,
+            blog.isMembership
+        )
     }
 }

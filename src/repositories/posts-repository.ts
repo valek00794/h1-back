@@ -1,13 +1,16 @@
+import { injectable } from 'inversify';
+
 import { PostDbType, Post } from '../types/posts-types'
 import { PostsModel } from '../db/mongo/posts.model'
 
-export class PostsRepository  {
+@injectable()
+export class PostsRepository {
     async createPost(newPost: Post): Promise<PostDbType> {
         const post = new PostsModel(newPost)
         await post.save()
         return post
     }
-    
+
     async updatePost(updatedPost: Post, id: string): Promise<boolean> {
         const updatedResult = await PostsModel.findByIdAndUpdate(id, updatedPost, { new: true })
         return updatedResult ? true : false

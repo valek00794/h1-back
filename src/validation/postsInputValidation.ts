@@ -1,6 +1,9 @@
 import { body } from 'express-validator'
 
-import { blogsQueryRepository } from '../composition-root'
+import { container } from '../composition-root'
+import { BlogsQueryRepository } from '../repositories/blogs-query-repository'
+
+const blogsQueryRepository = container.resolve(BlogsQueryRepository)
 
 const VALIDATE_PHARAMS = {
     titleMaxLength: 30,
@@ -24,9 +27,8 @@ export const postsBlogIdInputValidation = [
     body('blogId').trim()
         .notEmpty().withMessage('The field is required'),
     body('blogId').custom(async (value) => {
-        const blogs = await blogsQueryRepository.getBlogs()
-        const blogIdIncludes = blogs.items.findIndex(el => el.id?.toString() === value)
-        if (blogIdIncludes === -1) {
+        const blogs = await blogsQueryRepository.findBlog(value)
+        if (blogs === null) {
             throw new Error('Blog not found')
         }
         return value

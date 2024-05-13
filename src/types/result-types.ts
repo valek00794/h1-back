@@ -9,7 +9,7 @@ export type APIErrorResult = {
     errorsMessages: FieldError[]
 }
 
-export class Result<T = null> {
+export class Result<T> {
     constructor(
         public status: ResultStatus,
         public data: T,
@@ -18,14 +18,22 @@ export class Result<T = null> {
     }
 }
 
+export class SuccessResult<T> extends Result<T> {
+    constructor(data: T) {
+        super(ResultStatus.Success, data, null)
+    }
+}
+
 export class Paginator<T> {
+    public pagesCount: number
     constructor(
-        public pagesCount: number,
         public page: number,
         public pageSize: number,
         public totalCount: number,
         public items: T
-    ) { }
+    ) {
+        this.pagesCount = Math.ceil(this.totalCount / this.pageSize)
+    }
 }
 
 

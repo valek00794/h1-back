@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 
 import { jwtAdapter } from "../adapters/jwt/jwt-adapter"
 import { SETTINGS } from "../settings"
-import { UserInfoType } from "../types/users-types"
+import { UserInfo } from "../types/users-types"
 
 export const userIdFromJWTMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     if (req.headers.authorization) {
@@ -10,7 +10,7 @@ export const userIdFromJWTMiddleware = async (req: Request, res: Response, next:
         const userVerifyInfo = await jwtAdapter.getUserInfoByToken(token!, SETTINGS.JWT.AT_SECRET)
         if (userVerifyInfo) {
             if (!req.user) {
-                req.user = {} as UserInfoType
+                req.user = {} as UserInfo
             }
             req.user!.userId = userVerifyInfo.userId
         }

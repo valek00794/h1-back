@@ -1,18 +1,20 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { SearchQueryParametersType } from '../types/query-types';
-import { UserViewType } from '../types/users-types';
+import { UserView } from '../types/users-types';
 import { StatusCodes } from '../settings';
 import { Paginator } from '../types/result-types';
 import { UsersQueryRepository } from '../repositories/users-query-repository';
 import { UsersService } from '../services/users-service';
 
+@injectable()
 export class UsersController {
     constructor(
         protected usersService: UsersService,
         protected usersQueryRepository: UsersQueryRepository) { }
 
-    async createUserController(req: Request, res: Response<UserViewType>) {
+    async createUserController(req: Request, res: Response<UserView>) {
         const createdUser = await this.usersService.createUser(req.body.login, req.body.email, req.body.password)
         const user = this.usersQueryRepository.mapToOutput(createdUser)
         res
@@ -21,7 +23,7 @@ export class UsersController {
         return
     }
 
-    async getUsersController(req: Request, res: Response<Paginator<UserViewType[]>>) {
+    async getUsersController(req: Request, res: Response<Paginator<UserView[]>>) {
         const query = req.query as unknown as SearchQueryParametersType
         const users = await this.usersQueryRepository.getAllUsers(query)
         res

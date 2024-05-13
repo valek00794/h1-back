@@ -1,4 +1,5 @@
 import { ObjectId, WithId } from "mongodb"
+import { ExtendedLikesInfo } from "./likes-types"
 
 export type CreatePostType = {
     title: string,
@@ -18,8 +19,21 @@ export class Post {
     ) { }
 }
 
+export class PostView extends Post {
+    constructor(
+        post: Post,
+        public id: ObjectId,
+        public extendedLikesInfo?: ExtendedLikesInfo
+    ) {
+        super(post.title,
+            post.shortDescription,
+            post.content,
+            post.blogId,
+            post.blogName,
+            post.createdAt)
+    }
+}
+
 export type PostDbType = WithId<Post>
 
-export type PostViewType = Post & {
-    id: ObjectId,
-}
+

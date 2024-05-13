@@ -1,4 +1,5 @@
 import { DeleteResult, UpdateResult } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { ResultStatus, SETTINGS } from '../settings'
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
@@ -7,6 +8,7 @@ import { Result } from '../types/result-types'
 import { UsersDevicesRepository } from '../repositories/usersDevices-repository'
 import { AuthService } from './auth-service'
 
+@injectable()
 export class UsersDevicesService {
     constructor(
         protected authService: AuthService,
@@ -33,6 +35,23 @@ export class UsersDevicesService {
         return await this.usersDevicesRepository.updateUserDevice(userVerifyInfoByOldToken!, newLastActiveDate, newExpiryDate)
     }
 
+    async getActiveDevicesByUser(refreshToken: string): Promise<Result<null | UsersDevicesType[]>> {
+        const userVerifyInfo = await this.authService.checkUserByRefreshToken(refreshToken)
+        if (userVerifyInfo === null) {
+            return new Result<null>(
+                ResultStatus.Unauthorized,
+                null,
+                null
+            )
+        }
+        const devices = await this.usersDevicesRepository.getAllActiveDevicesByUser(userVerifyInfo.data?.userId!)
+        return new Result<UsersDevicesType[]>(
+            ResultStatus.Success,
+            devices,
+            null
+        )
+    }
+
     async deleteAllDevicesByUser(refreshToken: string): Promise<Result<null | DeleteResult>> {
         const userVerifyInfo = await this.authService.checkUserByRefreshToken(refreshToken)
         if (userVerifyInfo.data === null) {
@@ -49,11 +68,35 @@ export class UsersDevicesService {
             null
         )
     }
-    async deleteUserDeviceById(deviceId: string): Promise<Result<DeleteResult>> {
-        const deleteResult = await this.usersDevicesRepository.deleteUserDevicebyId(deviceId)
-        return new Result<DeleteResult>(
+
+    async deleteUserDeviceById(refreshToken: string, deviceId: string): Promise<Result<null>> {
+        const userVerifyInfo = await this.authService.checkUserByRefreshToken(refreshToken)
+        if (userVerifyInfo === null) {
+            return new Result(
+                ResultStatus.Unauthorized,
+                null,
+                null
+            )
+        }
+        const device = await this.usersDevicesRepository.getUserDeviceById(deviceId)
+        if (!device) {
+            return new Result(
+                ResultStatus.NotFound,
+                null,
+                null
+            )
+        }
+        if (userVerifyInfo.data?.userId !== device.userId) {
+            return new Result(
+                ResultStatus.Forbidden,
+                null,
+                null
+            )
+        }
+        await this.usersDevicesRepository.deleteUserDevicebyId(deviceId)
+        return new Result(
             ResultStatus.NoContent,
-            deleteResult,
+            null,
             null
         )
     }

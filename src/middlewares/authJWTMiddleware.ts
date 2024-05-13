@@ -2,8 +2,11 @@ import { Request, Response, NextFunction } from "express"
 
 import { jwtAdapter } from "../adapters/jwt/jwt-adapter"
 import { SETTINGS, StatusCodes } from "../settings"
-import { UserInfoType } from "../types/users-types"
-import { usersQueryRepository } from "../composition-root"
+import { UserInfo } from "../types/users-types"
+import { container } from "../composition-root"
+import { UsersQueryRepository } from "../repositories/users-query-repository"
+
+const usersQueryRepository = container.resolve(UsersQueryRepository)
 
 export const authJWTMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
@@ -17,7 +20,7 @@ export const authJWTMiddleware = async (req: Request, res: Response, next: NextF
     const userVerifyInfo = await jwtAdapter.getUserInfoByToken(token!, SETTINGS.JWT.AT_SECRET)
     if (userVerifyInfo) {
         if (!req.user) {
-            req.user = {} as UserInfoType 
+            req.user = {} as UserInfo
         }
         req.user!.userId = userVerifyInfo.userId
 

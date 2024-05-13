@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LikesInfoView = exports.LikesInfo = exports.LikeStatus = void 0;
+exports.ExtendedLikesInfo = exports.NewestLike = exports.LikesInfoView = exports.LikesInfo = exports.LikeStatus = void 0;
 var LikeStatus;
 (function (LikeStatus) {
     LikeStatus["None"] = "None";
@@ -8,10 +8,12 @@ var LikeStatus;
     LikeStatus["Dislike"] = "Dislike";
 })(LikeStatus || (exports.LikeStatus = LikeStatus = {}));
 class LikesInfo {
-    constructor(likesUsersIds, dislikesUsersIds, commentId) {
-        this.likesUsersIds = likesUsersIds;
-        this.dislikesUsersIds = dislikesUsersIds;
-        this.commentId = commentId;
+    constructor(parrentId, authorId, authorLogin, status, addedAt) {
+        this.parrentId = parrentId;
+        this.authorId = authorId;
+        this.authorLogin = authorLogin;
+        this.status = status;
+        this.addedAt = addedAt;
     }
 }
 exports.LikesInfo = LikesInfo;
@@ -23,3 +25,18 @@ class LikesInfoView {
     }
 }
 exports.LikesInfoView = LikesInfoView;
+class NewestLike {
+    constructor(addedAt, userId, login) {
+        this.addedAt = addedAt;
+        this.userId = userId;
+        this.login = login;
+    }
+}
+exports.NewestLike = NewestLike;
+class ExtendedLikesInfo extends LikesInfoView {
+    constructor(likesCount, dislikesCount, myStatus, newestLikes) {
+        super(likesCount, dislikesCount, myStatus);
+        this.newestLikes = newestLikes;
+    }
+}
+exports.ExtendedLikesInfo = ExtendedLikesInfo;

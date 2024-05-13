@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -11,11 +20,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsQueryRepository = void 0;
 const mongodb_1 = require("mongodb");
+const inversify_1 = require("inversify");
+const posts_types_1 = require("../types/posts-types");
 const utils_1 = require("../utils");
 const posts_model_1 = require("../db/mongo/posts.model");
 const result_types_1 = require("../types/result-types");
-class PostsQueryRepository {
-    getPosts(query, blogId) {
+const likes_query_repository_1 = require("./likes-query-repository");
+const likes_types_1 = require("../types/likes-types");
+let PostsQueryRepository = class PostsQueryRepository {
+    constructor(likesQueryRepository) {
+        this.likesQueryRepository = likesQueryRepository;
+    }
+    getPosts(query, blogId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const sanitizationQuery = (0, utils_1.getSanitizationQuery)(query);
             let findOptions = {};
@@ -28,28 +44,39 @@ class PostsQueryRepository {
                 .skip((sanitizationQuery.pageNumber - 1) * sanitizationQuery.pageSize)
                 .limit(sanitizationQuery.pageSize);
             const postsCount = yield posts_model_1.PostsModel.countDocuments(findOptions);
-            return new result_types_1.Paginator(Math.ceil(postsCount / sanitizationQuery.pageSize), sanitizationQuery.pageNumber, sanitizationQuery.pageSize, postsCount, posts.map(post => this.mapToOutput(post)));
+            const postsItems = yield Promise.all(posts.map((post) => __awaiter(this, void 0, void 0, function* () {
+                const likesInfo = yield this.likesQueryRepository.getLikesInfo(post.id);
+                const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo, userId);
+                return this.mapToOutput(post, mapedlikesInfo);
+            })));
+            return new result_types_1.Paginator(sanitizationQuery.pageNumber, sanitizationQuery.pageSize, postsCount, postsItems);
         });
     }
-    findPost(id) {
+    findPost(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!mongodb_1.ObjectId.isValid(id)) {
                 return false;
             }
             const post = yield posts_model_1.PostsModel.findById(id);
-            return post ? this.mapToOutput(post) : false;
+            let outputPost;
+            if (post) {
+                const likesInfo = yield this.likesQueryRepository.getLikesInfo(post.id);
+                const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo, userId);
+                outputPost = this.mapToOutput(post, mapedlikesInfo);
+            }
+            return post && outputPost ? outputPost : false;
         });
     }
-    mapToOutput(post) {
-        return {
-            id: post._id,
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt
-        };
+    mapToOutput(post, extendedLikesInfo) {
+        const outPost = new posts_types_1.Post(post.title, post.shortDescription, post.content, post.blogId, post.blogName, post.createdAt);
+        const extendedLikesInfoView = extendedLikesInfo ?
+            extendedLikesInfo :
+            new likes_types_1.ExtendedLikesInfo(0, 0, likes_types_1.LikeStatus.None, []);
+        return new posts_types_1.PostView(outPost, post._id, extendedLikesInfoView);
     }
-}
+};
 exports.PostsQueryRepository = PostsQueryRepository;
+exports.PostsQueryRepository = PostsQueryRepository = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [likes_query_repository_1.LikesQueryRepository])
+], PostsQueryRepository);

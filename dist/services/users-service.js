@@ -1,4 +1,13 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,11 +22,13 @@ exports.UsersService = void 0;
 const mongodb_1 = require("mongodb");
 const uuid_1 = require("uuid");
 const add_1 = require("date-fns/add");
+const inversify_1 = require("inversify");
 const email_manager_1 = require("../managers/email-manager");
 const result_types_1 = require("../types/result-types");
 const settings_1 = require("../settings");
 const bcypt_adapter_1 = require("../adapters/bcypt-adapter");
-class UsersService {
+const users_repository_1 = require("../repositories/users-repository");
+let UsersService = class UsersService {
     constructor(usersRepository) {
         this.usersRepository = usersRepository;
     }
@@ -91,5 +102,73 @@ class UsersService {
             return yield this.usersRepository.deleteUserById(id);
         });
     }
-}
+    passwordRecovery(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.usersRepository.findUserByLoginOrEmail(email);
+            if (user === null) {
+                return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
+            }
+            const newUserRecoveryPasswordInfo = {
+                recoveryCode: (0, uuid_1.v4)(),
+                expirationDate: (0, add_1.add)(new Date(), {
+                    hours: 1
+                }),
+            };
+            try {
+                yield email_manager_1.emailManager.sendEmailPasswordRecoveryMessage(email, newUserRecoveryPasswordInfo.recoveryCode);
+            }
+            catch (error) {
+                console.error(error);
+                const errors = {
+                    errorsMessages: []
+                };
+                errors.errorsMessages.push({
+                    message: "Error sending recovery email",
+                    field: "Email sender"
+                });
+                return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
+            }
+            yield this.usersRepository.updatePasswordRecoveryInfo(user._id, newUserRecoveryPasswordInfo);
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
+        });
+    }
+    confirmPasswordRecovery(recoveryCode, newPassword) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const recoveryInfo = yield this.usersRepository.findPasswordRecoveryInfo(recoveryCode);
+            const errors = {
+                errorsMessages: []
+            };
+            if (recoveryInfo === null) {
+                errors.errorsMessages.push({
+                    message: "User with current recovery code not found",
+                    field: "recoveryCode"
+                });
+                return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
+            }
+            if (recoveryInfo !== null) {
+                if (recoveryInfo.recoveryCode !== recoveryCode) {
+                    errors.errorsMessages.push({
+                        message: "Recovery code does not match",
+                        field: "recoveryCode"
+                    });
+                }
+                if (recoveryInfo.expirationDate < new Date()) {
+                    errors.errorsMessages.push({
+                        message: "Recovery code has expired, needs to be requested again",
+                        field: "recoveryCode"
+                    });
+                }
+                if (errors.errorsMessages.length !== 0) {
+                    return new result_types_1.Result(settings_1.ResultStatus.BadRequest, null, errors);
+                }
+            }
+            yield this.updateUserPassword(recoveryInfo.userId, newPassword);
+            return new result_types_1.Result(settings_1.ResultStatus.NoContent, null, null);
+        });
+    }
+};
 exports.UsersService = UsersService;
+exports.UsersService = UsersService = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [users_repository_1.UsersRepository])
+], UsersService);

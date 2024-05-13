@@ -1,6 +1,9 @@
-import { UsersDevicesType } from "../types/users-types"
+import { injectable } from 'inversify';
+
+import { UsersDevicesOutput, UsersDevicesType } from "../types/users-types"
 import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
+@injectable()
 export class UsersDevicesQueryRepository {
     async getAllActiveDevicesByUser(userId: string): Promise<UsersDevicesType[]> {
         const userDevices = await UsersDevicesModel.find({ userId })
@@ -12,12 +15,12 @@ export class UsersDevicesQueryRepository {
         return deviceSession ? this.mapToOutput(deviceSession) : null
     }
 
-    mapToOutput(userDevice: UsersDevicesType) {
-        return {
-            ip: userDevice.ip,
-            title: userDevice.title,
-            lastActiveDate: userDevice.lastActiveDate,
-            deviceId: userDevice.deviceId,
-        }
+    mapToOutput(userDevice: UsersDevicesType): UsersDevicesOutput {
+        return new UsersDevicesOutput(
+            userDevice.ip,
+            userDevice.title,
+            userDevice.deviceId,
+            userDevice.lastActiveDate
+        )
     }
 }

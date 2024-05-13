@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
+exports.PostView = exports.Post = void 0;
 class Post {
     constructor(title, shortDescription, content, blogId, blogName, createdAt) {
         this.title = title;
@@ -12,3 +12,11 @@ class Post {
     }
 }
 exports.Post = Post;
+class PostView extends Post {
+    constructor(post, id, extendedLikesInfo) {
+        super(post.title, post.shortDescription, post.content, post.blogId, post.blogName, post.createdAt);
+        this.id = id;
+        this.extendedLikesInfo = extendedLikesInfo;
+    }
+}
+exports.PostView = PostView;

@@ -1,13 +1,20 @@
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify';
 
-import { PostDbType, PostViewType } from '../types/posts-types'
+import { Post, PostDbType, PostView } from '../types/posts-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
 import { PostsModel } from '../db/mongo/posts.model'
 import { Paginator } from '../types/result-types'
+import { LikesQueryRepository } from './likes-query-repository'
+import { ExtendedLikesInfo, LikeStatus } from '../types/likes-types'
 
+@injectable()
 export class PostsQueryRepository {
-    async getPosts(query: SearchQueryParametersType, blogId?: string): Promise<Paginator<PostViewType[]>> {
+    constructor(
+        protected likesQueryRepository: LikesQueryRepository,
+    ) { }
+    async getPosts(query: SearchQueryParametersType, blogId?: string, userId?: string): Promise<Paginator<PostView[]>> {
         const sanitizationQuery = getSanitizationQuery(query)
         let findOptions = {}
         if (blogId) {
@@ -22,32 +29,46 @@ export class PostsQueryRepository {
 
         const postsCount = await PostsModel.countDocuments(findOptions)
 
-        return new Paginator<PostViewType[]>(
-            Math.ceil(postsCount / sanitizationQuery.pageSize),
+        const postsItems = await Promise.all(posts.map(async post => {
+            const likesInfo = await this.likesQueryRepository.getLikesInfo(post.id)
+            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo, userId)
+            return this.mapToOutput(post, mapedlikesInfo)
+        }))
+
+        return new Paginator<PostView[]>(
             sanitizationQuery.pageNumber,
             sanitizationQuery.pageSize,
             postsCount,
-            posts.map(post => this.mapToOutput(post))
+            postsItems
         )
     }
 
-    async findPost(id: string): Promise<false | PostViewType> {
+    async findPost(id: string, userId?: string): Promise<false | PostView> {
         if (!ObjectId.isValid(id)) {
             return false
         }
         const post = await PostsModel.findById(id)
-        return post ? this.mapToOutput(post) : false
+        let outputPost
+        if (post) {
+            const likesInfo = await this.likesQueryRepository.getLikesInfo(post.id)
+            const mapedlikesInfo = this.likesQueryRepository.mapExtendedLikesInfo(likesInfo, userId)
+            outputPost = this.mapToOutput(post, mapedlikesInfo)
+        }
+        return post && outputPost ? outputPost : false
     }
 
-    mapToOutput(post: PostDbType): PostViewType {
-        return {
-            id: post._id!,
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt
-        }
+    mapToOutput(post: PostDbType, extendedLikesInfo?: ExtendedLikesInfo): PostView {
+        const outPost = new Post(
+            post.title,
+            post.shortDescription,
+            post.content,
+            post.blogId,
+            post.blogName,
+            post.createdAt
+        )
+        const extendedLikesInfoView = extendedLikesInfo ?
+            extendedLikesInfo :
+            new ExtendedLikesInfo(0, 0, LikeStatus.None, [])
+        return new PostView(outPost, post._id!, extendedLikesInfoView)
     }
 }

@@ -1,4 +1,10 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,20 +16,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommentsRepository = void 0;
+const inversify_1 = require("inversify");
 const comments_model_1 = require("../db/mongo/comments.model");
-const commentLikesStatus_model_1 = require("../db/mongo/commentLikesStatus-model");
-class CommentsRepository {
+let CommentsRepository = class CommentsRepository {
     createComment(newComment) {
         return __awaiter(this, void 0, void 0, function* () {
             const comment = new comments_model_1.CommentsModel(newComment);
-            const commentLikesInfo = new commentLikesStatus_model_1.CommentLikesStatusModel({
-                commentId: comment._id,
-                postId: comment.postId,
-                likesCount: [],
-                dislikesCount: []
-            });
             yield comment.save();
-            yield commentLikesInfo.save();
             return comment;
         });
     }
@@ -39,24 +38,13 @@ class CommentsRepository {
             return deleteResult ? true : false;
         });
     }
-    likeComment(commentId, userId) {
+    findComment(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.removeLikeStatusComment(commentId, userId);
-            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, { $addToSet: { likesUsersIds: userId } }, { new: true });
+            return yield comments_model_1.CommentsModel.findById(id);
         });
     }
-    dislikeComment(commentId, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.removeLikeStatusComment(commentId, userId);
-            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, { $addToSet: { dislikesUsersIds: userId } }, { new: true });
-        });
-    }
-    removeLikeStatusComment(commentId, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield commentLikesStatus_model_1.CommentLikesStatusModel.findOneAndUpdate({ commentId }, {
-                $pull: { likesUsersIds: userId, dislikesUsersIds: userId }
-            }, { new: true });
-        });
-    }
-}
+};
 exports.CommentsRepository = CommentsRepository;
+exports.CommentsRepository = CommentsRepository = __decorate([
+    (0, inversify_1.injectable)()
+], CommentsRepository);

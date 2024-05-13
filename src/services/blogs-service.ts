@@ -1,11 +1,13 @@
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { BlogDbType, Blog } from '../types/blogs-types'
 import { BlogsRepository } from '../repositories/blogs-repository'
 
+@injectable()
 export class BlogsService {
     constructor(protected blogsRepository: BlogsRepository) { }
-    
+
     async createBlog(body: Blog): Promise<BlogDbType> {
         const newBlog = new Blog(
             body.name,
@@ -22,6 +24,9 @@ export class BlogsService {
             return false
         }
         const blog = await this.blogsRepository.findBlog(id)
+        if (!blog) {
+            return false
+        }
         const updatedblog = new Blog(
             body.name,
             body.description,
