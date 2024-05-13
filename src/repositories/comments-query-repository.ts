@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { CommentsModel } from '../db/mongo/comments.model'
 import { CommentDbType, CommentView } from '../types/comments-types'
@@ -8,6 +9,7 @@ import { LikeStatus, LikesInfoView } from '../types/likes-types'
 import { Paginator } from '../types/result-types'
 import { LikesQueryRepository } from './likes-query-repository'
 
+@injectable()
 export class CommentsQueryRepository {
     constructor(
         protected likesQueryRepository: LikesQueryRepository,

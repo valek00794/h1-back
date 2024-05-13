@@ -1,6 +1,9 @@
+import { injectable } from 'inversify';
+
 import { LikeStatusModel } from '../db/mongo/likeStatus-model'
 import { ExtendedLikesInfo, LikeStatus, LikesInfo, LikesInfoView, NewestLike } from '../types/likes-types'
 
+@injectable()
 export class LikesQueryRepository {
     async getLikesInfo(parrentId: string): Promise<LikesInfo[]> {
         return await LikeStatusModel.find({ parrentId })

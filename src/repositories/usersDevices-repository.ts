@@ -1,9 +1,11 @@
 import { DeleteResult } from 'mongodb'
 import { UpdateWriteOpResult } from 'mongoose'
+import { injectable } from 'inversify';
 
 import { UserDeviceInfoType, UsersDevicesType } from '../types/users-types'
 import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
+@injectable()
 export class UsersDevicesRepository {
     async addUserDevice(device: UsersDevicesType) {
         const newDevice = new UsersDevicesModel(device)

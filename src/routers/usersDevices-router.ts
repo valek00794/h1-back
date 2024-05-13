@@ -1,6 +1,8 @@
 import { Router } from "express"
-import { usersDevicesController } from "../composition-root"
+import { container } from "../composition-root"
+import { UsersDevicesController } from "../controllers/usersDevicesController"
 
+const usersDevicesController = container.resolve(UsersDevicesController)
 export const usersDevicesRouter = Router()
 
 usersDevicesRouter.get('/', usersDevicesController.getActiveDevicesByUserController.bind(usersDevicesController))

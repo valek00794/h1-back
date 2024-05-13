@@ -1,6 +1,9 @@
+import { injectable } from 'inversify';
+
 import { PostDbType, Post } from '../types/posts-types'
 import { PostsModel } from '../db/mongo/posts.model'
 
+@injectable()
 export class PostsRepository {
     async createPost(newPost: Post): Promise<PostDbType> {
         const post = new PostsModel(newPost)

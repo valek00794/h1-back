@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter';
 
@@ -12,6 +13,7 @@ import { UsersQueryRepository } from '../repositories/users-query-repository';
 import { UsersService } from '../services/users-service';
 import { UsersDevicesService } from '../services/usersDevices-service';
 
+@injectable()
 export class AuthController {
     constructor(
         protected authService: AuthService,

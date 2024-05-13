@@ -5,8 +5,10 @@ import { inputValidationMiddleware } from "../middlewares/inputValidationMiddlew
 import { authJWTMiddleware } from "../middlewares/authJWTMiddleware";
 import { confirmationCodeInputValidation, emailInputValidation, recoveryCodeInputValidation, userDataInputValidation } from "../validation/usersInputValidation";
 import { apiRequestsCounterMiddleware, apiRequestsLogMiddleware } from "../middlewares/apiRequestsLogMiddleware";
-import { authController } from "../composition-root";
+import { container } from "../composition-root";
+import { AuthController } from "../controllers/authController";
 
+const authController = container.resolve(AuthController)
 export const authRouter = Router();
 
 authRouter.post('/login', apiRequestsLogMiddleware, apiRequestsCounterMiddleware, authInputValidation, inputValidationMiddleware, authController.signInController.bind(authController))

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { SearchQueryParametersType } from '../types/query-types';
 import { UserView } from '../types/users-types';
@@ -7,6 +8,7 @@ import { Paginator } from '../types/result-types';
 import { UsersQueryRepository } from '../repositories/users-query-repository';
 import { UsersService } from '../services/users-service';
 
+@injectable()
 export class UsersController {
     constructor(
         protected usersService: UsersService,

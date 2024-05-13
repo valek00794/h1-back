@@ -5,9 +5,13 @@ import { inputValidationMiddleware } from "../middlewares/inputValidationMiddlew
 
 import { postsInputValidation } from "../validation/postsInputValidation";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { blogsController, postsController } from "../composition-root";
+import { container } from "../composition-root";
 import { userIdFromJWTMiddleware } from "../middlewares/userIdFromJWTMiddleware";
+import { BlogsController } from "../controllers/blogsController";
+import { PostsController } from "../controllers/postsController";
 
+const blogsController = container.resolve(BlogsController)
+const postsController = container.resolve(PostsController)
 export const blogsRouter = Router();
 
 blogsRouter.get('/', blogsController.getBlogsController.bind(blogsController))

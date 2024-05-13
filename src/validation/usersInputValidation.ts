@@ -1,6 +1,9 @@
 import { body } from 'express-validator'
 
-import { usersRepository } from '../composition-root'
+import { container } from '../composition-root'
+import { UsersRepository } from '../repositories/users-repository'
+
+const usersRepository = container.resolve(UsersRepository)
 
 const VALIDATE_PHARAMS = {
     password: {

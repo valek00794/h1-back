@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { PostView } from '../types/posts-types'
 import { SearchQueryParametersType } from '../types/query-types';
@@ -9,6 +10,7 @@ import { PostsQueryRepository } from '../repositories/posts-query-repository';
 import { BlogsQueryRepository } from '../repositories/blogs-query-repository';
 import { LikesService } from '../services/likes-service';
 
+@injectable()
 export class PostsController {
     constructor(
         protected postsService: PostsService,

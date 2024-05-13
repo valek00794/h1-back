@@ -1,6 +1,9 @@
+import { injectable } from 'inversify';
+
 import { UsersDevicesOutput, UsersDevicesType } from "../types/users-types"
 import { UsersDevicesModel } from "../db/mongo/usersDevices.model"
 
+@injectable()
 export class UsersDevicesQueryRepository {
     async getAllActiveDevicesByUser(userId: string): Promise<UsersDevicesType[]> {
         const userDevices = await UsersDevicesModel.find({ userId })

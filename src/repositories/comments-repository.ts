@@ -1,6 +1,9 @@
+import { injectable } from 'inversify';
+
 import { CommentDbType, Comment } from '../types/comments-types'
 import { CommentsModel } from '../db/mongo/comments.model'
 
+@injectable()
 export class CommentsRepository {
     async createComment(newComment: Comment): Promise<CommentDbType> {
         const comment = new CommentsModel(newComment)

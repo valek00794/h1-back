@@ -6,8 +6,12 @@ import { commentInputValidation, likeStatusInputValidation } from "../validation
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { authJWTMiddleware } from "../middlewares/authJWTMiddleware";
 import { userIdFromJWTMiddleware } from "../middlewares/userIdFromJWTMiddleware";
-import { commentsController, postsController } from "../composition-root";
+import { container } from "../composition-root";
+import { CommentsController } from "../controllers/commentsController";
+import { PostsController } from "../controllers/postsController";
 
+const commentsController = container.resolve(CommentsController)
+const postsController = container.resolve(PostsController)
 export const postsRouter = Router();
 
 postsRouter.get('/', userIdFromJWTMiddleware, postsController.getPostsController.bind(postsController))

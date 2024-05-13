@@ -1,4 +1,5 @@
 import { DeleteResult, UpdateResult } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { ResultStatus, SETTINGS } from '../settings'
 import { jwtAdapter } from '../adapters/jwt/jwt-adapter'
@@ -7,6 +8,7 @@ import { Result } from '../types/result-types'
 import { UsersDevicesRepository } from '../repositories/usersDevices-repository'
 import { AuthService } from './auth-service'
 
+@injectable()
 export class UsersDevicesService {
     constructor(
         protected authService: AuthService,

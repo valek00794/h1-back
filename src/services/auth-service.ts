@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns/add'
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { UserDeviceInfoType } from '../types/users-types'
 import { emailManager } from '../managers/email-manager'
@@ -12,6 +13,7 @@ import { JWTTokensOutType } from '../adapters/jwt/jwt-types'
 import { UsersRepository } from '../repositories/users-repository'
 import { UsersDevicesRepository } from '../repositories/usersDevices-repository'
 
+@injectable()
 export class AuthService {
     constructor(
         protected usersRepository: UsersRepository,

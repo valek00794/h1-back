@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import { injectable } from 'inversify';
 
 import { CommentDbType, CommentInputType, Comment, CommentView } from "../types/comments-types"
 import { CommentatorInfo } from "../types/users-types"
@@ -6,8 +7,8 @@ import { ResultStatus } from "../settings"
 import { Result } from "../types/result-types"
 import { CommentsRepository } from "../repositories/comments-repository"
 import { PostsRepository } from "../repositories/posts-repository"
-import { LikesRepository } from "../repositories/likes-repository"
 
+@injectable()
 export class CommentsService {
     constructor(
         protected commentsRepository: CommentsRepository,

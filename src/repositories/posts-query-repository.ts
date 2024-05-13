@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { Post, PostDbType, PostView } from '../types/posts-types'
 import { getSanitizationQuery } from '../utils'
@@ -8,6 +9,7 @@ import { Paginator } from '../types/result-types'
 import { LikesQueryRepository } from './likes-query-repository'
 import { ExtendedLikesInfo, LikeStatus } from '../types/likes-types'
 
+@injectable()
 export class PostsQueryRepository {
     constructor(
         protected likesQueryRepository: LikesQueryRepository,

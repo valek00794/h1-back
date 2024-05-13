@@ -1,6 +1,9 @@
 import { body } from 'express-validator'
 
-import { blogsQueryRepository } from '../composition-root'
+import { container } from '../composition-root'
+import { BlogsQueryRepository } from '../repositories/blogs-query-repository'
+
+const blogsQueryRepository = container.resolve(BlogsQueryRepository)
 
 const VALIDATE_PHARAMS = {
     titleMaxLength: 30,

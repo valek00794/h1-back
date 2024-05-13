@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import { injectable } from 'inversify';
 
 import { UserDbType, UserInfo, UserView } from "../types/users-types"
 import { getSanitizationQuery } from "../utils"
@@ -6,6 +7,7 @@ import { SearchQueryParametersType } from "../types/query-types"
 import { UsersModel } from "../db/mongo/users.model"
 import { Paginator } from "../types/result-types"
 
+@injectable()
 export class UsersQueryRepository {
     async findUserById(id: string): Promise<UserInfo | false> {
         if (!ObjectId.isValid(id)) {

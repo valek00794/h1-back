@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { Comment } from '../types/comments-types';
 import { SearchQueryParametersType } from '../types/query-types';
@@ -9,6 +10,7 @@ import { CommentsQueryRepository } from '../repositories/comments-query-reposito
 import { PostsQueryRepository } from '../repositories/posts-query-repository';
 import { LikesService } from '../services/likes-service';
 
+@injectable()
 export class CommentsController {
     constructor(
         protected commentsService: CommentsService,

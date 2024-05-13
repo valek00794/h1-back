@@ -2,6 +2,7 @@
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { add } from 'date-fns/add'
+import { injectable } from 'inversify';
 
 import { UserDbType, UserSignUpType } from '../types/users-types'
 import { emailManager } from '../managers/email-manager'
@@ -10,6 +11,7 @@ import { ResultStatus } from '../settings'
 import { bcryptArapter } from '../adapters/bcypt-adapter'
 import { UsersRepository } from '../repositories/users-repository'
 
+@injectable()
 export class UsersService {
     constructor(protected usersRepository: UsersRepository) { }
 

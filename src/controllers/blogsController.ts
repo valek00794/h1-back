@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { BlogView } from '../types/blogs-types';
 import { SearchQueryParametersType } from '../types/query-types';
@@ -8,6 +9,7 @@ import { BlogsService } from '../services/blogs-service';
 import { BlogsQueryRepository } from '../repositories/blogs-query-repository';
 
 
+@injectable()
 export class BlogsController {
     constructor(
         protected blogsService: BlogsService,

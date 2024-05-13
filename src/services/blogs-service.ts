@@ -1,8 +1,10 @@
 import { ObjectId } from 'mongodb'
+import { injectable } from 'inversify';
 
 import { BlogDbType, Blog } from '../types/blogs-types'
 import { BlogsRepository } from '../repositories/blogs-repository'
 
+@injectable()
 export class BlogsService {
     constructor(protected blogsRepository: BlogsRepository) { }
 

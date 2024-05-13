@@ -1,10 +1,13 @@
 import { Request, Response } from 'express'
+import { injectable } from 'inversify';
 
 import { ResultStatus, StatusCodes } from '../settings'
 import { UsersDevicesType } from '../types/users-types'
 import { UsersDevicesQueryRepository } from '../repositories/usersDevices-query-repository'
 import { AuthService } from '../services/auth-service'
 import { UsersDevicesService } from '../services/usersDevices-service'
+
+@injectable()
 export class UsersDevicesController {
     constructor(
         protected authService: AuthService,

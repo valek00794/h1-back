@@ -7,9 +7,11 @@ const inputValidationMiddleware_1 = require("../middlewares/inputValidationMiddl
 const authJWTMiddleware_1 = require("../middlewares/authJWTMiddleware");
 const userIdFromJWTMiddleware_1 = require("../middlewares/userIdFromJWTMiddleware");
 const composition_root_1 = require("../composition-root");
+const commentsController_1 = require("../controllers/commentsController");
+const commentsController = composition_root_1.container.resolve(commentsController_1.CommentsController);
 exports.commentsRouter = (0, express_1.Router)();
-exports.commentsRouter.get('/:id', userIdFromJWTMiddleware_1.userIdFromJWTMiddleware, composition_root_1.commentsController.findCommentController.bind(composition_root_1.commentsController));
-exports.commentsRouter.post('/', authJWTMiddleware_1.authJWTMiddleware, composition_root_1.commentsController.createCommentForPostController.bind(composition_root_1.commentsController));
-exports.commentsRouter.delete('/:commentId', authJWTMiddleware_1.authJWTMiddleware, composition_root_1.commentsController.deleteCommentController.bind(composition_root_1.commentsController));
-exports.commentsRouter.put('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.commentInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, composition_root_1.commentsController.updateCommentForPostController.bind(composition_root_1.commentsController));
-exports.commentsRouter.put('/:commentId/like-status', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.likeStatusInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, composition_root_1.commentsController.changeCommentLikeStatusController.bind(composition_root_1.commentsController));
+exports.commentsRouter.get('/:id', userIdFromJWTMiddleware_1.userIdFromJWTMiddleware, commentsController.findCommentController.bind(commentsController));
+exports.commentsRouter.post('/', authJWTMiddleware_1.authJWTMiddleware, commentsController.createCommentForPostController.bind(commentsController));
+exports.commentsRouter.delete('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentsController.deleteCommentController.bind(commentsController));
+exports.commentsRouter.put('/:commentId', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.commentInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsController.updateCommentForPostController.bind(commentsController));
+exports.commentsRouter.put('/:commentId/like-status', authJWTMiddleware_1.authJWTMiddleware, commentInputValidation_1.likeStatusInputValidation, inputValidationMiddleware_1.inputValidationMiddleware, commentsController.changeCommentLikeStatusController.bind(commentsController));

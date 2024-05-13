@@ -1,10 +1,12 @@
 import { ObjectId } from "mongodb"
+import { injectable } from 'inversify';
 
 import { UserEmailConfirmationInfoType, UserRecoveryPasswordInfoType, UserSignUpType, UserDbType, UserType } from "../types/users-types"
 import { UsersModel } from "../db/mongo/users.model"
 import { UsersEmailConfirmationsModel } from "../db/mongo/usersEmailConfirmation.model"
 import { UsersRecoveryPassswordModel } from "../db/mongo/usersRecoveryPasssword.model"
 
+@injectable()
 export class UsersRepository {
     async createUser(signUpData: UserSignUpType): Promise<UserDbType> {
         const user = new UsersModel(signUpData.user)
