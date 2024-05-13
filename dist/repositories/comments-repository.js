@@ -11,20 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommentsRepository = void 0;
 const comments_model_1 = require("../db/mongo/comments.model");
-const likes_types_1 = require("../types/likes-types");
-const commentLikesStatus_model_1 = require("../db/mongo/commentLikesStatus-model");
 class CommentsRepository {
     createComment(newComment) {
         return __awaiter(this, void 0, void 0, function* () {
             const comment = new comments_model_1.CommentsModel(newComment);
-            const commentLikesInfo = new commentLikesStatus_model_1.LikesStatusModel({
-                parrentId: comment._id,
-                parrentName: likes_types_1.LikeStatusParrent.Comment,
-                likesUsersIds: [],
-                dislikesUsersIds: []
-            });
             yield comment.save();
-            yield commentLikesInfo.save();
             return comment;
         });
     }

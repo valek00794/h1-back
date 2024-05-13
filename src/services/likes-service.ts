@@ -1,4 +1,4 @@
-import { LikeStatus, LikeStatusParrent } from "../types/likes-types"
+import { LikeStatus } from "../types/likes-types"
 import { ResultStatus } from "../settings"
 import { Result } from "../types/result-types"
 
@@ -9,17 +9,13 @@ export class LikesService {
         protected likesRepository: LikesRepository,
     ) { }
 
-    async changeLikeStatus(parrentId: string, parrentName: LikeStatusParrent, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
-        if (likeStatus === LikeStatus.Like) {
-            await this.likesRepository.likeEntity(parrentId, userId, parrentName)
+    async changeLikeStatus(parrentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<null>> {
+        const likeInfo = await this.likesRepository.getLikeInfo(parrentId, userId)
+        if (likeInfo === null) {
+            await this.likesRepository.createLikeInfo(parrentId, userId, likeStatus)
+        } else {
+            await this.likesRepository.updateLikeInfo(parrentId, userId, likeStatus)
         }
-        if (likeStatus === LikeStatus.Dislike) {
-            await this.likesRepository.dislikeEntity(parrentId, userId, parrentName)
-        }
-        if (likeStatus === LikeStatus.None) {
-            await this.likesRepository.removeEntityLikeStatus(parrentId, userId, parrentName)
-        }
-
         return new Result<null>(
             ResultStatus.NoContent,
             null,

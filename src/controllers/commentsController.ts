@@ -8,7 +8,6 @@ import { CommentsService } from '../services/comments-service';
 import { CommentsQueryRepository } from '../repositories/comments-query-repository';
 import { PostsQueryRepository } from '../repositories/posts-query-repository';
 import { LikesService } from '../services/likes-service';
-import { LikeStatusParrent } from '../types/likes-types';
 
 export class CommentsController {
     constructor(
@@ -115,7 +114,7 @@ export class CommentsController {
                 .send()
             return
         }
-        await this.likesService.changeLikeStatus(req.params.commentId, LikeStatusParrent.Comment, req.body.likeStatus, req.user!.userId)
+        await this.likesService.changeLikeStatus(req.params.commentId, req.body.likeStatus, req.user!.userId)
         res
             .status(StatusCodes.NO_CONTENT_204)
             .send()

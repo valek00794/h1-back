@@ -6,18 +6,12 @@ export enum LikeStatus {
     Dislike = 'Dislike'
 }
 
-export enum LikeStatusParrent {
-    Post = 'Post',
-    Comment = 'Comment',
-}
-
 export class LikesInfo {
     constructor(
         public parrentId: ObjectId,
-        public parrentName: LikeStatusParrent,
-        public likesUsersIds: string[],
-        public dislikesUsersIds: string[],
-
+        public authorId: ObjectId,
+        public status: LikeStatus,
+        public addedAt: Date,
     ) { }
 }
 

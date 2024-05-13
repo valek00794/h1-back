@@ -1,23 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExtendedLikesInfo = exports.NewestLike = exports.LikesInfoView = exports.LikesInfo = exports.LikeStatusParrent = exports.LikeStatus = void 0;
+exports.ExtendedLikesInfo = exports.NewestLike = exports.LikesInfoView = exports.LikesInfo = exports.LikeStatus = void 0;
 var LikeStatus;
 (function (LikeStatus) {
     LikeStatus["None"] = "None";
     LikeStatus["Like"] = "Like";
     LikeStatus["Dislike"] = "Dislike";
 })(LikeStatus || (exports.LikeStatus = LikeStatus = {}));
-var LikeStatusParrent;
-(function (LikeStatusParrent) {
-    LikeStatusParrent["Post"] = "Post";
-    LikeStatusParrent["Comment"] = "Comment";
-})(LikeStatusParrent || (exports.LikeStatusParrent = LikeStatusParrent = {}));
 class LikesInfo {
-    constructor(parrentId, parrentName, likesUsersIds, dislikesUsersIds) {
+    constructor(parrentId, authorId, status, addedAt) {
         this.parrentId = parrentId;
-        this.parrentName = parrentName;
-        this.likesUsersIds = likesUsersIds;
-        this.dislikesUsersIds = dislikesUsersIds;
+        this.authorId = authorId;
+        this.status = status;
+        this.addedAt = addedAt;
     }
 }
 exports.LikesInfo = LikesInfo;

@@ -1,19 +1,10 @@
 import { CommentDbType, Comment } from '../types/comments-types'
 import { CommentsModel } from '../db/mongo/comments.model'
-import { LikeStatusParrent } from '../types/likes-types'
-import { LikesStatusModel } from '../db/mongo/commentLikesStatus-model'
 
 export class CommentsRepository {
     async createComment(newComment: Comment): Promise<CommentDbType> {
         const comment = new CommentsModel(newComment)
-        const commentLikesInfo = new LikesStatusModel({
-            parrentId: comment._id,
-            parrentName: LikeStatusParrent.Comment,
-            likesUsersIds: [],
-            dislikesUsersIds: []
-        })
         await comment.save()
-        await commentLikesInfo.save()
         return comment
     }
 

@@ -34,7 +34,7 @@ class CommentsQueryRepository {
                 .limit(sanitizationQuery.pageSize);
             const commentsCount = yield comments_model_1.CommentsModel.countDocuments(findOptions);
             const commentsItems = yield Promise.all(comments.map((comment) => __awaiter(this, void 0, void 0, function* () {
-                const likesInfo = yield this.likesQueryRepository.getLikesInfo(comment.id, likes_types_1.LikeStatusParrent.Comment);
+                const likesInfo = yield this.likesQueryRepository.getLikesInfo(comment.id);
                 const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId, likesInfo);
                 return this.mapToOutput(comment, mapedlikesInfo);
             })));
@@ -49,7 +49,7 @@ class CommentsQueryRepository {
             const comment = yield comments_model_1.CommentsModel.findById(id);
             let outputComment;
             if (comment) {
-                const likesInfo = yield this.likesQueryRepository.getLikesInfo(id, likes_types_1.LikeStatusParrent.Comment);
+                const likesInfo = yield this.likesQueryRepository.getLikesInfo(id);
                 const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId, likesInfo);
                 outputComment = this.mapToOutput(comment, mapedlikesInfo);
             }

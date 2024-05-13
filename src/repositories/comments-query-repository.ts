@@ -4,7 +4,7 @@ import { CommentsModel } from '../db/mongo/comments.model'
 import { CommentDbType, CommentView } from '../types/comments-types'
 import { getSanitizationQuery } from '../utils'
 import { SearchQueryParametersType } from '../types/query-types'
-import { LikeStatus, LikeStatusParrent, LikesInfoView } from '../types/likes-types'
+import { LikeStatus, LikesInfoView } from '../types/likes-types'
 import { Paginator } from '../types/result-types'
 import { LikesQueryRepository } from './likes-query-repository'
 
@@ -29,7 +29,7 @@ export class CommentsQueryRepository {
         const commentsCount = await CommentsModel.countDocuments(findOptions)
 
         const commentsItems = await Promise.all(comments.map(async comment => {
-            const likesInfo = await this.likesQueryRepository.getLikesInfo(comment.id, LikeStatusParrent.Comment)
+            const likesInfo = await this.likesQueryRepository.getLikesInfo(comment.id)
             const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId!, likesInfo!)
             return this.mapToOutput(comment, mapedlikesInfo)
         }))
@@ -49,7 +49,7 @@ export class CommentsQueryRepository {
         const comment = await CommentsModel.findById(id)
         let outputComment
         if (comment) {
-            const likesInfo = await this.likesQueryRepository.getLikesInfo(id, LikeStatusParrent.Comment)
+            const likesInfo = await this.likesQueryRepository.getLikesInfo(id)
             const mapedlikesInfo = this.likesQueryRepository.mapLikesInfo(userId!, likesInfo!)
             outputComment = this.mapToOutput(comment, mapedlikesInfo)
         }

@@ -10,37 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LikesQueryRepository = void 0;
-const commentLikesStatus_model_1 = require("../db/mongo/commentLikesStatus-model");
+const likeStatus_model_1 = require("../db/mongo/likeStatus-model");
 const likes_types_1 = require("../types/likes-types");
 class LikesQueryRepository {
-    getLikesInfo(parrentId, parrentName) {
+    getLikesInfo(parrentId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield commentLikesStatus_model_1.LikesStatusModel.findOne({ parrentId, parrentName });
+            return yield likeStatus_model_1.LikeStatusModel.find({ parrentId });
         });
     }
     mapLikesInfo(userId, likesInfo) {
-        let myLikeStatus = likes_types_1.LikeStatus.None;
-        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.includes(userId))) {
-            myLikeStatus = likes_types_1.LikeStatus.Like;
-        }
-        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.includes(userId))) {
-            myLikeStatus = likes_types_1.LikeStatus.Dislike;
-        }
-        const likesCount = (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.length) || 0;
-        const dislikesCount = (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.length) || 0;
-        return new likes_types_1.LikesInfoView(likesCount, dislikesCount, myLikeStatus);
-    }
-    mapExtendedLikesInfo(userId, likesInfo) {
-        let myLikeStatus = likes_types_1.LikeStatus.None;
-        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.includes(userId))) {
-            myLikeStatus = likes_types_1.LikeStatus.Like;
-        }
-        if (userId && (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.includes(userId))) {
-            myLikeStatus = likes_types_1.LikeStatus.Dislike;
-        }
-        const likesCount = (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.likesUsersIds.length) || 0;
-        const dislikesCount = (likesInfo === null || likesInfo === void 0 ? void 0 : likesInfo.dislikesUsersIds.length) || 0;
-        return new likes_types_1.LikesInfoView(likesCount, dislikesCount, myLikeStatus);
+        var _a;
+        const likesInfoView = new likes_types_1.LikesInfoView(likesInfo.filter(like => like.status === likes_types_1.LikeStatus.Like).length, likesInfo.filter(like => like.status === likes_types_1.LikeStatus.Dislike).length, ((_a = likesInfo.find(like => like.authorId.toHexString() === userId)) === null || _a === void 0 ? void 0 : _a.status) || likes_types_1.LikeStatus.None);
+        return likesInfoView;
     }
 }
 exports.LikesQueryRepository = LikesQueryRepository;

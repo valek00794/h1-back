@@ -1,43 +1,31 @@
-import { LikesStatusModel } from '../db/mongo/commentLikesStatus-model'
-import { LikeStatusParrent, LikesInfo } from '../types/likes-types'
+
+import { LikeStatusModel } from '../db/mongo/likeStatus-model'
+import { LikeStatus, LikesInfo } from '../types/likes-types'
 
 export class LikesRepository {
-    async createLikeInfo(parrentId: string, parrentName: LikeStatusParrent): Promise<LikesInfo> {
-        const likesInfo = new LikesStatusModel({
+    async createLikeInfo(parrentId: string, authorId: string, status: LikeStatus): Promise<LikesInfo> {
+        const likesInfo = new LikeStatusModel({
             parrentId,
-            parrentName,
-            likesUsersIds: [],
-            dislikesUsersIds: []
+            authorId,
+            status,
+            addedAt: new Date().toISOString(),
         })
         await likesInfo.save()
         return likesInfo
     }
 
-    async likeEntity(entityId: string, userId: string, parrentName: LikeStatusParrent): Promise<LikesInfo | null> {
-        await this.removeEntityLikeStatus(entityId, userId, parrentName)
-        return await LikesStatusModel.findOneAndUpdate(
-            { parrentId: entityId, parrentName },
-            { $addToSet: { likesUsersIds: userId } },
-            { new: true }
-        )
-    }
-
-    async dislikeEntity(entityId: string, userId: string, parrentName: LikeStatusParrent): Promise<LikesInfo | null> {
-        await this.removeEntityLikeStatus(entityId, userId, parrentName)
-        return await LikesStatusModel.findOneAndUpdate(
-            { parrentId: entityId, parrentName },
-            { $addToSet: { dislikesUsersIds: userId } },
-            { new: true }
-        )
-    }
-
-    async removeEntityLikeStatus(entityId: string, userId: string, parrentName: LikeStatusParrent): Promise<LikesInfo | null> {
-        return await LikesStatusModel.findOneAndUpdate(
-            { parrentId: entityId, parrentName },
+    async updateLikeInfo(parrentId: string, authorId: string, status: LikeStatus): Promise<LikesInfo | null> {
+        return await LikeStatusModel.findOneAndUpdate(
+            { parrentId, authorId },
             {
-                $pull: { likesUsersIds: userId, dislikesUsersIds: userId }
+                status,
+                addedAt: new Date().toISOString()
             },
             { new: true }
         )
+    }
+
+    async getLikeInfo(parrentId: string, authorId: string) {
+        return await LikeStatusModel.findOne({ parrentId, authorId })
     }
 }
